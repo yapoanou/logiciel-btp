@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Pro CI - Gestion des Chantiers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        :root { 
+            --primary: #2c3e50; 
+            --ci-orange: #ff8200; 
+            --ci-green: #009e49;
+            --bg: #f4f7f6; 
+        }
+        body { background-color: var(--bg); font-family: 'Inter', sans-serif; margin: 0; padding-top: 5px; }
+        
+        .flag-top { height: 5px; display: flex; position: fixed; top: 0; width: 100%; z-index: 2000; }
+        .orange { background: var(--ci-orange); flex: 1; }
+        .white  { background: #fff; flex: 1; }
+        .green  { background: var(--ci-green); flex: 1; }
+
+        nav { 
+            background: var(--primary); padding: 1rem; display: flex; flex-wrap: wrap;
+            justify-content: center; align-items: center; gap: 10px; margin-top: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        nav a { 
+            color: white; text-decoration: none; font-weight: 500; padding: 8px 12px;
+            border-radius: 5px; font-size: 0.85rem; transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1); white-space: nowrap;
+        }
+        nav a:hover { border-color: var(--ci-orange); background: rgba(255,255,255,0.1); }
+        .active-link { background: var(--ci-orange) !important; color: white; border-color: var(--ci-orange); }
+        .logout-btn { background: #c0392b; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.85rem; margin-left: 10px; }
+
+        .card { background: white; border-radius: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
+        .status-msg { display: none; padding: 12px 14px; border-radius: 10px; font-weight: 700; margin-bottom: 14px; position: sticky; top: 70px; z-index: 1000; }
+        .status-success { background: #e8f8ef; color: #0f7a3d; border: 1px solid #b7e4c7; }
+        .status-error   { background: #fdecec; color: #b42318; border: 1px solid #f7b9b9; }
+
+        .badge-en_cours { background: #dcfce7; color: #15803d; }
+        .badge-termine  { background: #dbeafe; color: #1d4ed8; }
+        .badge-suspendu { background: #fef9c3; color: #a16207; }
+
+        .select-statut {
+            border: none; background: transparent; font-size: 0.75rem;
+            font-weight: 700; cursor: pointer; outline: none; padding: 2px 4px;
+            border-radius: 6px;
+        }
+
+        .filtre-btn { transition: 0.2s; }
+        .filtre-btn.actif { outline: 2px solid var(--ci-orange); }
+    </style>
+</head>
+<body>
+    
+    <div class="flag-top"><div class="orange"></div><div class="white"></div><div class="green"></div></div>
+
+    <nav>
+        <a href="tableau-de-bord.html" style="background:var(--ci-orange)">📊 Dashboard</a>
+        <a href="equipe.html">👥 Équipe</a>
+        <a href="chantiers.html">🏗️ Chantiers</a>
+        <a href="pointage.html">📅 Pointage</a>
+        <a href="materiaux.html">📦 Matériaux</a>
+        <a href="bilan.html">💰 Bilan</a>
+        <a href="journal.html">📝 Journal</a>
+        <a href="photos.html">📸 Photos</a>
+        <a href="stats.html">📈 Stats</a>
+        <a href="profil.html">⚙️ Profil</a>
+
+        <!-- Cloche -->
+        <div class="notif-cloche" id="notif-cloche" onclick="togglePanel()">
+            🔔
+            <div class="notif-badge" id="notif-badge"></div>
+        </div>
+
+        <button onclick="deconnexion()" class="logout-btn">Sortir</button>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div id="status-msg" class="status-msg"></div>
+        
+        <div class="mb-10">
+            <h1 class="text-3xl font-extrabold text-slate-800">Gestion des Projets</h1>
+            <p class="text-slate-500">Suivi et pilotage de vos chantiers actifs en Côte d'Ivoire.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Zone Création PDG -->
+            <div class="lg:col-span-1" id="zone-creation">
+                <div class="card p-6 sticky top-24 border border-slate-100">
+                    <h2 class="text-xl font-bold mb-6 text-slate-800 border-b pb-4">➕ Nouveau Projet</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Nom du chantier</label>
+                            <input type="text" id="nom_chantier_input" placeholder="ex: Villa 4, Cocody"
+                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Nom du client</label>
+                            <input type="text" id="client_nom_input" placeholder="ex: M. Koné"
+                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Contact client (optionnel)</label>
+                            <input type="tel" id="client_tel_input" placeholder="0700000000"
+                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <button id="btn-add-chantier" onclick="ajouterChantier()"
+                            class="bg-green-600 hover:bg-green-700 text-white w-full py-4 rounded-xl font-bold text-lg mt-4 shadow-lg transition-all active:scale-95">
+                            CRÉER LE CHANTIER
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste chantiers -->
+            <div class="lg:col-span-2" id="zone-liste">
+                <div class="card p-6 min-h-[400px] border border-slate-100">
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-4">📋 Liste des Chantiers</h2>
+
+                    <!-- Filtres rapides -->
+                    <div class="flex gap-2 mb-5 flex-wrap" id="zone-filtres">
+                        <button onclick="filtrerStatut('')" data-statut=""
+                            class="filtre-btn actif px-3 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-600 hover:bg-slate-300">
+                            Tous
+                        </button>
+                        <button onclick="filtrerStatut('en_cours')" data-statut="en_cours"
+                            class="filtre-btn px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 hover:bg-green-200">
+                            🟢 En cours
+                        </button>
+                        <button onclick="filtrerStatut('termine')" data-statut="termine"
+                            class="filtre-btn px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 hover:bg-blue-200">
+                            🔵 Terminés
+                        </button>
+                        <button onclick="filtrerStatut('suspendu')" data-statut="suspendu"
+                            class="filtre-btn px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 hover:bg-yellow-200">
+                            🟡 Suspendus
+                        </button>
+                    </div>
+
+                    <div id="liste-chantiers" class="space-y-4">
+                        <div class="text-center py-10 text-slate-400 italic">Chargement en cours...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="supabase.js"></script>
+    <script>
+let ENTREPRISE_ID = null;
+let USER_ROLE     = '';
+let tousChantiers = [];
+let filtreActif   = '';
+
+function afficherMessage(message, type = 'success') {
+    const msgDiv = document.getElementById('status-msg');
+    msgDiv.innerText = message;
+    msgDiv.className = `status-msg block ${type === 'success' ? 'status-success' : 'status-error'}`;
+    msgDiv.style.display = 'block';
+    setTimeout(() => { msgDiv.style.display = 'none'; }, 5000);
+}
+
+function labelStatut(statut) {
+    return { en_cours: '🟢 En cours', termine: '🔵 Terminé', suspendu: '🟡 Suspendu' }[statut] || statut;
+}
+
+async function init() {
+    const session = await window.requireAuth();
+    if (!session) return;
+
+    const profile = await window.getUserProfile();
+    if (!profile) return;
+
+    ENTREPRISE_ID = profile.entreprise_id;
+    USER_ROLE     = profile.role;
+
+    if (USER_ROLE !== 'pdg') {
+        document.getElementById('zone-creation').style.display = 'none';
+        document.getElementById('zone-filtres').style.display  = 'none';
+    }
+
+    chargerChantiers();
+}
+
+async function ajouterChantier() {
+    const nom        = document.getElementById('nom_chantier_input').value.trim();
+    const client_nom = document.getElementById('client_nom_input').value.trim();
+    const client_tel = document.getElementById('client_tel_input').value.trim();
+    const btn        = document.getElementById('btn-add-chantier');
+
+    if (!nom || !client_nom) return afficherMessage("Nom du chantier et nom du client requis.", 'error');
+
+    btn.disabled = true;
+    btn.innerText = "Création...";
+
+    const { error } = await window.sb.from('chantiers').insert([{
+        nom_chantier:   nom,
+        client_nom:     client_nom,
+        client_contact: client_tel || null,
+        entreprise_id:  ENTREPRISE_ID
+    }]);
+
+    if (!error) {
+        document.getElementById('nom_chantier_input').value = '';
+        document.getElementById('client_nom_input').value   = '';
+        document.getElementById('client_tel_input').value   = '';
+        afficherMessage("✅ Chantier créé avec succès !");
+        chargerChantiers();
+    } else {
+        afficherMessage("❌ " + error.message, 'error');
+    }
+
+    btn.disabled = false;
+    btn.innerText = "CRÉER LE CHANTIER";
+}
+
+async function chargerChantiers() {
+    const { data: chantiers, error } = await window.sb
+        .from('chantiers')
+        .select('id, nom_chantier, client_nom, client_contact, statut, created_at')
+        .eq('entreprise_id', ENTREPRISE_ID)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        document.getElementById('liste-chantiers').innerHTML = `<div class="text-red-500">Erreur de chargement.</div>`;
+        return;
+    }
+
+    tousChantiers = chantiers || [];
+    afficherChantiers(tousChantiers);
+}
+
+function filtrerStatut(statut) {
+    filtreActif = statut;
+    document.querySelectorAll('.filtre-btn').forEach(btn => {
+        btn.classList.toggle('actif', btn.dataset.statut === statut);
+    });
+    const liste = statut ? tousChantiers.filter(c => c.statut === statut) : tousChantiers;
+    afficherChantiers(liste);
+}
+
+function afficherChantiers(liste) {
+    const container = document.getElementById('liste-chantiers');
+
+    if (!liste || liste.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-20">
+                <div class="text-5xl mb-4">🏗️</div>
+                <p class="italic text-slate-400">Aucun projet trouvé.</p>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = liste.map(c => {
+        const badgeClass = { en_cours: 'badge-en_cours', termine: 'badge-termine', suspendu: 'badge-suspendu' }[c.statut] || 'badge-en_cours';
+
+        return `
+        <div class="flex items-start justify-between p-5 border border-slate-100 rounded-2xl hover:border-orange-200 hover:bg-orange-50/30 transition-all shadow-sm gap-4">
+            <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-slate-800 text-lg truncate">${c.nom_chantier}</h3>
+                <div class="flex items-center gap-3 mt-2 flex-wrap">
+                    <span class="text-xs font-semibold px-2 py-1 bg-slate-100 text-slate-600 rounded-md">
+                        <i class="fas fa-user mr-1"></i> ${c.client_nom || 'Client inconnu'}
+                    </span>
+                    ${c.client_contact ? `<span class="text-xs text-slate-400"><i class="fas fa-phone mr-1"></i>${c.client_contact}</span>` : ''}
+                    <span class="text-[10px] text-slate-400">Créé le : ${new Date(c.created_at).toLocaleDateString('fr-FR')}</span>
+                </div>
+
+                <!-- Statut -->
+                <div class="mt-3 flex items-center gap-2">
+                    <span class="text-xs text-slate-400 font-semibold">Statut :</span>
+                    ${USER_ROLE === 'pdg' ? `
+                    <div class="px-3 py-1 rounded-full text-xs font-bold ${badgeClass}">
+                        <select class="select-statut ${badgeClass}"
+                            onchange="changerStatut('${c.id}', this.value)">
+                            <option value="en_cours" ${c.statut === 'en_cours' ? 'selected' : ''}>🟢 En cours</option>
+                            <option value="termine"  ${c.statut === 'termine'  ? 'selected' : ''}>🔵 Terminé</option>
+                            <option value="suspendu" ${c.statut === 'suspendu' ? 'selected' : ''}>🟡 Suspendu</option>
+                        </select>
+                    </div>
+                    ` : `
+                    <span class="px-3 py-1 rounded-full text-xs font-bold ${badgeClass}">
+                        ${labelStatut(c.statut)}
+                    </span>
+                    `}
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2 flex-shrink-0">
+                <button onclick="window.location.href='bilan.html?id=${c.id}'" title="Voir le bilan"
+                    class="h-11 w-11 flex items-center justify-center rounded-full bg-white text-orange-500 border border-slate-100 hover:bg-orange-500 hover:text-white shadow-sm transition-all">
+                    <i class="fas fa-chart-line"></i>
+                </button>
+                ${USER_ROLE === 'pdg' ? `
+                <button onclick="supprimerChantier('${c.id}', '${c.nom_chantier.replace(/'/g, "\\'")}')" title="Supprimer"
+                    class="h-11 w-11 flex items-center justify-center rounded-full bg-white text-red-400 border border-slate-100 hover:bg-red-500 hover:text-white shadow-sm transition-all">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                ` : ''}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+async function changerStatut(id, nouveauStatut) {
+    const { error } = await window.sb
+        .from('chantiers')
+        .update({ statut: nouveauStatut })
+        .eq('id', id);
+
+    if (!error) {
+        tousChantiers = tousChantiers.map(c => c.id === id ? { ...c, statut: nouveauStatut } : c);
+        afficherMessage(`✅ Statut mis à jour : ${labelStatut(nouveauStatut)}`);
+        const liste = filtreActif ? tousChantiers.filter(c => c.statut === filtreActif) : tousChantiers;
+        afficherChantiers(liste);
+    } else {
+        afficherMessage("❌ " + error.message, 'error');
+    }
+}
+
+async function supprimerChantier(id, nom) {
+    if (!confirm(`⚠️ Supprimer le chantier "${nom}" ?\nToutes les données liées seront supprimées.`)) return;
+
+    const { error } = await window.sb.from('chantiers').delete().eq('id', id);
+
+    if (!error) {
+        afficherMessage("✅ Chantier supprimé.");
+        chargerChantiers();
+    } else {
+        afficherMessage("❌ " + error.message, 'error');
+    }
+}
+
+async function deconnexion() {
+    await window.sb.auth.signOut();
+    localStorage.clear();
+    window.location.href = 'login.html';
+}
+
+window.onload = init;
+    </script>
+</body>
+</html>

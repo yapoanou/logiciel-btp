@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Pro CI - Statistiques</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --primary: #2c3e50; --ci-orange: #ff8200; --ci-green: #009e49; --bg: #f4f7f6; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; color: #333; padding-bottom: 50px; }
+        
+        nav { background: var(--primary); padding: 1rem; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; position: sticky; top: 0; z-index: 1000; }
+        nav a { color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        nav a:hover { border-color: var(--ci-orange); }
+        .active-link { background: var(--ci-orange) !important; font-weight: bold; }
+
+        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
+        
+        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 380px; border: 1px solid #eee; }
+        
+        .big-number { font-size: 2.5rem; font-weight: 900; color: var(--primary); margin: 10px 0; letter-spacing: -1px; }
+        h3 { font-size: 1rem; font-weight: 700; color: #64748b; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; width: 100%; text-align: center; }
+        
+        canvas { max-width: 100% !important; }
+        .logout-btn { background: #c0392b; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+   <nav>
+        <a href="tableau-de-bord.html" style="background:var(--ci-orange)">📊 Dashboard</a>
+        <a href="equipe.html">👥 Équipe</a>
+        <a href="chantiers.html">🏗️ Chantiers</a>
+        <a href="pointage.html">📅 Pointage</a>
+        <a href="materiaux.html">📦 Matériaux</a>
+        <a href="bilan.html">💰 Bilan</a>
+        <a href="journal.html">📝 Journal</a>
+        <a href="photos.html">📸 Photos</a>
+        <a href="stats.html">📈 Stats</a>
+        <a href="profil.html">⚙️ Profil</a>
+
+        <!-- Cloche -->
+        <div class="notif-cloche" id="notif-cloche" onclick="togglePanel()">
+            🔔
+            <div class="notif-badge" id="notif-badge"></div>
+        </div>
+
+        <button onclick="deconnexion()" class="logout-btn">Sortir</button>
+    </nav>
+    <div class="container">
+        <div class="mb-10 text-center">
+            <h2 class="text-3xl font-black text-slate-800">Analyse Globale de Performance</h2>
+            <p class="text-slate-500">Vue d'ensemble financière de tous les chantiers</p>
+        </div>
+        
+        <div class="grid-stats">
+            <div class="card">
+                <h3>Investissement Total</h3>
+                <div id="total-global" class="big-number">...</div>
+                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden mt-4">
+                    <div class="h-full bg-orange-500" style="width: 70%"></div>
+                </div>
+                <p class="mt-4 text-slate-400 text-sm text-center">Cumul Main d'œuvre + Matériaux</p>
+            </div>
+
+            <div class="card">
+                <h3>Répartition des Coûts</h3>
+                <canvas id="chartType"></canvas>
+            </div>
+
+            <div class="card">
+                <h3>Dépenses par Projet</h3>
+                <canvas id="chartChantiers"></canvas>
+            </div>
+
+            <div class="card">
+                <h3>Top Matériaux</h3>
+                <canvas id="chartCat"></canvas>
+            </div>
+        </div>
+    </div>
+
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase.js"></script>
+    <script>
+let ENTREPRISE_ID = null;
+
+async function init() {
+    const session = await window.requireAuth();
+    if (!session) return;
+
+    const profile = await window.getUserProfile();
+    if (!profile || profile.role !== 'pdg') {
+        alert("Accès Direction uniquement.");
+        window.location.href = 'login.html';
+        return;
+    }
+
+    ENTREPRISE_ID = profile.entreprise_id;
+    chargerStats();
+}
+
+async function chargerStats() {
+    if (!ENTREPRISE_ID) return;
+
+    try {
+        const [resChantiers, resEquipe, resPointages, resMateriaux] = await Promise.all([
+            sb.from('chantiers')
+                .select('id, nom_chantier')
+                .eq('entreprise_id', ENTREPRISE_ID),
+            sb.from('equipe')
+                .select('id, salaire_journalier')
+                .eq('entreprise_id', ENTREPRISE_ID),
+            sb.from('pointage')
+                .select('chantier_id, equipe_id')
+                .eq('entreprise_id', ENTREPRISE_ID)
+                .eq('statut', 'present'),
+            sb.from('materiaux')
+                .select('chantier_id, designation, quantite, prix_unitaire, prix_total')
+                .eq('entreprise_id', ENTREPRISE_ID)
+        ]);
+
+        const chantiers = resChantiers.data || [];
+        const depensesParChantier = {};
+        chantiers.forEach(c => depensesParChantier[c.id] = 0);
+
+        // Calcul Main d'œuvre
+        const tarifs = {};
+        resEquipe.data?.forEach(o => tarifs[o.id] = Number(o.salaire_journalier) || 0);
+
+        let totalMO = 0;
+        resPointages.data?.forEach(p => {
+            const cout = tarifs[p.equipe_id] || 0;
+            totalMO += cout;
+            if (depensesParChantier[p.chantier_id] !== undefined) {
+                depensesParChantier[p.chantier_id] += cout;
+            }
+        });
+
+        // Calcul Matériaux
+        let totalMat = 0;
+        const parMateriau = {};
+        resMateriaux.data?.forEach(m => {
+            const qte  = Number(m.quantite) || 1;
+            const cout = Number(m.prix_total ?? (Number(m.prix_unitaire) * qte)) || 0;
+            totalMat += cout;
+            if (depensesParChantier[m.chantier_id] !== undefined) {
+                depensesParChantier[m.chantier_id] += cout;
+            }
+            const nom = (m.designation || 'Divers').trim();
+            parMateriau[nom] = (parMateriau[nom] || 0) + cout;
+        });
+
+        document.getElementById('total-global').innerText =
+            (totalMO + totalMat).toLocaleString('fr-FR') + " FCFA";
+
+        // 1. Pie : MO vs Matériaux
+        new Chart(document.getElementById('chartType'), {
+            type: 'pie',
+            data: {
+                labels: ["Main d'œuvre", 'Matériaux'],
+                datasets: [{
+                    data: [totalMO, totalMat],
+                    backgroundColor: ['#3498db', '#ff8200'],
+                    borderWidth: 0
+                }]
+            },
+            options: { plugins: { legend: { position: 'bottom' } } }
+        });
+
+        // 2. Bar : Dépenses par chantier
+        new Chart(document.getElementById('chartChantiers'), {
+            type: 'bar',
+            data: {
+                labels: chantiers.map(c => c.nom_chantier),
+                datasets: [{
+                    label: 'Dépenses Totales (F)',
+                    data: chantiers.map(c => depensesParChantier[c.id]),
+                    backgroundColor: '#2c3e50',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // 3. Doughnut : Top 5 matériaux
+        const topMat = Object.entries(parMateriau)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+
+        new Chart(document.getElementById('chartCat'), {
+            type: 'doughnut',
+            data: {
+                labels: topMat.map(i => i[0]),
+                datasets: [{
+                    data: topMat.map(i => i[1]),
+                    backgroundColor: ['#009e49', '#f1c40f', '#e74c3c', '#9b59b6', '#3498db'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                cutout: '65%',
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+    } catch (e) {
+        console.error("Erreur Stats:", e);
+    }
+}
+
+async function deconnexion() {
+    await sb.auth.signOut();
+    localStorage.clear();
+    window.location.href = 'login.html';
+}
+
+window.onload = init;
+    </script>
+</body>
+</html>

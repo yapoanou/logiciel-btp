@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Pro CI - Pointage Terrain</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        :root { --primary: #1e293b; --ci-orange: #ff8200; --ci-green: #059669; --bg: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 40px; }
+        
+        .flag-top { height: 4px; display: flex; position: fixed; top: 0; width: 100%; z-index: 2000; }
+        .orange { background: var(--ci-orange); flex: 1; }
+        .white  { background: #fff; flex: 1; }
+        .green  { background: var(--ci-green); flex: 1; }
+
+        nav { background: var(--primary); padding: 0.75rem; display: flex; overflow-x: auto; gap: 8px; margin-top: 4px; white-space: nowrap; scrollbar-width: none; }
+        nav::-webkit-scrollbar { display: none; }
+        nav a { color: #94a3b8; text-decoration: none; padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
+        nav a:hover { color: white; background: rgba(255,255,255,0.1); }
+        .active-link { background: var(--ci-orange) !important; color: white !important; }
+        .logout-btn { background: #c0392b; color: white; padding: 8px 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
+
+        .container { max-width: 550px; margin: 20px auto; padding: 0 16px; }
+        .card { background: white; padding: 24px; border-radius: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+
+        .sync-badge {
+            display: none; background: #fffbeb; color: #92400e;
+            padding: 12px 16px; border-radius: 16px; margin-bottom: 15px;
+            font-weight: 700; text-align: center; border: 1px solid #fde68a;
+            font-size: 0.85rem; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+        .sync-pending {
+            display: none; background: #f0fdf4; color: #166534;
+            padding: 12px 16px; border-radius: 16px; margin-bottom: 15px;
+            font-weight: 700; text-align: center; border: 1px solid #bbf7d0;
+            font-size: 0.85rem; cursor: pointer; transition: 0.2s;
+        }
+        .sync-pending:hover { background: #dcfce7; }
+
+        .status-msg { display: none; padding: 14px; border-radius: 14px; font-weight: 700; text-align: center; font-size: 0.9rem; margin-bottom: 15px; }
+        .status-success { background: #e8f8ef; color: #0f7a3d; border: 1px solid #b7e4c7; }
+        .status-error   { background: #fdecec; color: #b42318; border: 1px solid #f7b9b9; }
+
+        .ouvrier-row { display: flex; justify-content: space-between; align-items: center; padding: 14px; border-radius: 16px; transition: 0.2s; margin-bottom: 4px; }
+        .ouvrier-row:hover { background: #f8fafc; }
+        .ouvrier-nom  { font-weight: 700; color: #1e293b; display: block; }
+        .ouvrier-role { font-size: 0.7rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.025em; }
+
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e2e8f0; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--ci-green); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; margin-top: 20px; transition: 0.3s; box-shadow: 0 10px 15px -3px rgba(30,41,59,0.2); }
+        .btn-save:disabled { background: #94a3b8; cursor: not-allowed; }
+
+        #search-worker { background: #f1f5f9; border-radius: 12px; padding: 10px 15px; width: 100%; border: 2px solid transparent; font-size: 0.9rem; margin-bottom: 15px; outline: none; box-sizing: border-box; }
+        #search-worker:focus { border-color: var(--ci-orange); background: white; }
+    </style>
+</head>
+<body>
+
+    <div class="flag-top"><div class="orange"></div><div class="white"></div><div class="green"></div></div>
+
+   <nav>
+        <a href="tableau-de-bord.html" style="background:var(--ci-orange)">📊 Dashboard</a>
+        <a href="equipe.html">👥 Équipe</a>
+        <a href="chantiers.html">🏗️ Chantiers</a>
+        <a href="pointage.html">📅 Pointage</a>
+        <a href="materiaux.html">📦 Matériaux</a>
+        <a href="bilan.html">💰 Bilan</a>
+        <a href="journal.html">📝 Journal</a>
+        <a href="photos.html">📸 Photos</a>
+        <a href="stats.html">📈 Stats</a>
+        <a href="profil.html">⚙️ Profil</a>
+
+        <!-- Cloche -->
+        <div class="notif-cloche" id="notif-cloche" onclick="togglePanel()">
+            🔔
+            <div class="notif-badge" id="notif-badge"></div>
+        </div>
+
+        <button onclick="deconnexion()" class="logout-btn">Sortir</button>
+    </nav>
+
+    <div class="container">
+
+        <!-- Bannière hors-ligne -->
+        <div id="sync-banner" class="sync-badge">
+            <i class="fas fa-wifi mr-2"></i> HORS-LIGNE — Pointages sauvegardés localement
+        </div>
+
+        <!-- Bannière données en attente -->
+        <div id="sync-pending" class="sync-pending" onclick="synchroniserPointage()">
+            <i class="fas fa-cloud-upload-alt mr-2"></i>
+            <span id="sync-pending-text">Données en attente — Cliquer pour synchroniser</span>
+        </div>
+
+        <div id="status-msg" class="status-msg"></div>
+
+        <div class="card">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-black text-slate-800 uppercase">Fiche de présence</h3>
+                <span id="date-display" class="text-[10px] font-black bg-orange-100 px-3 py-1.5 rounded-lg text-orange-600 uppercase"></span>
+            </div>
+
+            <div class="mb-6">
+                <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block">Chantier d'intervention</label>
+                <select id="select-chantier" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-md font-bold focus:border-orange-500 outline-none transition"></select>
+            </div>
+
+            <input type="text" id="search-worker" placeholder="🔍 Rechercher un nom..." onkeyup="filtrerOuvriers()">
+
+            <div class="flex justify-between items-center px-4 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <span>Collaborateur</span>
+                <span>Présent</span>
+            </div>
+
+            <div id="liste-ouvriers" class="divide-y divide-slate-50">
+                <div class="text-center py-10">
+                    <i class="fas fa-circle-notch fa-spin text-orange-500 text-2xl"></i>
+                </div>
+            </div>
+
+            <button class="btn-save" onclick="validerPointage()" id="btn-valider">
+                VALIDER LE POINTAGE
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="supabase.js"></script>
+    <script>
+
+let ENTREPRISE_ID = null;
+let AUTEUR_ID     = null;
+let membresEquipe = [];
+
+const CACHE_KEY_CHANTIERS = 'cache_chantiers';
+const CACHE_KEY_EQUIPE    = 'cache_equipe';
+const QUEUE_KEY           = 'pointage_queue';
+const AUJOURDHUI          = new Date().toLocaleDateString('en-CA');
+
+// ── INIT ─────────────────────────────────────────────────
+async function init() {
+    const session = await window.requireAuth();
+    if (!session) return;
+
+    const profile = await window.getUserProfile();
+    if (!profile) return;
+
+    ENTREPRISE_ID = profile.entreprise_id;
+    AUTEUR_ID     = (await window.sb.auth.getUser()).data.user?.id;
+
+    document.getElementById('date-display').innerText = new Date().toLocaleDateString('fr-FR', {
+        day: '2-digit', month: 'short', year: 'numeric'
+    });
+
+    window.addEventListener('online',  onRetourEnLigne);
+    window.addEventListener('offline', onPassageHorsLigne);
+
+    if (!navigator.onLine) {
+        document.getElementById('sync-banner').style.display = 'block';
+    }
+
+    await chargerDonnees();
+    verifierQueueEnAttente();
+}
+
+function onPassageHorsLigne() {
+    document.getElementById('sync-banner').style.display = 'block';
+    afficherMessage("📴 Connexion perdue — mode hors-ligne activé", 'error');
+}
+
+async function onRetourEnLigne() {
+    document.getElementById('sync-banner').style.display = 'none';
+    afficherMessage("🌐 Connexion rétablie !");
+    await synchroniserPointage();
+    verifierQueueEnAttente();
+}
+
+// ── CHARGEMENT ────────────────────────────────────────────
+async function chargerDonnees() {
+    if (navigator.onLine) {
+        try {
+            const [resC, resE] = await Promise.all([
+                window.sb.from('chantiers')
+                    .select('id, nom_chantier')
+                    .eq('entreprise_id', ENTREPRISE_ID)
+                    .eq('statut', 'en_cours'),
+                window.sb.from('equipe')
+                    .select('id, nom, role_terrain')
+                    .eq('entreprise_id', ENTREPRISE_ID)
+                    .eq('actif', true)
+                    .order('nom')
+            ]);
+
+            if (resC.data) {
+                localStorage.setItem(CACHE_KEY_CHANTIERS, JSON.stringify(resC.data));
+                remplirSelectChantiers(resC.data);
+            }
+            if (resE.data) {
+                localStorage.setItem(CACHE_KEY_EQUIPE, JSON.stringify(resE.data));
+                membresEquipe = resE.data;
+                afficherOuvriers(membresEquipe);
+            }
+        } catch (err) {
+            console.error("Erreur réseau, chargement cache:", err);
+            chargerDepuisCache();
+        }
+    } else {
+        chargerDepuisCache();
+    }
+}
+
+function chargerDepuisCache() {
+    const chantiersCaches = JSON.parse(localStorage.getItem(CACHE_KEY_CHANTIERS) || '[]');
+    const equipeCachee    = JSON.parse(localStorage.getItem(CACHE_KEY_EQUIPE)    || '[]');
+
+    if (chantiersCaches.length > 0) {
+        remplirSelectChantiers(chantiersCaches);
+    } else {
+        document.getElementById('select-chantier').innerHTML =
+            '<option value="">Aucun chantier en cache — connectez-vous d\'abord</option>';
+    }
+
+    if (equipeCachee.length > 0) {
+        membresEquipe = equipeCachee;
+        afficherOuvriers(membresEquipe);
+    } else {
+        document.getElementById('liste-ouvriers').innerHTML =
+            `<p class='text-center py-10 text-slate-400 text-sm'>
+                Aucune équipe en cache.<br>
+                <span class='text-xs'>Ouvrez l'app avec internet une première fois.</span>
+            </p>`;
+    }
+}
+
+function remplirSelectChantiers(chantiers) {
+    const select = document.getElementById('select-chantier');
+    select.innerHTML = chantiers.length > 0
+        ? chantiers.map(c => `<option value="${c.id}">${c.nom_chantier}</option>`).join('')
+        : '<option value="">Aucun chantier en cours</option>';
+}
+
+// ── AFFICHAGE ─────────────────────────────────────────────
+function afficherOuvriers(liste) {
+    const container = document.getElementById('liste-ouvriers');
+    if (liste.length === 0) {
+        container.innerHTML = "<p class='text-center py-10 text-slate-400 text-sm'>Aucun résultat.</p>";
+        return;
+    }
+    container.innerHTML = liste.map(o => `
+        <div class="ouvrier-row">
+            <div class="flex-1">
+                <span class="ouvrier-nom">${o.nom}</span>
+                <span class="ouvrier-role">${o.role_terrain || ''}</span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" class="presence-check" data-id="${o.id}" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    `).join('');
+}
+
+function filtrerOuvriers() {
+    const term     = document.getElementById('search-worker').value.toLowerCase();
+    const filtered = membresEquipe.filter(o => o.nom.toLowerCase().includes(term));
+    afficherOuvriers(filtered);
+}
+
+// ── VALIDER ───────────────────────────────────────────────
+async function validerPointage() {
+    const chantier_id = document.getElementById('select-chantier').value;
+    if (!chantier_id) return afficherMessage("⚠️ Sélectionnez un chantier.", 'error');
+    if (!AUTEUR_ID)   return afficherMessage("⚠️ Session invalide.", 'error');
+
+    const btn    = document.getElementById('btn-valider');
+    const checks = document.querySelectorAll('.presence-check');
+
+    const pointages = [];
+    checks.forEach(check => {
+        pointages.push({
+            entreprise_id: ENTREPRISE_ID,
+            chantier_id:   chantier_id,
+            equipe_id:     check.dataset.id,
+            statut:        check.checked ? 'present' : 'absent',
+            auteur_id:     AUTEUR_ID,
+            date_pointage: AUJOURDHUI
+        });
+    });
+
+    btn.disabled = true;
+    btn.innerHTML = "<i class='fas fa-sync fa-spin mr-2'></i> ENVOI...";
+
+    if (navigator.onLine) {
+        const { error } = await window.sb.from('pointage').upsert(pointages, {
+            onConflict: 'entreprise_id,chantier_id,equipe_id,date_pointage'
+        });
+
+        if (error) {
+            sauvegarderEnQueue(pointages);
+            afficherMessage(`⚠️ Erreur réseau — ${pointages.length} pointage(s) sauvegardés localement`, 'error');
+        } else {
+            afficherMessage(`✅ Pointage envoyé ! (${pointages.length} ouvriers)`);
+        }
+    } else {
+        sauvegarderEnQueue(pointages);
+        afficherMessage(`💾 Sauvegardé localement (${pointages.length} ouvriers) — synchronisation au retour de connexion`);
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = "VALIDER LE POINTAGE";
+    verifierQueueEnAttente();
+}
+
+// ── QUEUE ─────────────────────────────────────────────────
+function sauvegarderEnQueue(pointages) {
+    let queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+    pointages.forEach(p => {
+        // Remplacer si même clé (évite les doublons)
+        queue = queue.filter(q =>
+            !(q.equipe_id === p.equipe_id &&
+              q.chantier_id === p.chantier_id &&
+              q.date_pointage === p.date_pointage)
+        );
+        queue.push(p);
+    });
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+}
+
+function verifierQueueEnAttente() {
+    const queue   = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+    const pending = document.getElementById('sync-pending');
+
+    if (queue.length > 0 && navigator.onLine) {
+        document.getElementById('sync-pending-text').innerText =
+            `${queue.length} pointage(s) en attente — Cliquer pour synchroniser`;
+        pending.style.display = 'block';
+    } else {
+        pending.style.display = 'none';
+    }
+}
+
+async function synchroniserPointage() {
+    if (!navigator.onLine) return;
+
+    const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+    if (queue.length === 0) return;
+
+    try {
+        const { error } = await window.sb.from('pointage').upsert(queue, {
+            onConflict: 'entreprise_id,chantier_id,equipe_id,date_pointage'
+        });
+
+        if (!error) {
+            localStorage.removeItem(QUEUE_KEY);
+            document.getElementById('sync-pending').style.display = 'none';
+            afficherMessage(`✅ ${queue.length} pointage(s) synchronisé(s) avec succès !`);
+        } else {
+            afficherMessage("❌ Erreur sync : " + error.message, 'error');
+        }
+    } catch (err) {
+        afficherMessage("❌ Impossible de synchroniser.", 'error');
+    }
+}
+
+// ── UTILITAIRES ───────────────────────────────────────────
+function afficherMessage(message, type = 'success') {
+    const msgDiv = document.getElementById('status-msg');
+    if (!msgDiv) return;
+    msgDiv.innerText     = message;
+    msgDiv.className     = `status-msg ${type === 'success' ? 'status-success' : 'status-error'}`;
+    msgDiv.style.display = 'block';
+    setTimeout(() => { msgDiv.style.display = 'none'; }, 6000);
+}
+
+async function deconnexion() {
+    await window.sb.auth.signOut();
+    localStorage.clear();
+    window.location.href = 'login.html';
+}
+
+window.onload = init;
+    </script>
+</body>
+</html>

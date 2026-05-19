@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Agrément - BTP PRO CI</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .upload-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .drop-zone { border: 2px dashed #009e49; padding: 30px; border-radius: 10px; cursor: pointer; margin: 20px 0; background: #f0fff4; }
+        .drop-zone:hover { background: #d7ffd9; }
+        button { width: 100%; padding: 12px; background: #009e49; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        #status { margin-top: 15px; font-size: 0.9rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="upload-card">
+        <h2>📜 Votre Agrément</h2>
+        <p>Téléchargez votre attestation technique (PDF ou JPG)</p>
+        
+        <input type="file" id="fileInput" style="display: none;" accept=".pdf, .jpg, .jpeg, .png">
+        <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
+            Cliquez ici pour choisir le fichier
+        </div>
+        
+        <p id="file-name" style="font-size: 0.8rem; color: #666;"></p>
+        <button id="uploadBtn" onclick="uploadFile()">ENVOYER LE DOCUMENT</button>
+        
+        <div id="status"></div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://hkwyxsbejhzizevlxiys.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_87kRUTcXT1bWc3GpMMCtpw_YSA-zkZt'; 
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisp = document.getElementById('file-name');
+
+        fileInput.onchange = () => {
+            if(fileInput.files[0]) fileNameDisp.innerText = "Fichier sélectionné : " + fileInput.files[0].name;
+        };
+
+        async function uploadFile() {
+            const file = fileInput.files[0];
+            const status = document.getElementById('status');
+            const btn = document.getElementById('uploadBtn');
+
+            if (!file) return alert("Veuillez choisir un fichier.");
+
+            btn.innerText = "Envoi en cours...";
+            btn.disabled = true;
+
+            try {
+                // 1. Récupérer l'utilisateur connecté
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) throw new Error("Vous devez être connecté.");
+
+                // 2. Envoyer le fichier vers le Storage
+                const fileExt = file.name.split('.').pop();
+                const filePath = `${user.id}/${Math.random()}.${fileExt}`;
+
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('agrements')
+                    .upload(filePath, file);
+
+                if (uploadError) throw uploadError;
+
+                // 3. Récupérer l'URL publique
+                const { data: urlData } = supabase.storage.from('agrements').getPublicUrl(filePath);
+                const publicUrl = urlData.publicUrl;
+
+                // 4. Mettre à jour la table 'utilisateurs'
+                const { error: updateError } = await supabase
+                    .from('utilisateurs')
+                    .update({ 
+                        attestation_url: publicUrl,
+                        statut_agrement: 'validé' // On le passe en validé automatiquement ou 'en_revue'
+                    })
+                    .eq('id', user.id);
+
+                if (updateError) throw updateError;
+
+                status.innerHTML = "✅ Succès ! Document reçu.";
+                status.style.color = "green";
+                setTimeout(() => window.location.href = 'accueil.html', 2000);
+
+            } catch (err) {
+                console.error(err);
+                status.innerHTML = "❌ Erreur : " + err.message;
+                status.style.color = "red";
+                btn.disabled = false;
+                btn.innerText = "ENVOYER LE DOCUMENT";
+            }
+        }
+    </script>
+</body>
+</html>

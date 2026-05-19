@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Pro CI - Espace Terrain</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #e67e22;
+            --bg: #f0f2f5;
+            --glass: rgba(255, 255, 255, 0.95);
+            --shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f0f2f5 0%, #c3cfe2 100%);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--primary);
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .header-content h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-content p {
+            margin: 5px 0 0;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .welcome-card {
+            background: var(--glass);
+            width: 85%;
+            max-width: 450px;
+            padding: 20px;
+            margin: -25px 0 20px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .welcome-card h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Une seule colonne pour des menus plus grands sur mobile */
+            gap: 20px;
+            width: 90%;
+            max-width: 450px;
+            padding-bottom: 40px;
+        }
+
+        .menu-item {
+            background: var(--glass);
+            display: flex;
+            align-items: center;
+            padding: 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: var(--primary);
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-left: 8px solid #ddd;
+        }
+
+        .menu-item:active {
+            transform: scale(0.96);
+        }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 1.8rem;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .menu-info {
+            text-align: left;
+        }
+
+        .menu-info h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .menu-info p {
+            margin: 2px 0 0;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        /* Couleurs dynamiques */
+        .item-pointage { border-left-color: #ff8200; }
+        .item-pointage .icon-box { background: linear-gradient(135deg, #ff8200, #ffb347); }
+
+        .item-materiaux { border-left-color: #3498db; }
+        .item-materiaux .icon-box { background: linear-gradient(135deg, #3498db, #5dade2); }
+
+        .item-journal { border-left-color: #009e49; }
+        .item-journal .icon-box { background: linear-gradient(135deg, #009e49, #2ecc71); }
+
+        .item-photos { border-left-color: #9b59b6; }
+        .item-photos .icon-box { background: linear-gradient(135deg, #9b59b6, #af7ac5); }
+
+        .btn-logout {
+            width: 80%;
+            max-width: 300px;
+            padding: 18px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
+            margin: 20px 0 40px;
+            transition: 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <h1>🏗️ BTP PRO CI</h1>
+            <p>Système de Management Terrain</p>
+        </div>
+    </header>
+
+    <div class="welcome-card">
+        <h2 id="chef-name">Chargement du profil...</h2>
+        <div id="current-date" style="font-size: 0.8rem; color: #666; margin-top: 5px;"></div>
+    </div>
+
+    <div class="menu-grid">
+        <a href="chef-pointages.html" class="menu-item item-pointage">
+            <div class="icon-box"><i class="fas fa-calendar-check"></i></div>
+            <div class="menu-info">
+                <h3>Pointage</h3>
+                <p>Gérer la présence des ouvriers</p>
+            </div>
+        </a>
+
+        <a href="chef-materiaux.html" class="menu-item item-materiaux">
+            <div class="icon-box"><i class="fas fa-shopping-cart"></i></div>
+            <div class="menu-info">
+                <h3>Achats & Matériaux</h3>
+                <p>Enregistrer les dépenses et stocks</p>
+            </div>
+        </a>
+
+        <a href="chef-journal.html" class="menu-item item-journal">
+            <div class="icon-box"><i class="fas fa-file-signature"></i></div>
+            <div class="menu-info">
+                <h3>Journal de Bord</h3>
+                <p>Rapports quotidiens et obstacles</p>
+            </div>
+        </a>
+
+    </div>
+
+    <button class="btn-logout" onclick="deconnexion()">🚪 SE DÉCONNECTER</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase.js"></script>
+    <script src="app-core.js"></script>
+   <script>
+
+async function init() {
+    const nameDisplay = document.getElementById('chef-name');
+    const dateDisplay = document.getElementById('current-date');
+
+    // Affichage immédiat depuis le cache
+    const nomCache = localStorage.getItem('user_nom');
+    if (nomCache) nameDisplay.innerText = `Bonjour, ${nomCache} 👋`;
+
+    dateDisplay.innerText = new Date().toLocaleDateString('fr-FR', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    try {
+        // Vérification session
+        const { data: { user } } = await sb.auth.getUser();
+        if (!user) return window.location.replace('login.html');
+
+        // Récupération profil
+        const { data: profile, error } = await sb
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+        if (error || !profile) {
+            nameDisplay.innerText = "⚠️ Profil introuvable";
+            return;
+        }
+
+        // Vérifier que c'est bien un chef
+        if (profile.role !== 'chef') {
+            window.location.replace('tableau-de-bord.html');
+            return;
+        }
+
+        const nomChef = profile.full_name || 'Chef';
+        nameDisplay.innerText = `Bonjour, ${nomChef} 👋`;
+
+        // Sauvegarde locale
+        localStorage.setItem('entreprise_id', profile.entreprise_id || '');
+        localStorage.setItem('user_id',       user.id);
+        localStorage.setItem('user_nom',      nomChef);
+        localStorage.setItem('user_role',     profile.role);
+
+    } catch (err) {
+        console.error("Erreur:", err);
+        nameDisplay.innerText = "🚨 Erreur de connexion";
+    }
+}
+
+async function deconnexion() {
+    await sb.auth.signOut();
+    localStorage.clear();
+    window.location.replace('login.html');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

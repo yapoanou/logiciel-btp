@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Pro CI - Accueil</title>
+    
+    <!-- Scripts Supabase pour la vérification de session -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase.js"></script>
+    <script>
+        // Configuration identique à ton fichier supabase.js
+        
+        // Correction de la redirection : On vérifie la session réelle
+        async function checkSession() {
+            const { data: { session } } = await sb.auth.getSession();
+            if (session) {
+                window.location.href = 'tableau-de-bord.html';
+            }
+        }
+        checkSession();
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; }
+        .hero-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+                        url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .flag-line { height: 4px; display: flex; width: 100%; }
+    </style>
+</head>
+<body>
+
+    <!-- Petit rappel des couleurs nationales en haut -->
+    <div class="flag-line">
+        <div class="bg-[#ff8200] flex-1"></div>
+        <div class="bg-white flex-1"></div>
+        <div class="bg-[#009e49] flex-1"></div>
+    </div>
+
+    <nav class="bg-[#1a222d] text-white px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-2">
+            <div class="bg-[#009e49] p-1.5 rounded-lg">
+                <i class="fas fa-hard-hat text-white"></i>
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-10V4m-5 10v-4"></path></svg>
+            </div>
+            <span class="text-xl font-black uppercase tracking-tighter">BTP Pro <span class="text-[#009e49]">CI</span></span>
+        </div>
+        <div class="flex space-x-4 items-center">
+            <a href="login.html" class="text-sm font-bold hover:text-[#ff8200] transition">CONNEXION</a>
+            <a href="inscription.html" class="bg-[#ff8200] hover:bg-orange-600 px-4 py-2 rounded-lg text-xs font-black transition">
+                CRÉER MON COMPTE
+            </a>
+        </div>
+    </nav>
+
+    <header class="hero-bg h-[500px] flex items-center justify-center text-center px-4">
+        <div class="max-w-4xl">
+            <h1 class="text-white text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
+                Gérez vos chantiers <br><span class="text-[#ff8200]">comme un pro</span> en Côte d'Ivoire
+            </h1>
+            <p class="text-gray-200 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light">
+                Pointage des ouvriers, suivi du ciment et calcul des bénéfices. L'outil indispensable des entrepreneurs ivoiriens.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="inscription.html" class="w-full sm:w-auto bg-[#009e49] text-white px-10 py-4 rounded-xl font-black text-lg shadow-2xl hover:bg-green-600 transition transform hover:scale-105">
+                    COMMENCER MAINTENANT
+                </a>
+                <a href="#features" class="w-full sm:w-auto bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition">
+                    VOIR LES FONCTIONS
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="max-w-7xl mx-auto px-6 -mt-12 pb-20">
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Gestion Personnel -->
+            <div class="bg-white p-8 rounded-3xl card-shadow border-t-4 border-[#009e49] group hover:bg-[#009e49] transition-all duration-300">
+                <div class="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-[#009e49] mb-6 group-hover:bg-white/20 group-hover:text-white transition">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                </div>
+                <h3 class="text-xl font-black text-gray-800 mb-3 group-hover:text-white">Gestion de l'Équipe</h3>
+                <p class="text-gray-600 text-sm leading-relaxed group-hover:text-white/80">Faites le pointage chaque matin. Calculez les fins de semaine en un clic, sans palabres.</p>
+            </div>
+
+            <!-- Matériaux -->
+            <div class="bg-white p-8 rounded-3xl card-shadow border-t-4 border-[#ff8200] group hover:bg-[#ff8200] transition-all duration-300">
+                <div class="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center text-[#ff8200] mb-6 group-hover:bg-white/20 group-hover:text-white transition">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                </div>
+                <h3 class="text-xl font-black text-gray-800 mb-3 group-hover:text-white">Suivi des Stocks</h3>
+                <p class="text-gray-600 text-sm leading-relaxed group-hover:text-white/80">Ciment, sable, gravier... Contrôlez les livraisons et la consommation pour éviter les gaspillages.</p>
+            </div>
+
+            <!-- Dashboard -->
+            <div class="bg-white p-8 rounded-3xl card-shadow border-t-4 border-[#1a222d] group hover:bg-[#1a222d] transition-all duration-300">
+                <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-800 mb-6 group-hover:bg-white/20 group-hover:text-white transition">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </div>
+                <h3 class="text-xl font-black text-gray-800 mb-3 group-hover:text-white">Bilan Financier</h3>
+                <p class="text-gray-600 text-sm leading-relaxed group-hover:text-white/80">Sachez exactement si vous gagnez de l'argent ou si vous en perdez, chantier par chantier.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-[#1a222d] text-white py-12 px-6 text-center">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-2xl font-bold mb-4">Prêt à digitaliser vos chantiers ?</h2>
+            <p class="text-gray-400 mb-8">Rejoignez la nouvelle génération d'entrepreneurs BTP en Côte d'Ivoire.</p>
+            <a href="inscription.html" class="bg-[#ff8200] text-white px-8 py-3 rounded-xl font-bold hover:bg-orange-600 transition inline-block">
+                CRÉER MON COMPTE PDG
+            </a>
+            <div class="mt-12 pt-8 border-t border-white/10 text-xs text-gray-500">
+                BTP PRO CI &copy; 2026 - Conçu pour Abidjan, Bouaké, San-Pédro et toute la CI.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

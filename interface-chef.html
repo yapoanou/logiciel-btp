@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP PRO - Interface Chef</title>
+    <style>
+        :root { --primary: #2c3e50; --accent: #e67e22; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        header { background: var(--primary); color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        main { padding: 20px; max-width: 600px; margin: auto; }
+        section { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { color: var(--primary); font-size: 1.2rem; margin-top: 0; border-bottom: 2px solid var(--accent); padding-bottom: 5px; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        button:hover { opacity: 0.9; }
+        .logout-btn { background: #e74c3c; width: auto; padding: 8px 15px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🏗️ Terrain</h1>
+        <button class="logout-btn" onclick="deconnexion()">Déconnexion</button>
+    </header>
+
+    <main>
+        <section id="section-rapport">
+            <h2>📝 Rapport & Photos</h2>
+            <form id="formRapport">
+                <select id="selectChantierRapport" required><option>Chargement des chantiers...</option></select>
+                <textarea id="obstacles" placeholder="Avancement, météo ou obstacles rencontrés..."></textarea>
+                
+                <label style="font-size: 0.8rem; color: #666;">Ajouter une photo d'avancement :</label>
+                <input type="file" id="photo-avancement" accept="image/*" capture="camera">
+                
+                <button type="submit" id="btnRapport">Envoyer le Rapport</button>
+            </form>
+        </section>
+
+        <section id="section-depenses">
+            <h2>💵 Dépense Express</h2>
+            <form id="formDepense">
+                <select id="selectChantierDepense" required><option>Chargement des chantiers...</option></select>
+                <input type="number" id="montant" placeholder="Montant (FCFA)" required>
+                <input type="text" id="motif" placeholder="Motif (ex: Sable, Ciment, Transport)" required>
+                <button type="submit" id="btnDepense">Enregistrer la Dépense</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase.js"></script>
+    <script>
+        
+
+        const ENTREPRISE_ID = localStorage.getItem('entreprise_id');
+        const AUTEUR_ID = localStorage.getItem('user_id');
+        const supabaseClient = window.sb;
+
+        async function init() {
+            if (!ENTREPRISE_ID || !AUTEUR_ID) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const { data: chantiers, error } = await supabaseClient
+                .from('chantiers')
+                .select('id, nom_chantier')
+                .eq('entreprise_id', ENTREPRISE_ID)
+                .eq('statut', 'en_cours');
+
+            if (error) {
+                console.error("Erreur chargement chantiers:", error);
+                return;
+            }
+
+            const options = (chantiers || []).map(c => `<option value="${c.id}">${c.nom_chantier}</option>`).join('');
+            document.getElementById('selectChantierRapport').innerHTML = options || '<option value="">Aucun chantier</option>';
+            document.getElementById('selectChantierDepense').innerHTML = options || '<option value="">Aucun chantier</option>';
+        }
+
+        document.getElementById('formRapport').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnRapport');
+            btn.disabled = true;
+            btn.innerText = "Envoi...";
+
+            const chantierId = document.getElementById('selectChantierRapport').value;
+            const texte = document.getElementById('obstacles').value.trim();
+            const photoFile = document.getElementById('photo-avancement').files[0];
+
+            if (!chantierId || !texte) {
+                btn.disabled = false;
+                btn.innerText = "Envoyer le Rapport";
+                return alert("Sélectionnez un chantier et écrivez un rapport.");
+            }
+
+            try {
+                let photoUrl = null;
+                if (photoFile) {
+                    const fileExt = photoFile.name.split('.').pop();
+                    const fileName = `${ENTREPRISE_ID}/${Date.now()}.${fileExt}`;
+                    const { error: uploadError } = await supabaseClient.storage
+                        .from('photos_chantier')
+                        .upload(fileName, photoFile);
+                    if (uploadError) throw uploadError;
+                    const { data: pub } = supabaseClient.storage.from('photos_chantier').getPublicUrl(fileName);
+                    photoUrl = pub.publicUrl;
+                }
+
+                const { error: journalError } = await supabaseClient.from('journal').insert([{
+                    chantier_id: chantierId,
+                    note: texte,
+                    auteur_id: AUTEUR_ID,
+                    entreprise_id: ENTREPRISE_ID
+                }]);
+                if (journalError) throw journalError;
+
+                if (photoUrl) {
+                    const { error: photoError } = await supabaseClient.from('photos').insert([{
+                        chantier_id: chantierId,
+                        url: photoUrl,
+                        auteur_id: AUTEUR_ID,
+                        entreprise_id: ENTREPRISE_ID
+                    }]);
+                    if (photoError) throw photoError;
+                }
+
+                alert("✅ Rapport envoyé !");
+                location.reload();
+            } catch (err) {
+                alert("❌ Erreur : " + (err.message || "Erreur inconnue"));
+                btn.disabled = false;
+                btn.innerText = "Envoyer le Rapport";
+            }
+        });
+
+        document.getElementById('formDepense').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnDepense');
+            btn.disabled = true;
+            btn.innerText = "Enregistrement...";
+
+            const chantierId = document.getElementById('selectChantierDepense').value;
+            const motif = document.getElementById('motif').value.trim();
+            const montant = Number(document.getElementById('montant').value);
+
+            if (!chantierId || !motif || !montant) {
+                btn.disabled = false;
+                btn.innerText = "Enregistrer la Dépense";
+                return alert("Champs obligatoires manquants.");
+            }
+
+            const { error } = await supabaseClient.from('depenses').insert([{
+                chantier_id: chantierId,
+                designation: motif,
+                quantite: 1,
+                prix_unitaire: montant,
+                prix_total: montant,
+                mode: 'especes',
+                auteur_id: AUTEUR_ID,
+                entreprise_id: ENTREPRISE_ID
+            }]);
+
+            if (error) {
+                alert("❌ Erreur : " + error.message);
+                btn.disabled = false;
+                btn.innerText = "Enregistrer la Dépense";
+            } else {
+                alert("💰 Dépense enregistrée !");
+                location.reload();
+            }
+        });
+
+        function deconnexion() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

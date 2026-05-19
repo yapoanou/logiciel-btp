@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP PRO CI - Profil Entreprise</title>
+    <style>
+        :root { --primary: #2c3e50; --secondary: #e67e22; --bg: #f4f7f6; --success: #009e49; --error: #e74c3c; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; color: #333; }
+        
+        nav { background: var(--primary); padding: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        nav a { color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.1); }
+        .active { background: var(--secondary); border: none; font-weight: bold; }
+
+        .container { max-width: 600px; margin: 30px auto; padding: 0 15px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        
+        .profile-icon { font-size: 3rem; background: #eee; width: 80px; height: 80px; line-height: 80px; border-radius: 50%; margin: 0 auto 15px; }
+        
+        h2 { color: var(--primary); margin-top: 0; font-size: 1.4rem; }
+        
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #666; font-size: 0.85rem; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1rem; transition: border 0.3s; }
+        input:focus { border-color: var(--secondary); outline: none; }
+        
+        .btn-save { width: 100%; padding: 15px; background: var(--success); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 1rem; }
+        .btn-save:hover { background: #007a39; }
+        .btn-logout { background: #fff; color: var(--error); border: 2px solid var(--error); margin-top: 15px; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-logout:hover { background: var(--error); color: white; }
+        
+        #status-msg { padding: 10px; border-radius: 5px; background: #d4edda; color: #155724; margin-bottom: 15px; display: none; }
+    </style>
+    <link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+</head>
+<body>
+   <nav>
+        <a href="tableau-de-bord.html" style="background:var(--ci-orange)">📊 Dashboard</a>
+        <a href="equipe.html">👥 Équipe</a>
+        <a href="chantiers.html">🏗️ Chantiers</a>
+        <a href="pointage.html">📅 Pointage</a>
+        <a href="materiaux.html">📦 Matériaux</a>
+        <a href="bilan.html">💰 Bilan</a>
+        <a href="journal.html">📝 Journal</a>
+        <a href="photos.html">📸 Photos</a>
+        <a href="stats.html">📈 Stats</a>
+        <a href="profil.html">⚙️ Profil</a>
+
+        <!-- Cloche -->
+        <div class="notif-cloche" id="notif-cloche" onclick="togglePanel()">
+            🔔
+            <div class="notif-badge" id="notif-badge"></div>
+        </div>
+
+        <button onclick="deconnexion()" class="logout-btn">Sortir</button>
+    </nav>
+
+
+    <div class="container">
+        <div class="card">
+            <div class="profile-icon">🏢</div>
+            <h2>Mon Entreprise</h2>
+            <div id="status-msg">✅ Informations mises à jour !</div>
+            
+            <div class="form-group">
+                <label>Nom de la structure</label>
+                <input type="text" id="nom-ent" placeholder="Ex: Ivoire Construction SARL">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label>Ville</label>
+                    <input type="text" id="ville-ent" placeholder="Abidjan">
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="tel" id="contact-ent" placeholder="+225 07...">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Adresse physique (Siège)</label>
+                <input type="text" id="adresse-ent" placeholder="Angré, 7ème Tranche">
+            </div>
+
+            <button class="btn-save" onclick="updateProfil()" id="btn-save">💾 Enregistrer les modifications</button>
+            <button class="btn-logout" onclick="logout()">🚪 Déconnexion</button>
+        </div>
+    </div>
+
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase.js"></script>
+    <script>
+let ENTREPRISE_ID = null;
+
+async function init() {
+    const session = await window.requireAuth();
+    if (!session) return;
+
+    const profile = await window.getUserProfile();
+    if (!profile || profile.role !== 'pdg') {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    ENTREPRISE_ID = profile.entreprise_id;
+    chargerProfil();
+}
+
+async function chargerProfil() {
+    const { data, error } = await sb
+        .from('entreprises')
+        .select('*')
+        .eq('id', ENTREPRISE_ID)
+        .single();
+
+    if (data) {
+        document.getElementById('nom-ent').value     = data.nom     || '';
+        document.getElementById('ville-ent').value   = data.ville   || '';
+        document.getElementById('contact-ent').value = data.contact || '';
+        document.getElementById('adresse-ent').value = data.adresse || '';
+    } else if (error) {
+        console.error("Erreur chargement profil:", error.message);
+    }
+}
+
+async function updateProfil() {
+    const btn    = document.getElementById('btn-save');
+    const status = document.getElementById('status-msg');
+
+    const updates = {
+        nom:     document.getElementById('nom-ent').value.trim(),
+        ville:   document.getElementById('ville-ent').value.trim(),
+        contact: document.getElementById('contact-ent').value.trim(),
+        adresse: document.getElementById('adresse-ent').value.trim()
+    };
+
+    btn.disabled = true;
+    btn.innerText = "⏳ Synchronisation...";
+
+    const { error } = await sb
+        .from('entreprises')
+        .update(updates)
+        .eq('id', ENTREPRISE_ID);
+
+    btn.disabled = false;
+    btn.innerText = "💾 Enregistrer les modifications";
+
+    if (!error) {
+        status.style.display = 'block';
+        setTimeout(() => { status.style.display = 'none'; }, 3000);
+    } else {
+        alert("❌ " + error.message);
+    }
+}
+
+async function deconnexion() {
+    if (!confirm("Voulez-vous vraiment vous déconnecter ?")) return;
+    await sb.auth.signOut();
+    localStorage.clear();
+    window.location.href = 'login.html';
+}
+
+window.onload = init;
+    </script>
+</body>
+</html>

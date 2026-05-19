@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Pro CI - Mon Équipe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        :root { --primary: #2c3e50; --ci-orange: #ff8200; --ci-green: #009e49; --bg: #f4f7f6; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; padding-top: 5px; }
+        
+        .flag-top { height: 5px; display: flex; position: fixed; top: 0; width: 100%; z-index: 2000; }
+        .orange { background: var(--ci-orange); flex: 1; }
+        .white { background: #fff; flex: 1; }
+        .green { background: var(--ci-green); flex: 1; }
+
+        nav { 
+            background: var(--primary); 
+            padding: 1rem; 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            align-items: center;
+            gap: 10px; 
+            margin-top: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        nav a { 
+            color: white; 
+            text-decoration: none; 
+            font-weight: 500; 
+            padding: 8px 12px; 
+            border-radius: 5px; 
+            font-size: 0.85rem; 
+            transition: 0.3s; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        nav a:hover { border-color: var(--ci-orange); background: rgba(255,255,255,0.1); }
+        .active-link { background: var(--ci-orange) !important; color: white; border-color: var(--ci-orange); }
+        .logout-btn { background: #c0392b; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
+
+        .card-membre { transition: 0.3s; border-left: 5px solid var(--ci-green); }
+        .card-membre:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+    <div class="flag-top"><div class="orange"></div><div class="white"></div><div class="green"></div></div>
+
+  <nav>
+        <a href="tableau-de-bord.html" style="background:var(--ci-orange)">📊 Dashboard</a>
+        <a href="equipe.html">👥 Équipe</a>
+        <a href="chantiers.html">🏗️ Chantiers</a>
+        <a href="pointage.html">📅 Pointage</a>
+        <a href="materiaux.html">📦 Matériaux</a>
+        <a href="bilan.html">💰 Bilan</a>
+        <a href="journal.html">📝 Journal</a>
+        <a href="photos.html">📸 Photos</a>
+        <a href="stats.html">📈 Stats</a>
+        <a href="profil.html">⚙️ Profil</a>
+
+        <!-- Cloche -->
+        <div class="notif-cloche" id="notif-cloche" onclick="togglePanel()">
+            🔔
+            <div class="notif-badge" id="notif-badge"></div>
+        </div>
+
+        <button onclick="deconnexion()" class="logout-btn">Sortir</button>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-800">Gestion de l'Équipe</h1>
+                <p class="text-slate-500">Espace Direction - Suivi des ouvriers et accès chefs.</p>
+            </div>
+            <button onclick="ouvrirModal()" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg transition-all flex items-center active:scale-95">
+                <i class="fas fa-user-plus mr-2 text-xl"></i> AJOUTER UN MEMBRE
+            </button>
+        </div>
+
+        <div id="liste-equipe" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="col-span-full text-center py-20 text-slate-400 italic">
+                <i class="fas fa-spinner fa-spin mr-2"></i> Chargement de votre équipe...
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MEMBRE -->
+    <div id="modal-membre" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 text-slate-800 flex items-center">
+                <i class="fas fa-id-card mr-3 text-orange-500"></i> Nouveau Collaborateur
+            </h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Nom complet</label>
+                    <input type="text" id="nom_membre" placeholder="ex: Kouassi Koffi" class="w-full p-4 border rounded-2xl outline-none focus:ring-2 focus:ring-orange-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Fonction / Rôle</label>
+                    <select id="role_membre" onchange="toggleAccessFields()" class="w-full p-4 border rounded-2xl outline-none bg-slate-50 focus:ring-2 focus:ring-orange-500 font-semibold">
+                        <option value="Maçon">Maçon</option>
+                        <option value="chef">Chef de chantier (Accès Application)</option>
+                        <option value="Ouvrier qualifié">Ouvrier qualifié</option>
+                        <option value="Électricien">Électricien</option>
+                        <option value="Plombier">Plombier</option>
+                        <option value="Manoeuvre">Manoeuvre</option>
+                    </select>
+                </div>
+
+                <div id="access-fields" class="hidden p-4 bg-blue-50 rounded-2xl border border-blue-100 space-y-3">
+                    <p class="text-[10px] font-black text-blue-700 uppercase tracking-widest flex items-center">
+                        <i class="fas fa-key mr-2"></i> Identifiants pour le Chef
+                    </p>
+                    <input type="email" id="email_chef" placeholder="Email professionnel" class="w-full p-3 border rounded-xl outline-none">
+                    <input type="password" id="pass_chef" placeholder="Mot de passe (min 6 car.)" class="w-full p-3 border rounded-xl outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Téléphone</label>
+                    <input type="tel" id="tel_membre" placeholder="0707070707" class="w-full p-4 border rounded-2xl outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Salaire journalier (FCFA)</label>
+                    <input type="number" id="salaire_membre" placeholder="ex: 5000" min="0" class="w-full p-4 border rounded-2xl outline-none">
+                </div>
+                
+                <div class="flex gap-4 mt-6">
+                    <button onclick="fermerModal()" class="flex-1 py-4 text-slate-500 font-bold hover:bg-slate-50 rounded-2xl transition">Annuler</button>
+                    <button onclick="ajouterMembre()" id="btn-save" class="flex-1 py-4 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold shadow-lg transition active:scale-95">ENREGISTRER</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="supabase.js"></script>
+    <script>
+let currentEntrepriseId = null;
+
+async function init() {
+    const session = await window.requireAuth();
+    if (!session) return;
+
+    const profile = await window.getUserProfile();
+    if (!profile || profile.role !== 'pdg') {
+        alert("Accès réservé à la direction.");
+        window.location.href = 'login.html';
+        return;
+    }
+
+    currentEntrepriseId = profile.entreprise_id;
+    chargerEquipe();
+}
+
+function ouvrirModal() {
+    document.getElementById('modal-membre').style.display = 'flex';
+}
+
+function fermerModal() {
+    document.getElementById('modal-membre').style.display = 'none';
+    ['nom_membre', 'tel_membre', 'email_chef', 'pass_chef', 'salaire_membre'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('role_membre').value = 'Maçon';
+    toggleAccessFields();
+}
+
+function toggleAccessFields() {
+    const role = document.getElementById('role_membre').value;
+    document.getElementById('access-fields').classList.toggle('hidden', role !== 'chef');
+}
+
+async function chargerEquipe() {
+    const container = document.getElementById('liste-equipe');
+    const { data: membres, error } = await window.sb
+        .from('equipe')
+        .select('*')
+        .eq('entreprise_id', currentEntrepriseId)
+        .order('nom');
+
+    if (error) {
+        console.error(error);
+        container.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">Erreur de chargement.</div>`;
+        return;
+    }
+
+    if (membres && membres.length > 0) {
+        container.innerHTML = membres.map(m => `
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-5 card-membre">
+                <div class="bg-slate-100 text-slate-600 w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-xl relative flex-shrink-0">
+                    ${m.nom ? m.nom.charAt(0).toUpperCase() : '?'}
+                    ${m.role_terrain && m.role_terrain.includes('Chef') ? '<span class="absolute -top-1 -right-1 bg-blue-500 w-3 h-3 rounded-full border-2 border-white"></span>' : ''}
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-slate-800 text-lg leading-tight">${m.nom}</h3>
+                    <p class="text-[10px] text-orange-600 font-black uppercase tracking-wider mt-1">${m.role_terrain || '-'}</p>
+                    <div class="text-xs text-slate-500 mt-1 italic"><i class="fas fa-phone-alt mr-1"></i> ${m.phone || '-'}</div>
+                    <div class="text-xs text-slate-500 mt-1"><i class="fas fa-coins mr-1"></i> ${Number(m.salaire_journalier || 0).toLocaleString('fr-FR')} FCFA/jour</div>
+                </div>
+                <button onclick="supprimerMembre('${m.id}')" class="text-slate-300 hover:text-red-500 transition-colors px-2 flex-shrink-0">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        `).join('');
+    } else {
+        container.innerHTML = `<div class="col-span-full text-center py-20 bg-white rounded-3xl border-2 border-dashed text-slate-400">Aucun membre enregistré.</div>`;
+    }
+}
+
+async function ajouterMembre() {
+    const nom        = document.getElementById('nom_membre').value.trim();
+    const roleSelect = document.getElementById('role_membre').value;
+    const tel        = document.getElementById('tel_membre').value.trim();
+    const salaire    = Number(document.getElementById('salaire_membre').value) || 0;
+    const btn        = document.getElementById('btn-save');
+
+    if (!nom || !tel) return alert("Nom et téléphone requis.");
+
+    btn.disabled = true;
+    btn.innerText = "Patientez...";
+
+    try {
+        // Cas chef : créer compte Auth + profil
+        if (roleSelect === 'chef') {
+            const email = document.getElementById('email_chef').value.trim();
+            const pass  = document.getElementById('pass_chef').value.trim();
+
+            if (!email || pass.length < 6) {
+                throw new Error("Email valide et mot de passe (min 6 car.) requis pour un chef.");
+            }
+
+            const { data: authData, error: authError } = await window.sb.auth.signUp({
+                email,
+                password: pass
+            });
+            if (authError) throw authError;
+            if (!authData.user) throw new Error("Compte chef non créé.");
+
+            const { error: profileError } = await window.sb.from('profiles').insert([{
+                id:            authData.user.id,
+                full_name:     nom,
+                role:          'chef',
+                entreprise_id: currentEntrepriseId,
+                email:         email,
+                phone:         tel
+            }]);
+            if (profileError) throw new Error("Erreur profil chef : " + profileError.message);
+        }
+
+        // Insertion dans equipe (tous rôles)
+        const roleTerrain = roleSelect === 'chef' ? 'Chef de chantier' : roleSelect;
+        const { error: teamError } = await window.sb.from('equipe').insert([{
+            nom:                nom,
+            role_terrain:       roleTerrain,
+            phone:              tel,
+            entreprise_id:      currentEntrepriseId,
+            salaire_journalier: salaire
+        }]);
+        if (teamError) throw new Error("Erreur équipe : " + teamError.message);
+
+        alert("✅ Membre ajouté avec succès !");
+        fermerModal();
+        chargerEquipe();
+
+    } catch (err) {
+        alert("❌ " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "ENREGISTRER";
+    }
+}
+
+async function supprimerMembre(id) {
+    if (!confirm("Voulez-vous vraiment supprimer ce membre ?")) return;
+    const { error } = await window.sb.from('equipe').delete().eq('id', id);
+    if (!error) chargerEquipe();
+    else alert("Erreur de suppression.");
+}
+
+async function deconnexion() {
+    await window.sb.auth.signOut();
+    localStorage.clear();
+    window.location.href = 'login.html';
+}
+
+window.onload = init;
+    </script>
+</body>
+</html>

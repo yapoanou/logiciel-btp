@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Pro CI - Journal de Bord</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #009e49;
+            --bg: #f0f2f5;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f0f2f5 0%, #c3cfe2 100%);
+            margin: 0; padding-bottom: 50px; color: var(--primary);
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--primary); color: white; padding: 25px; text-align: center;
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .container { width: 90%; max-width: 500px; margin: 20px auto 0; }
+
+        .main-card {
+            background: var(--glass); padding: 25px; border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        label { display: block; font-weight: bold; margin: 15px 0 5px; font-size: 0.85rem; color: #555; }
+
+        select, textarea {
+            width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #ddd;
+            font-size: 1rem; background: white; box-sizing: border-box; outline: none;
+            transition: 0.3s;
+        }
+        select:focus, textarea:focus { border-color: var(--accent); }
+        textarea { height: 120px; resize: none; }
+
+        .photo-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;
+        }
+
+        .photo-box {
+            aspect-ratio: 1; border: 2px dashed var(--accent); border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; background: rgba(0,158,73,0.05); position: relative;
+            cursor: pointer;
+        }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-box i { font-size: 1.5rem; color: var(--accent); }
+
+        .btn-valider {
+            width: 100%; padding: 20px; background: var(--accent); color: white;
+            border: none; border-radius: 20px; font-weight: bold; font-size: 1.1rem;
+            margin-top: 25px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,158,73,0.3);
+            transition: 0.3s;
+        }
+        .btn-valider:disabled { background: #95a5a6; cursor: not-allowed; }
+
+        .nav-back { position: absolute; left: 20px; top: 25px; color: white; text-decoration: none; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="chef-accueil.html" class="nav-back"><i class="fas fa-arrow-left"></i></a>
+    <h1 style="margin:0; font-size: 1.3rem;">📝 Journal de Bord</h1>
+</header>
+
+<div class="container">
+    <div class="main-card">
+        <label><i class="fas fa-city"></i> Chantier concerné</label>
+        <select id="select-chantier">
+            <option value="">Chargement des chantiers...</option>
+        </select>
+
+        <label><i class="fas fa-comment-dots"></i> Rapport des travaux</label>
+        <textarea id="travaux" placeholder="Décrivez l'avancement, les problèmes ou les besoins..."></textarea>
+
+        <label><i class="fas fa-camera"></i> Photos d'avancement (Max 4)</label>
+        <div class="photo-grid">
+            <div class="photo-box" onclick="triggerInput(0)"><i class="fas fa-plus" id="icon-0"></i><img id="img-0" style="display:none"></div>
+            <div class="photo-box" onclick="triggerInput(1)"><i class="fas fa-plus" id="icon-1"></i><img id="img-1" style="display:none"></div>
+            <div class="photo-box" onclick="triggerInput(2)"><i class="fas fa-plus" id="icon-2"></i><img id="img-2" style="display:none"></div>
+            <div class="photo-box" onclick="triggerInput(3)"><i class="fas fa-plus" id="icon-3"></i><img id="img-3" style="display:none"></div>
+        </div>
+
+        <input type="file" id="file-0" accept="image/*" capture="environment" hidden onchange="handleFile(0)">
+        <input type="file" id="file-1" accept="image/*" capture="environment" hidden onchange="handleFile(1)">
+        <input type="file" id="file-2" accept="image/*" capture="environment" hidden onchange="handleFile(2)">
+        <input type="file" id="file-3" accept="image/*" capture="environment" hidden onchange="handleFile(3)">
+
+        <button class="btn-valider" onclick="envoyerRapport()" id="btn-final">ENVOYER LE RAPPORT</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase.js"></script>
+<script>
+
+let ENTREPRISE_ID = null;
+let AUTEUR_ID     = null;
+let selectedFiles = [null, null, null, null];
+
+const BUCKET = 'photos-chantiers';
+
+async function init() {
+    const session = await window.requireAuth();
+    if (!session) return;
+
+    const profile = await window.getUserProfile();
+    if (!profile) return;
+
+    ENTREPRISE_ID = profile.entreprise_id;
+    AUTEUR_ID     = (await window.sb.auth.getUser()).data.user?.id;
+
+    const { data: chantiers } = await window.sb
+        .from('chantiers')
+        .select('id, nom_chantier')
+        .eq('entreprise_id', ENTREPRISE_ID)
+        .eq('statut', 'en_cours');
+
+    const select = document.getElementById('select-chantier');
+    if (chantiers && chantiers.length > 0) {
+        select.innerHTML = chantiers.map(c =>
+            `<option value="${c.id}">${c.nom_chantier}</option>`
+        ).join('');
+    } else {
+        select.innerHTML = '<option value="">Aucun chantier trouvé</option>';
+    }
+}
+
+function triggerInput(index) {
+    document.getElementById(`file-${index}`).click();
+}
+
+function handleFile(index) {
+    const file = document.getElementById(`file-${index}`).files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) return alert("Photo trop lourde (max 5Mo)");
+
+    selectedFiles[index] = file;
+    const img  = document.getElementById(`img-${index}`);
+    const icon = document.getElementById(`icon-${index}`);
+    img.src            = URL.createObjectURL(file);
+    img.style.display  = 'block';
+    icon.style.display = 'none';
+}
+
+async function envoyerRapport() {
+    const btn         = document.getElementById('btn-final');
+    const chantier_id = document.getElementById('select-chantier').value;
+    const texte       = document.getElementById('travaux').value.trim();
+
+    if (!chantier_id || !texte) return alert("Veuillez sélectionner un chantier et écrire un rapport.");
+    if (!AUTEUR_ID)             return alert("Session invalide, reconnectez-vous.");
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+
+    try {
+        // 1. Upload photos
+        const urls = [];
+        for (let file of selectedFiles) {
+            if (!file) continue;
+
+            const ext      = file.name.split('.').pop();
+            const fileName = `${ENTREPRISE_ID}/${chantier_id}/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
+
+            const { error: upError } = await window.sb.storage
+                .from(BUCKET)
+                .upload(fileName, file);
+
+            if (upError) throw upError;
+
+            const { data } = window.sb.storage.from(BUCKET).getPublicUrl(fileName);
+            urls.push(data.publicUrl);
+        }
+
+        // 2. Insérer la note dans journal
+        const { error: insError } = await window.sb.from('journal').insert([{
+            chantier_id:   chantier_id,
+            note:          texte,
+            auteur_id:     AUTEUR_ID,
+            entreprise_id: ENTREPRISE_ID
+        }]);
+        if (insError) throw insError;
+
+        // 3. Insérer les photos
+        if (urls.length > 0) {
+            const { error: pErr } = await window.sb.from('photos').insert(
+                urls.map(u => ({
+                    chantier_id:   chantier_id,
+                    url:           u,
+                    auteur_id:     AUTEUR_ID,
+                    entreprise_id: ENTREPRISE_ID
+                }))
+            );
+            if (pErr) throw pErr;
+        }
+
+        alert("✅ Rapport envoyé !");
+        window.location.href = 'chef-accueil.html';
+
+    } catch (err) {
+        console.error(err);
+        alert("❌ " + err.message);
+        btn.disabled = false;
+        btn.innerText = "ENVOYER LE RAPPORT";
+    }
+}
+
+async function deconnexion() {
+    await window.sb.auth.signOut();
+    localStorage.clear();
+    window.location.href = 'login.html';
+}
+
+window.onload = init;
+</script>
+</body>
+</html>

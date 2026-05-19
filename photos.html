@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Pro CI - Photos Chantier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        :root { --primary: #1e293b; --ci-orange: #ff8200; --ci-green: #009e49; --bg: #f1f5f9; }
+        
+        body { background-color: var(--bg); font-family: 'Inter', sans-serif; margin: 0; padding-bottom: 40px; }
+        
+        /* Drapeau Côte d'Ivoire en haut */
+        .flag-top { height: 4px; display: flex; position: fixed; top: 0; width: 100%; z-index: 2000; }
+        .orange { background: var(--ci-orange); flex: 1; }
+        .white { background: #fff; flex: 1; }
+        .green { background: var(--ci-green); flex: 1; }
+
+        /* Nav scrollable sur mobile */
+        nav { background: var(--primary); padding: 0.75rem; display: flex; overflow-x: auto; gap: 8px; margin-top: 4px; white-space: nowrap; scrollbar-width: none; }
+        nav::-webkit-scrollbar { display: none; }
+        nav a { color: #94a3b8; text-decoration: none; padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.05); }
+        .active-link { background: var(--ci-orange) !important; color: white !important; border-color: var(--ci-orange); }
+
+        .upload-card { background: white; border-radius: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        
+        /* Style des photos dans la galerie */
+        .photo-grid-item { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; transition: 0.3s; }
+        .photo-grid-item:hover { transform: translateY(-5px); box-shadow: 0 12px 20px rgba(0,0,0,0.08); }
+        .photo-container { position: relative; width: 100%; padding-top: 75%; /* Ratio 4:3 */ overflow: hidden; background: #f8fafc; }
+        .photo-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        
+        .loader-spin { display: none; }
+        .is-loading .loader-spin { display: inline-block; animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .btn-capture { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 20px; transition: 0.3s; cursor: pointer; }
+        .btn-capture:hover { border-color: var(--ci-orange); background: #fffaf5; }
+    </style>
+</head>
+<body>
+
+    <div class="flag-top"><div class="orange"></div><div class="white"></div><div class="green"></div></div>
+
+  <nav>
+        <a href="tableau-de-bord.html" style="background:var(--ci-orange)">📊 Dashboard</a>
+        <a href="equipe.html">👥 Équipe</a>
+        <a href="chantiers.html">🏗️ Chantiers</a>
+        <a href="pointage.html">📅 Pointage</a>
+        <a href="materiaux.html">📦 Matériaux</a>
+        <a href="bilan.html">💰 Bilan</a>
+        <a href="journal.html">📝 Journal</a>
+        <a href="photos.html">📸 Photos</a>
+        <a href="stats.html">📈 Stats</a>
+        <a href="profil.html">⚙️ Profil</a>
+
+        <!-- Cloche -->
+        <div class="notif-cloche" id="notif-cloche" onclick="togglePanel()">
+            🔔
+            <div class="notif-badge" id="notif-badge"></div>
+        </div>
+
+        <button onclick="deconnexion()" class="logout-btn">Sortir</button>
+    </nav>
+
+    <div class="max-w-5xl mx-auto px-4 py-6">
+        
+        <!-- SECTION UPLOAD : Masquée pour le PDG -->
+        <div id="section-upload" class="upload-card p-6 mb-10 max-w-xl mx-auto">
+            <h2 class="text-lg font-black text-slate-800 mb-5 flex items-center gap-2">
+                <i class="fas fa-camera-retro text-orange-500"></i> NOUVEAU RAPPORT PHOTO
+            </h2>
+            
+            <div class="space-y-4">
+                <select id="select-chantier" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-xl font-bold text-slate-700 focus:border-orange-500 outline-none transition"></select>
+                
+                <div class="btn-capture relative" onclick="document.getElementById('photo-file').click()">
+                    <input type="file" id="photo-file" accept="image/*" capture="environment" class="hidden">
+                    <div class="text-center">
+                        <i class="fas fa-plus-circle text-3xl text-slate-300 mb-2"></i>
+                        <p id="file-name" class="text-xs font-bold text-slate-500 uppercase tracking-tighter">Prendre une photo sur le terrain</p>
+                    </div>
+                </div>
+                
+                <button onclick="uploadPhoto()" id="btn-upload" class="w-full bg-slate-900 hover:bg-black text-white font-black py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-3">
+                    <i class="fas fa-paper-plane"></i> ENVOYER AU BUREAU
+                    <i class="fas fa-circle-notch loader-spin"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- HEADER GALERIE -->
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Flux Photos Récent</h3>
+            <button onclick="chargerPhotos()" class="bg-white p-2 px-4 rounded-full text-xs font-bold text-slate-500 border border-slate-200 hover:bg-slate-50">
+                <i class="fas fa-sync-alt mr-1"></i> ACTUALISER
+            </button>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="galerie">
+            <div class="col-span-full text-center py-20">
+                <i class="fas fa-spinner fa-spin text-orange-500 text-3xl"></i>
+            </div>
+        </div>
+    </div>
+
+     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase.js"></script>
+    <script>
+const BUCKET_NAME = 'photos-chantiers';
+let ENTREPRISE_ID = null;
+let AUTEUR_ID = null;
+
+async function init() {
+    const session = await window.requireAuth();
+    if (!session) return;
+
+    const profile = await window.getUserProfile();
+    if (!profile) return;
+
+    ENTREPRISE_ID = profile.entreprise_id;
+    AUTEUR_ID     = (await sb.auth.getUser()).data.user?.id;
+
+    // Affichage nom de fichier sélectionné
+    document.getElementById('photo-file').addEventListener('change', function() {
+        if (this.files[0]) {
+            document.getElementById('file-name').innerHTML =
+                `<span class="text-green-600">✅ PHOTO CAPTURÉE : ${this.files[0].name.substring(0, 15)}...</span>`;
+        }
+    });
+
+    // Charger chantiers
+    const { data: chantiers } = await sb
+        .from('chantiers')
+        .select('id, nom_chantier')
+        .eq('entreprise_id', ENTREPRISE_ID);
+
+    if (chantiers) {
+        document.getElementById('select-chantier').innerHTML =
+            '<option value="">📍 CHOISIR LE CHANTIER</option>' +
+            chantiers.map(c =>
+                `<option value="${c.id}">${c.nom_chantier.toUpperCase()}</option>`
+            ).join('');
+    }
+
+    filtrerMenuParRole(profile.role);
+    chargerPhotos();
+}
+
+async function uploadPhoto() {
+    const fileInput   = document.getElementById('photo-file');
+    const file        = fileInput.files[0];
+    const chantier_id = document.getElementById('select-chantier').value;
+    const btn         = document.getElementById('btn-upload');
+
+    if (!file || !chantier_id) {
+        alert("⚠️ Sélectionnez un chantier et prenez une photo.");
+        return;
+    }
+    if (!AUTEUR_ID) {
+        alert("⚠️ Session invalide, reconnectez-vous.");
+        return;
+    }
+
+    btn.classList.add('is-loading');
+    btn.disabled = true;
+
+    const extension = file.name.split('.').pop();
+    const filePath  = `${ENTREPRISE_ID}/${chantier_id}/${Date.now()}.${extension}`;
+
+    try {
+        // 1. Upload storage
+        const { error: sErr } = await sb.storage
+            .from(BUCKET_NAME)
+            .upload(filePath, file);
+        if (sErr) throw sErr;
+
+        // 2. URL publique
+        const { data: urlData } = sb.storage
+            .from(BUCKET_NAME)
+            .getPublicUrl(filePath);
+
+        // 3. Enregistrement BDD
+        const { error: dErr } = await sb.from('photos').insert([{
+            chantier_id:   chantier_id,
+            url:           urlData.publicUrl,
+            entreprise_id: ENTREPRISE_ID,
+            auteur_id:     AUTEUR_ID
+        }]);
+        if (dErr) throw dErr;
+
+        fileInput.value = '';
+        document.getElementById('file-name').innerText = "Prendre une photo sur le terrain";
+        chargerPhotos();
+        alert("🚀 Photo envoyée avec succès !");
+
+    } catch (err) {
+        alert("❌ " + err.message);
+    } finally {
+        btn.classList.remove('is-loading');
+        btn.disabled = false;
+    }
+}
+
+async function chargerPhotos() {
+    const galerie = document.getElementById('galerie');
+
+    const { data, error } = await sb
+        .from('photos')
+        .select('*, chantiers(nom_chantier)')
+        .eq('entreprise_id', ENTREPRISE_ID)
+        .order('created_at', { ascending: false });
+
+    if (data && data.length > 0) {
+        galerie.innerHTML = data.map(p => `
+            <div class="photo-grid-item">
+                <div class="photo-container" onclick="window.open('${p.url}', '_blank')">
+                    <img src="${p.url}" alt="Terrain BTP" loading="lazy">
+                </div>
+                <div class="p-4 bg-white">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-slate-100 text-slate-600 text-[10px] font-black px-2 py-1 rounded border border-slate-200">
+                            ${p.chantiers?.nom_chantier || 'CHANTIER'}
+                        </span>
+                        <span class="text-[9px] text-slate-400 font-bold uppercase">
+                            ${new Date(p.created_at).toLocaleDateString('fr-FR')}
+                        </span>
+                    </div>
+                    <div class="text-[10px] text-slate-400 flex items-center gap-1 font-medium">
+                        <i class="far fa-clock"></i> Envoyé à ${new Date(p.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        galerie.innerHTML = `
+            <div class="col-span-full py-16 text-center text-slate-400 bg-white rounded-3xl border border-dashed border-slate-300">
+                Aucun rapport photo trouvé.
+            </div>`;
+    }
+}
+
+function filtrerMenuParRole(role) {
+    const sectionUpload = document.getElementById('section-upload');
+    // PDG consulte seulement, pas d'upload
+    if (role === 'pdg' && sectionUpload) sectionUpload.style.display = 'none';
+}
+
+async function deconnexion() {
+    await sb.auth.signOut();
+    localStorage.clear();
+    window.location.href = 'login.html';
+}
+
+window.onload = init;
+    </script>
+</body>
+</html>

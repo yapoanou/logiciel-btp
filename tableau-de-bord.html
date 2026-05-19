@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Pro CI - Tableau de Bord PDG</title>
+    <style>
+        :root { 
+            --primary: #2c3e50; 
+            --ci-orange: #ff8200; 
+            --ci-green: #009e49;
+            --bg: #f4f7f6; 
+            --text: #333; 
+        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; color: var(--text); padding-top: 5px; }
+        
+        .flag-top { height: 5px; display: flex; position: fixed; top: 0; width: 100%; z-index: 2000; }
+        .orange { background: var(--ci-orange); flex: 1; }
+        .white  { background: #fff; flex: 1; }
+        .green  { background: var(--ci-green); flex: 1; }
+
+        nav { 
+            background: var(--primary); padding: 1rem; display: flex; flex-wrap: wrap;
+            justify-content: center; align-items: center; gap: 10px; margin-top: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        nav a { 
+            color: white; text-decoration: none; font-weight: 500; padding: 8px 12px;
+            border-radius: 5px; font-size: 0.85rem; transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1); white-space: nowrap; position: relative;
+        }
+        nav a:hover { border-color: var(--ci-orange); background: rgba(255,255,255,0.1); }
+        .logout-btn { background: #c0392b; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.85rem; margin-left: 10px; }
+
+        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
+        .welcome-header { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .welcome-header h1 { color: var(--primary); margin: 0; font-size: 1.8rem; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid var(--ci-orange); }
+        .stat-card h3 { margin: 0; font-size: 0.8rem; color: #7f8c8d; text-transform: uppercase; }
+        .stat-card .value { font-size: 1.6rem; font-weight: bold; margin-top: 10px; color: var(--primary); }
+        .stat-card .detail { font-size: 0.7rem; color: #999; margin-top: 5px; }
+
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; }
+        @media (max-width: 992px) { .main-grid { grid-template-columns: 1fr; } }
+
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); min-height: 200px; }
+        h2 { font-size: 1.1rem; color: var(--primary); margin: 0 0 20px 0; border-bottom: 2px solid #f1f1f1; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-action { background: var(--ci-green); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.75rem; }
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; background: #e8f5e9; color: #2e7d32; }
+
+        /* ── CLOCHE ── */
+        .notif-cloche {
+            position: relative; cursor: pointer; padding: 8px 12px;
+            border-radius: 5px; color: white; font-size: 1.1rem;
+            border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;
+            user-select: none;
+        }
+        .notif-cloche:hover { background: rgba(255,255,255,0.1); }
+        .notif-badge {
+            position: absolute; top: 2px; right: 2px;
+            background: #e74c3c; color: white; border-radius: 50%;
+            width: 18px; height: 18px; font-size: 0.6rem; font-weight: 900;
+            display: none; align-items: center; justify-content: center;
+            border: 2px solid var(--primary);
+        }
+
+        /* ── PANEL ── */
+        .notif-panel {
+            display: none; position: fixed; top: 65px; right: 15px;
+            width: 340px; max-height: 480px; background: white;
+            border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border: 1px solid #f1f1f1; z-index: 9999; overflow: hidden;
+            animation: slideDown 0.2s ease-out;
+        }
+        @keyframes slideDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+        .notif-header { padding: 16px 20px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; }
+        .notif-header h3 { margin: 0; font-size: 0.95rem; font-weight: 700; }
+        .notif-clear { background: none; border: none; color: rgba(255,255,255,0.7); cursor: pointer; font-size: 0.75rem; font-weight: 600; }
+        .notif-clear:hover { color: white; }
+        .notif-list { overflow-y: auto; max-height: 380px; }
+        .notif-item { padding: 14px 20px; border-bottom: 1px solid #f5f5f5; display: flex; gap: 12px; align-items: flex-start; }
+        .notif-item.non-lue { background: #fff8f0; border-left: 3px solid var(--ci-orange); }
+        .notif-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+        .notif-icon.pointage { background: #e8f5e9; }
+        .notif-icon.materiau { background: #fff3e0; }
+        .notif-icon.journal  { background: #e3f2fd; }
+        .notif-body strong { font-size: 0.85rem; color: #1e293b; display: block; }
+        .notif-body span { font-size: 0.72rem; color: #94a3b8; }
+        .notif-empty { padding: 40px 20px; text-align: center; color: #94a3b8; font-size: 0.85rem; }
+
+        /* ── TOAST ── */
+        .toast {
+            position: fixed; bottom: 30px; right: 20px;
+            background: var(--primary); color: white;
+            padding: 14px 20px; border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            font-weight: 600; font-size: 0.85rem;
+            display: flex; align-items: center; gap: 10px;
+            z-index: 9999; transform: translateX(130%);
+            transition: transform 0.3s ease-out; max-width: 320px;
+        }
+        .toast.visible { transform: translateX(0); }
+    </style>
+</head>
+<body>
+
+    <div class="flag-top"><div class="orange"></div><div class="white"></div><div class="green"></div></div>
+
+    <nav>
+        <a href="tableau-de-bord.html" style="background:var(--ci-orange)">📊 Dashboard</a>
+        <a href="equipe.html">👥 Équipe</a>
+        <a href="chantiers.html">🏗️ Chantiers</a>
+        <a href="pointage.html">📅 Pointage</a>
+        <a href="materiaux.html">📦 Matériaux</a>
+        <a href="bilan.html">💰 Bilan</a>
+        <a href="journal.html">📝 Journal</a>
+        <a href="photos.html">📸 Photos</a>
+        <a href="stats.html">📈 Stats</a>
+        <a href="profil.html">⚙️ Profil</a>
+
+        <!-- Cloche -->
+        <div class="notif-cloche" id="notif-cloche" onclick="togglePanel()">
+            🔔
+            <div class="notif-badge" id="notif-badge"></div>
+        </div>
+
+        <button onclick="deconnexion()" class="logout-btn">Sortir</button>
+    </nav>
+
+    <!-- Panel notifications -->
+    <div id="notif-panel" class="notif-panel">
+        <div class="notif-header">
+            <h3>🔔 Notifications</h3>
+            <button class="notif-clear" onclick="toutMarquerLu()">Tout marquer lu</button>
+        </div>
+        <div class="notif-list" id="notif-list">
+            <div class="notif-empty">Aucune notification</div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span id="toast-icon">🔔</span>
+        <span id="toast-msg">Nouvelle activité</span>
+    </div>
+
+    <div class="container">
+        <div class="welcome-header">
+            <div>
+                <h1>Bonjour, <span id="nom-entreprise">PDG</span> 👋</h1>
+                <p>Espace Direction - Pilotage en temps réel</p>
+            </div>
+            <div class="badge" style="background:#fff3e0; color:#e67e22; padding:10px; font-size:0.85rem;">
+                Forfait Business Actif 🇨🇮
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><h3>Chantiers</h3><div class="value" id="count-chantiers">0</div></div>
+            <div class="stat-card" style="border-top-color:#3498db;">
+                <h3>Présences (Aujourd'hui)</h3>
+                <div class="value" id="count-presences-jour">0</div>
+                <div class="detail">Ouvriers pointés ce jour</div>
+            </div>
+            <div class="stat-card"><h3>Effectif Total</h3><div class="value" id="count-equipe">0</div></div>
+            <div class="stat-card" style="border-top-color:var(--ci-green);">
+                <h3>Investissement Global</h3>
+                <div class="value" id="sum-global" style="color:var(--ci-green);">0 F</div>
+                <div class="detail" id="detail-finance">Matériaux + Salaires cumulés</div>
+            </div>
+        </div>
+
+        <!-- Activité récente -->
+        <div class="card" style="margin-bottom:25px;">
+            <h2>
+                ⚡ Activité Récente
+                <span id="notif-count-label" style="font-size:0.75rem; color:#94a3b8; font-weight:500;"></span>
+            </h2>
+            <div id="activite-recente">
+                <div style="text-align:center; padding:20px; color:#94a3b8; font-size:0.85rem;">Chargement...</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="card">
+                <h2>🏗️ Projets Actifs <a href="chantiers.html" class="btn-action">Voir</a></h2>
+                <div id="liste-chantiers-recents">Chargement...</div>
+            </div>
+            <div class="card">
+                <h2>👥 Membres de l'Équipe <a href="equipe.html" class="btn-action">Gérer</a></h2>
+                <div id="liste-equipe-recents">Chargement...</div>
+            </div>
+            <div class="card">
+                <h2>💰 Derniers Achats <a href="materiaux.html" class="btn-action">Factures</a></h2>
+                <div id="liste-achats-recents">Chargement...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="supabase.js"></script>
+    <script>
+
+let ENTREPRISE_ID   = null;
+let notifications   = [];
+let panelOuvert     = false;
+let realtimeChannel = null;
+
+const NOTIF_KEY = 'btp_notifications';
+
+// ── INIT ─────────────────────────────────────────────────
+async function init() {
+    const session = await window.requireAuth();
+    if (!session) return;
+
+    const profile = await window.getUserProfile();
+    if (!profile || profile.role !== 'pdg') {
+        window.location.replace('login.html');
+        return;
+    }
+
+    ENTREPRISE_ID = profile.entreprise_id;
+    localStorage.setItem('entreprise_id', profile.entreprise_id);
+    localStorage.setItem('user_nom',      profile.full_name || '');
+    localStorage.setItem('user_role',     profile.role);
+
+    notifications = JSON.parse(localStorage.getItem(NOTIF_KEY) || '[]');
+    mettreAJourBadge();
+
+    await chargerDashboard();
+    await chargerActiviteRecente();
+    demarrerTempsReel();
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#notif-panel') && !e.target.closest('#notif-cloche')) {
+            fermerPanel();
+        }
+    });
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────
+async function chargerDashboard() {
+    const nomLocal = localStorage.getItem('user_nom');
+    if (nomLocal) document.getElementById('nom-entreprise').innerText = nomLocal;
+
+    try {
+        const aujourdhui = new Date().toISOString().split('T')[0];
+
+        const [resCh, resEq, resPres, resMat, resPointagesTout] = await Promise.all([
+            window.sb.from('chantiers').select('*').eq('entreprise_id', ENTREPRISE_ID).order('created_at', { ascending: false }),
+            window.sb.from('equipe').select('*').eq('entreprise_id', ENTREPRISE_ID),
+            window.sb.from('pointage').select('id').eq('entreprise_id', ENTREPRISE_ID).eq('date_pointage', aujourdhui).eq('statut', 'present'),
+            window.sb.from('materiaux').select('*').eq('entreprise_id', ENTREPRISE_ID).order('created_at', { ascending: false }),
+            window.sb.from('pointage').select('equipe_id').eq('entreprise_id', ENTREPRISE_ID).eq('statut', 'present')
+        ]);
+
+        const totalOuvriers      = resEq.data?.length || 0;
+        const presentsAujourdhui = resPres.data?.length || 0;
+        const tauxPresence       = totalOuvriers > 0 ? Math.round((presentsAujourdhui / totalOuvriers) * 100) : 0;
+
+        document.getElementById('count-chantiers').innerText = resCh.data?.length || 0;
+        document.getElementById('count-equipe').innerText    = totalOuvriers;
+        document.getElementById('count-presences-jour').innerHTML =
+            `${presentsAujourdhui} <span style="font-size:0.8rem; color:${tauxPresence < 50 ? '#e74c3c' : '#27ae60'}">(${tauxPresence}%)</span>`;
+
+        const totalMat = resMat.data?.reduce((acc, m) => {
+            const total = Number(m.prix_total ?? (Number(m.prix_unitaire) * (Number(m.quantite) || 1)));
+            return acc + (Number.isFinite(total) ? total : 0);
+        }, 0) || 0;
+
+        const tarifsMap = {};
+        resEq.data?.forEach(e => tarifsMap[e.id] = Number(e.salaire_journalier) || 0);
+        const totalSalaires = resPointagesTout.data?.reduce((acc, p) => acc + (tarifsMap[p.equipe_id] || 0), 0) || 0;
+
+        const global = totalMat + totalSalaires;
+        document.getElementById('sum-global').innerText     = global.toLocaleString('fr-FR') + " FCFA";
+        document.getElementById('detail-finance').innerHTML = `📦 Mat: <b>${totalMat.toLocaleString()}</b> | 👷 Sal: <b>${totalSalaires.toLocaleString()}</b>`;
+
+        document.getElementById('liste-chantiers-recents').innerHTML = resCh.data?.slice(0, 5).map(c => {
+            const color = (c.statut || '') === 'en_cours' ? 'var(--ci-green)' : '#95a5a6';
+            return `<div class="list-item"><span>${c.nom_chantier}</span><span class="badge" style="background:${color}22;color:${color}">${c.statut || 'Actif'}</span></div>`;
+        }).join('') || "Aucun projet.";
+
+        document.getElementById('liste-achats-recents').innerHTML = resMat.data?.slice(0, 5).map(m => {
+            const total = Number(m.prix_total ?? (Number(m.prix_unitaire) * (Number(m.quantite) || 1)));
+            return `<div class="list-item"><div><div style="font-weight:bold">${(m.designation||'').trim()}</div><div style="font-size:0.65rem;color:gray">${new Date(m.created_at).toLocaleDateString('fr-FR')}</div></div><strong style="color:var(--ci-orange)">${(Number.isFinite(total)?total:0).toLocaleString()} F</strong></div>`;
+        }).join('') || "Aucun achat.";
+
+        document.getElementById('liste-equipe-recents').innerHTML = resEq.data?.slice(0, 5).map(e =>
+            `<div class="list-item"><span>${e.nom}</span><span style="font-size:0.7rem;padding:2px 6px;background:#f1f1f1;border-radius:10px">${e.role_terrain||'Ouvrier'}</span></div>`
+        ).join('') || "Aucun membre.";
+
+    } catch (err) { console.error("Erreur Dashboard:", err); }
+}
+
+// ── ACTIVITÉ RÉCENTE ──────────────────────────────────────
+async function chargerActiviteRecente() {
+    try {
+        const hier = new Date();
+        hier.setDate(hier.getDate() - 1);
+
+        const [resPoint, resMat, resJournal] = await Promise.all([
+            window.sb.from('pointage')
+                .select('created_at, statut, equipe:equipe_id(nom), chantier:chantier_id(nom_chantier)')
+                .eq('entreprise_id', ENTREPRISE_ID)
+                .gte('created_at', hier.toISOString())
+                .order('created_at', { ascending: false }).limit(5),
+            window.sb.from('materiaux')
+                .select('created_at, designation, prix_total, chantier:chantier_id(nom_chantier)')
+                .eq('entreprise_id', ENTREPRISE_ID)
+                .gte('created_at', hier.toISOString())
+                .order('created_at', { ascending: false }).limit(5),
+            window.sb.from('journal')
+                .select('created_at, note, chantier:chantier_id(nom_chantier)')
+                .eq('entreprise_id', ENTREPRISE_ID)
+                .gte('created_at', hier.toISOString())
+                .order('created_at', { ascending: false }).limit(3)
+        ]);
+
+        const activites = [
+            ...(resPoint.data||[]).map(p => ({
+                icon: '📅',
+                texte: `${p.equipe?.nom||'Ouvrier'} — ${p.statut==='present'?'Présent':'Absent'} sur ${p.chantier?.nom_chantier||'chantier'}`,
+                date: new Date(p.created_at)
+            })),
+            ...(resMat.data||[]).map(m => ({
+                icon: '📦',
+                texte: `${m.designation} — ${Number(m.prix_total||0).toLocaleString('fr-FR')} FCFA sur ${m.chantier?.nom_chantier||'chantier'}`,
+                date: new Date(m.created_at)
+            })),
+            ...(resJournal.data||[]).map(j => ({
+                icon: '📝',
+                texte: `Rapport sur ${j.chantier?.nom_chantier||'chantier'} : "${j.note.substring(0,50)}${j.note.length>50?'...':''}"`,
+                date: new Date(j.created_at)
+            }))
+        ].sort((a, b) => b.date - a.date).slice(0, 8);
+
+        const container = document.getElementById('activite-recente');
+        document.getElementById('notif-count-label').innerText = activites.length > 0 ? `${activites.length} action(s) récente(s)` : '';
+
+        container.innerHTML = activites.length > 0
+            ? activites.map(a => `
+                <div class="list-item" style="align-items:flex-start;gap:12px;">
+                    <span style="font-size:1.1rem;flex-shrink:0;">${a.icon}</span>
+                    <div style="flex:1;">
+                        <div style="font-size:0.85rem;font-weight:600;color:#1e293b;">${a.texte}</div>
+                        <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">${tempsRelatif(a.date)}</div>
+                    </div>
+                </div>`).join('')
+            : `<div style="text-align:center;padding:20px;color:#94a3b8;font-size:0.85rem;">Aucune activité ces dernières 24h.</div>`;
+
+    } catch (err) { console.error("Erreur activité:", err); }
+}
+
+// ── TEMPS RÉEL ────────────────────────────────────────────
+function demarrerTempsReel() {
+    realtimeChannel = window.sb
+        .channel(`notifs_${ENTREPRISE_ID}`)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pointage', filter: `entreprise_id=eq.${ENTREPRISE_ID}` }, () => {
+            ajouterNotification({ type: 'pointage', icon: '📅', texte: 'Nouveau pointage enregistré par un chef', date: new Date() });
+            chargerDashboard(); chargerActiviteRecente();
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'materiaux', filter: `entreprise_id=eq.${ENTREPRISE_ID}` }, (p) => {
+            ajouterNotification({ type: 'materiau', icon: '📦', texte: `Nouvel achat : ${p.new?.designation||'Matériau'} — ${Number(p.new?.prix_total||0).toLocaleString('fr-FR')} FCFA`, date: new Date() });
+            chargerDashboard(); chargerActiviteRecente();
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'journal', filter: `entreprise_id=eq.${ENTREPRISE_ID}` }, () => {
+            ajouterNotification({ type: 'journal', icon: '📝', texte: 'Nouveau rapport de chantier publié', date: new Date() });
+            chargerActiviteRecente();
+        })
+        .subscribe();
+}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────
+function ajouterNotification(notif) {
+    notif.id  = Date.now();
+    notif.lue = false;
+    notifications.unshift(notif);
+    if (notifications.length > 30) notifications = notifications.slice(0, 30);
+    localStorage.setItem(NOTIF_KEY, JSON.stringify(notifications));
+    mettreAJourBadge();
+    if (panelOuvert) afficherPanel();
+    afficherToast(notif.icon, notif.texte);
+}
+
+function mettreAJourBadge() {
+    const nonLues = notifications.filter(n => !n.lue).length;
+    const badge   = document.getElementById('notif-badge');
+    if (nonLues > 0) {
+        badge.style.display = 'flex';
+        badge.innerText     = nonLues > 9 ? '9+' : String(nonLues);
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function afficherPanel() {
+    const liste = document.getElementById('notif-list');
+    if (notifications.length === 0) {
+        liste.innerHTML = `<div class="notif-empty">🔕 Aucune notification</div>`;
+        return;
+    }
+    liste.innerHTML = notifications.map(n => `
+        <div class="notif-item ${n.lue ? '' : 'non-lue'}">
+            <div class="notif-icon ${n.type}">${n.icon}</div>
+            <div class="notif-body">
+                <strong>${n.texte}</strong>
+                <span>${tempsRelatif(new Date(n.date))}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function togglePanel() {
+    panelOuvert = !panelOuvert;
+    const panel = document.getElementById('notif-panel');
+    panel.style.display = panelOuvert ? 'block' : 'none';
+    if (panelOuvert) afficherPanel();
+}
+
+function fermerPanel() {
+    document.getElementById('notif-panel').style.display = 'none';
+    panelOuvert = false;
+}
+
+function toutMarquerLu() {
+    notifications = notifications.map(n => ({ ...n, lue: true }));
+    localStorage.setItem(NOTIF_KEY, JSON.stringify(notifications));
+    mettreAJourBadge();
+    afficherPanel();
+}
+
+function afficherToast(icon, message) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-icon').innerText = icon;
+    document.getElementById('toast-msg').innerText  = message;
+    toast.classList.add('visible');
+    setTimeout(() => toast.classList.remove('visible'), 4000);
+}
+
+function tempsRelatif(date) {
+    const diff = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
+    if (diff < 60)    return "À l'instant";
+    if (diff < 3600)  return `Il y a ${Math.floor(diff/60)} min`;
+    if (diff < 86400) return `Il y a ${Math.floor(diff/3600)}h`;
+    return new Date(date).toLocaleDateString('fr-FR');
+}
+
+async function deconnexion() {
+    if (realtimeChannel) window.sb.removeChannel(realtimeChannel);
+    await window.sb.auth.signOut();
+    localStorage.clear();
+    window.location.replace('login.html');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

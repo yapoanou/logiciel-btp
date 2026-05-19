@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP PRO CI - Inscription Business PDG</title>
+    <style>
+        :root { --primary: #009e49; --secondary: #2c3e50; --accent: #ff8200; --safe: #2ecc71; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--secondary); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: #333; }
+        
+        .card { background: white; padding: 35px; border-radius: 20px; width: 100%; max-width: 480px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); text-align: center; position: relative; }
+        
+        .flag-mini { height: 4px; display: flex; margin-bottom: 20px; border-radius: 2px; overflow: hidden; }
+        .orange { background: var(--accent); flex: 1; }
+        .white { background: #eee; flex: 1; }
+        .green { background: var(--primary); flex: 1; }
+
+        h2 { color: var(--secondary); margin-bottom: 5px; font-size: 1.8rem; }
+        p.subtitle { color: #7f8c8d; margin-bottom: 20px; font-size: 0.95rem; }
+        
+        .guide-trigger { color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-bottom: 15px; cursor: pointer; border-bottom: 2px dashed var(--primary); }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        input, select { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 1rem; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 5px rgba(0,158,73,0.2); }
+        
+        .plan-container { background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 12px; padding: 15px; margin: 15px 0; text-align: left; }
+        .plan-header { font-weight: bold; color: var(--secondary); margin-bottom: 5px; display: block; font-size: 0.9rem; }
+        
+        .security-box { background: #e8f5e9; border: 1px solid var(--safe); border-radius: 10px; padding: 12px; margin: 15px 0; display: flex; align-items: center; gap: 12px; text-align: left; }
+        .security-text { font-size: 0.8rem; color: #2e7d32; line-height: 1.3; }
+        .security-text b { display: block; color: var(--secondary); margin-bottom: 2px; }
+
+        button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.1rem; transition: 0.3s; }
+        button:hover { background: #007a39; transform: translateY(-2px); }
+        button:disabled { background: #95a5a6; cursor: not-allowed; }
+
+        .login-link { margin-top: 20px; display: block; color: var(--accent); text-decoration: none; font-weight: bold; font-size: 0.9rem; }
+
+        /* Modal Guide */
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 5% auto; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; text-align: left; position: relative; max-height: 85vh; overflow-y: auto; }
+        .close-guide { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #999; }
+        .guide-step { margin-bottom: 20px; display: flex; gap: 15px; }
+        .step-num { background: var(--accent); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="flag-mini"><div class="orange"></div><div class="white"></div><div class="green"></div></div>
+        <h2>🏗️ BTP PRO CI</h2>
+        <p class="subtitle">Ouverture de compte Administrateur (PDG)</p>
+
+        <span class="guide-trigger" onclick="toggleGuide(true)">💡 Comment fonctionne l'application ?</span>
+        
+        <input type="text" id="nom-ent" placeholder="Nom de l'entreprise">
+        <div class="grid-2">
+            <input type="text" id="ville-ent" placeholder="Ville">
+            <input type="tel" id="contact-ent" placeholder="Contact direct">
+        </div>
+        
+        <input type="email" id="email" placeholder="Email professionnel">
+        <input type="password" id="password" placeholder="Mot de passe (6 car. min)">
+
+        <div class="plan-container">
+            <span class="plan-header">Votre Forfait Business :</span>
+            <select id="choix-forfait">
+                <option value="mensuel">📅 Pack Mensuel - 45 000 FCFA</option>
+                <option value="trimestriel">💎 Pack Trimestriel - 120 000 FCFA</option>
+            </select>
+        </div>
+
+        <div class="security-box">
+            <span style="font-size: 1.5rem;">🛡️</span>
+            <div class="security-text">
+                <b>Protection SaaS "Anti-Fuite" Activée</b>
+                Données isolées par technologie <b>RLS</b>. Vos prix et chantiers sont strictement confidentiels.
+            </div>
+        </div>
+
+        <button id="btn-reg" onclick="handleRegister()">CRÉER MON ESPACE SÉCURISÉ</button>
+        <a href="login.html" class="login-link">Déjà un compte ? Connexion</a>
+    </div>
+
+    <!-- Modal Guide -->
+    <div id="guideModal" class="modal">
+        <div class="modal-content">
+            <span class="close-guide" onclick="toggleGuide(false)">&times;</span>
+            <h3 style="color: var(--primary); margin-top: 0;">📖 Guide de démarrage rapide</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 25px;">Maîtrisez votre business en 4 étapes simples :</p>
+            <div class="guide-step">
+                <div class="step-num">1</div>
+                <div><h4>Configuration</h4><p>Inscrivez votre entreprise pour activer votre tableau de bord PDG.</p></div>
+            </div>
+            <div class="guide-step">
+                <div class="step-num">2</div>
+                <div><h4>Équipe</h4><p>Créez des accès sécurisés pour vos Chefs de chantier.</p></div>
+            </div>
+            <div class="guide-step">
+                <div class="step-num">3</div>
+                <div><h4>Terrain</h4><p>Vos chefs pointent les ouvriers et matériaux en temps réel.</p></div>
+            </div>
+            <div class="guide-step">
+                <div class="step-num">4</div>
+                <div><h4>Contrôle</h4><p>Visualisez vos marges et dépenses sans quitter votre bureau.</p></div>
+            </div>
+            <button style="background: var(--secondary); color: white; border: none; padding: 10px; width: 100%; border-radius: 10px; cursor: pointer;" onclick="toggleGuide(false)">J'AI COMPRIS</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="supabase.js"></script>
+    <script>
+         const sbClient = window.sb;
+
+function toggleGuide(show) {
+    document.getElementById('guideModal').style.display = show ? 'block' : 'none';
+}
+
+async function handleRegister() {
+    const nomEnt   = document.getElementById('nom-ent').value.trim();
+    const villeEnt = document.getElementById('ville-ent').value.trim();
+    const contact  = document.getElementById('contact-ent').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (!nomEnt || !email || !password || !contact) {
+        return alert("Veuillez remplir tous les champs.");
+    }
+
+    const btn = document.getElementById('btn-reg');
+    btn.innerText = "Sécurisation en cours...";
+    btn.disabled  = true;
+
+    try {
+        const { data: authData, error: authError } = await sbClient.auth.signUp({ email, password });
+
+        if (authError) throw authError;
+        if (!authData.user) throw new Error("Compte non créé.");
+        if (!authData.session) throw new Error("Désactivez la confirmation email dans Supabase.");
+
+        const { data: entRow, error: entError } = await sbClient
+            .from('entreprises')
+            .insert([{
+                nom:        nomEnt,
+                ville:      villeEnt || null,
+                contact:    contact,
+                created_by: authData.user.id
+            }])
+            .select('id')
+            .single();
+
+        if (entError) throw new Error("Erreur Entreprise : " + entError.message);
+
+        const { error: profileError } = await sbClient
+            .from('profiles')
+            .insert([{
+                id:            authData.user.id,
+                entreprise_id: entRow.id,
+                full_name:     nomEnt,
+                role:          'pdg',
+                email:         email,
+                phone:         contact
+            }]);
+
+        if (profileError) throw new Error("Erreur Profil : " + profileError.message);
+
+        localStorage.setItem('user_id',       authData.user.id);
+        localStorage.setItem('user_role',     'pdg');
+        localStorage.setItem('user_nom',      nomEnt);
+        localStorage.setItem('entreprise_id', entRow.id);
+
+        alert("✅ Bienvenue ! Votre espace BTP PRO CI est prêt.");
+        window.location.href = 'tableau-de-bord.html';
+
+    } catch (err) {
+        console.error("❌ Erreur:", err);
+        alert("❌ " + err.message);
+        btn.innerText = "CRÉER MON ESPACE SÉCURISÉ";
+        btn.disabled  = false;
+    }
+}
+    </script>
+</body>
+</html>
