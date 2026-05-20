@@ -3,266 +3,558 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTP Pro CI - Espace Terrain</title>
+    <title>BTP Pro CI - Espace Chef</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2c3e50;
-            --accent: #e67e22;
-            --bg: #f0f2f5;
-            --glass: rgba(255, 255, 255, 0.95);
-            --shadow: 0 8px 30px rgba(0,0,0,0.1);
+            --noir:    #0f1419;
+            --blanc:   #ffffff;
+            --orange:  #ff8200;
+            --vert:    #009e49;
+            --gris:    #f5f5f5;
+            --gris2:   #e8e8e8;
+            --texte:   #1a1a2e;
+            --muted:   #8a8a9a;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #f0f2f5 0%, #c3cfe2 100%);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--gris);
+            color: var(--texte);
             min-height: 100vh;
-            color: var(--primary);
-        }
-
-        header {
-            background: var(--primary);
-            color: white;
-            width: 100%;
-            padding: 30px 20px;
-            text-align: center;
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
-            box-shadow: var(--shadow);
-            position: relative;
-        }
-
-        .header-content h1 {
-            margin: 0;
-            font-size: 1.6rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .header-content p {
-            margin: 5px 0 0;
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
-        .welcome-card {
-            background: var(--glass);
-            width: 85%;
-            max-width: 450px;
-            padding: 20px;
-            margin: -25px 0 20px;
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .welcome-card h2 {
-            margin: 0;
-            font-size: 1.1rem;
-            color: var(--primary);
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr; /* Une seule colonne pour des menus plus grands sur mobile */
-            gap: 20px;
-            width: 90%;
-            max-width: 450px;
             padding-bottom: 40px;
         }
 
-        .menu-item {
-            background: var(--glass);
+        /* ── HEADER ── */
+        .header {
+            background: var(--noir);
+            padding: 24px 20px 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; left: 0; right: 0; height: 20px;
+            background: var(--gris);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .logo-tag {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--orange);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            background: rgba(255,130,0,0.12);
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,130,0,0.25);
+        }
+
+        .date-tag {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.45);
+            text-align: right;
+            line-height: 1.5;
+        }
+
+        .bonjour {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .nom-chef {
+            color: var(--blanc);
+            font-size: 1.55rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .statut-ligne {
             display: flex;
             align-items: center;
-            padding: 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            color: var(--primary);
-            box-shadow: var(--shadow);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-left: 8px solid #ddd;
+            gap: 6px;
+            margin-top: 10px;
         }
 
-        .menu-item:active {
-            transform: scale(0.96);
+        .dot-vert {
+            width: 7px; height: 7px;
+            background: var(--vert);
+            border-radius: 50%;
+            animation: pulse-vert 2s infinite;
+        }
+        @keyframes pulse-vert {
+            0%,100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.3); }
         }
 
-        .icon-box {
-            width: 60px;
-            height: 60px;
+        .statut-txt {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.45);
+            font-weight: 500;
+        }
+
+        /* ── STATS BANDE ── */
+        .stats-bande {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1px;
+            background: var(--gris2);
+            margin: 0 20px 24px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .stat-cell {
+            background: var(--blanc);
+            padding: 16px 12px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--texte);
+            line-height: 1;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .stat-lbl {
+            font-size: 0.65rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        /* ── SECTION TITRE ── */
+        .section-titre {
+            padding: 0 20px 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* ── MENU ACTIONS ── */
+        .menu-liste {
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .menu-card {
+            background: var(--blanc);
             border-radius: 18px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+            color: var(--texte);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1.5px solid transparent;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card:active { transform: scale(0.98); }
+
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .menu-card.pointage::before  { background: var(--orange); }
+        .menu-card.materiaux::before { background: #3498db; }
+        .menu-card.journal::before   { background: var(--vert); }
+
+        .menu-icone {
+            width: 46px; height: 46px;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .menu-card.pointage  .menu-icone { background: #fff4ea; color: var(--orange); }
+        .menu-card.materiaux .menu-icone { background: #eaf4ff; color: #3498db; }
+        .menu-card.journal   .menu-icone { background: #eafaf1; color: var(--vert); }
+
+        .menu-texte { flex: 1; }
+        .menu-texte h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
+        .menu-texte p  { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
+
+        .menu-fleche {
+            color: var(--gris2);
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        /* ── ACTIVITÉ DU JOUR ── */
+        .activite-box {
+            margin: 0 20px 28px;
+            background: var(--blanc);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .activite-header {
+            padding: 16px 18px 12px;
+            border-bottom: 1px solid var(--gris);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activite-header span {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--texte);
+        }
+
+        .activite-header small {
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+
+        .activite-liste { padding: 8px 0; }
+
+        .activite-item {
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--gris);
+        }
+
+        .activite-item:last-child { border-bottom: none; }
+
+        .activite-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .activite-item p {
+            font-size: 0.8rem;
+            color: var(--texte);
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .activite-item small {
+            font-size: 0.68rem;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .activite-vide {
+            padding: 24px 18px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        /* ── BOUTON DÉCONNEXION ── */
+        .btn-deconnexion {
+            margin: 0 20px;
+            width: calc(100% - 40px);
+            padding: 16px;
+            background: none;
+            border: 1.5px solid var(--gris2);
+            border-radius: 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 20px;
-            font-size: 1.8rem;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            gap: 8px;
         }
 
-        .menu-info {
-            text-align: left;
+        .btn-deconnexion:hover {
+            border-color: #e74c3c;
+            color: #e74c3c;
         }
 
-        .menu-info h3 {
-            margin: 0;
-            font-size: 1.1rem;
-            font-weight: 700;
+        /* ── LOADER ── */
+        .loader-val {
+            display: inline-block;
+            width: 20px; height: 4px;
+            background: var(--gris2);
+            border-radius: 4px;
+            animation: shimmer 1.2s infinite;
         }
-
-        .menu-info p {
-            margin: 2px 0 0;
-            font-size: 0.8rem;
-            color: #7f8c8d;
-        }
-
-        /* Couleurs dynamiques */
-        .item-pointage { border-left-color: #ff8200; }
-        .item-pointage .icon-box { background: linear-gradient(135deg, #ff8200, #ffb347); }
-
-        .item-materiaux { border-left-color: #3498db; }
-        .item-materiaux .icon-box { background: linear-gradient(135deg, #3498db, #5dade2); }
-
-        .item-journal { border-left-color: #009e49; }
-        .item-journal .icon-box { background: linear-gradient(135deg, #009e49, #2ecc71); }
-
-        .item-photos { border-left-color: #9b59b6; }
-        .item-photos .icon-box { background: linear-gradient(135deg, #9b59b6, #af7ac5); }
-
-        .btn-logout {
-            width: 80%;
-            max-width: 300px;
-            padding: 18px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
-            margin: 20px 0 40px;
-            transition: 0.3s;
-        }
-
-        .btn-logout:hover {
-            background: #c0392b;
+        @keyframes shimmer {
+            0%,100% { opacity: 0.4; } 50% { opacity: 1; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-content">
-            <h1>🏗️ BTP PRO CI</h1>
-            <p>Système de Management Terrain</p>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-top">
+            <div class="logo-tag">BTP PRO CI</div>
+            <div class="date-tag" id="date-display"></div>
         </div>
-    </header>
-
-    <div class="welcome-card">
-        <h2 id="chef-name">Chargement du profil...</h2>
-        <div id="current-date" style="font-size: 0.8rem; color: #666; margin-top: 5px;"></div>
+        <div class="bonjour">Bonjour,</div>
+        <div class="nom-chef" id="chef-name">Chargement...</div>
+        <div class="statut-ligne">
+            <div class="dot-vert"></div>
+            <span class="statut-txt">Chef de chantier · En service</span>
+        </div>
     </div>
 
-    <div class="menu-grid">
-        <a href="chef-pointages.html" class="menu-item item-pointage">
-            <div class="icon-box"><i class="fas fa-calendar-check"></i></div>
-            <div class="menu-info">
+    <!-- STATS -->
+    <div class="stats-bande">
+        <div class="stat-cell">
+            <div class="stat-val" id="stat-presents"><span class="loader-val"></span></div>
+            <div class="stat-lbl">Présents</div>
+        </div>
+        <div class="stat-cell">
+            <div class="stat-val" id="stat-chantiers"><span class="loader-val"></span></div>
+            <div class="stat-lbl">Chantiers</div>
+        </div>
+        <div class="stat-cell">
+            <div class="stat-val" id="stat-depenses"><span class="loader-val"></span></div>
+            <div class="stat-lbl">Achats/j</div>
+        </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="section-titre">Actions terrain</div>
+    <div class="menu-liste">
+        <a href="chef-pointages.html" class="menu-card pointage">
+            <div class="menu-icone"><i class="fas fa-calendar-check"></i></div>
+            <div class="menu-texte">
                 <h3>Pointage</h3>
-                <p>Gérer la présence des ouvriers</p>
+                <p>Présence des ouvriers aujourd'hui</p>
             </div>
+            <div class="menu-fleche"><i class="fas fa-chevron-right"></i></div>
         </a>
 
-        <a href="chef-materiaux.html" class="menu-item item-materiaux">
-            <div class="icon-box"><i class="fas fa-shopping-cart"></i></div>
-            <div class="menu-info">
+        <a href="chef-materiaux.html" class="menu-card materiaux">
+            <div class="menu-icone"><i class="fas fa-box"></i></div>
+            <div class="menu-texte">
                 <h3>Achats & Matériaux</h3>
-                <p>Enregistrer les dépenses et stocks</p>
+                <p>Enregistrer une dépense terrain</p>
             </div>
+            <div class="menu-fleche"><i class="fas fa-chevron-right"></i></div>
         </a>
 
-        <a href="chef-journal.html" class="menu-item item-journal">
-            <div class="icon-box"><i class="fas fa-file-signature"></i></div>
-            <div class="menu-info">
+        <a href="chef-journal.html" class="menu-card journal">
+            <div class="menu-icone"><i class="fas fa-file-signature"></i></div>
+            <div class="menu-texte">
                 <h3>Journal de Bord</h3>
-                <p>Rapports quotidiens et obstacles</p>
+                <p>Rapport + photos du chantier</p>
             </div>
+            <div class="menu-fleche"><i class="fas fa-chevron-right"></i></div>
         </a>
-
     </div>
 
-    <button class="btn-logout" onclick="deconnexion()">🚪 SE DÉCONNECTER</button>
+    <!-- ACTIVITÉ DU JOUR -->
+    <div class="section-titre">Activité du jour</div>
+    <div class="activite-box">
+        <div class="activite-header">
+            <span>📋 Dernières actions</span>
+            <small id="activite-date"></small>
+        </div>
+        <div class="activite-liste" id="activite-liste">
+            <div class="activite-vide">Chargement...</div>
+        </div>
+    </div>
+
+    <!-- DÉCONNEXION -->
+    <button class="btn-deconnexion" onclick="deconnexion()">
+        <i class="fas fa-sign-out-alt"></i> Se déconnecter
+    </button>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="supabase.js"></script>
-    <script src="app-core.js"></script>
-   <script>
+    <script src="supabase.js"></script>
+    <script>
+
+let ENTREPRISE_ID = null;
+let USER_ID       = null;
+
+const AUJOURDHUI = new Date().toLocaleDateString('en-CA');
 
 async function init() {
-    const nameDisplay = document.getElementById('chef-name');
-    const dateDisplay = document.getElementById('current-date');
+    // Date affichage
+    const now = new Date();
+    document.getElementById('date-display').innerHTML =
+        now.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase() +
+        '<br>' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-    // Affichage immédiat depuis le cache
-    const nomCache = localStorage.getItem('user_nom');
-    if (nomCache) nameDisplay.innerText = `Bonjour, ${nomCache} 👋`;
+    document.getElementById('activite-date').innerText =
+        now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
 
-    dateDisplay.innerText = new Date().toLocaleDateString('fr-FR', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    });
+    // Auth
+    const { data: { user } } = await window.sb.auth.getUser();
+    if (!user) return window.location.replace('login.html');
 
+    USER_ID = user.id;
+
+    const { data: profile, error } = await window.sb
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+    if (error || !profile) {
+        document.getElementById('chef-name').innerText = "⚠️ Profil introuvable";
+        return;
+    }
+
+    if (profile.role !== 'chef') {
+        window.location.replace('tableau-de-bord.html');
+        return;
+    }
+
+    ENTREPRISE_ID = profile.entreprise_id;
+
+    const nomChef = profile.full_name || 'Chef';
+    document.getElementById('chef-name').innerText = nomChef;
+
+    localStorage.setItem('entreprise_id', ENTREPRISE_ID);
+    localStorage.setItem('user_id',       user.id);
+    localStorage.setItem('user_nom',      nomChef);
+    localStorage.setItem('user_role',     profile.role);
+
+    await chargerStats();
+    await chargerActivite();
+}
+
+async function chargerStats() {
     try {
-        // Vérification session
-        const { data: { user } } = await sb.auth.getUser();
-        if (!user) return window.location.replace('login.html');
+        const [resPresents, resChantiers, resDepenses] = await Promise.all([
+            window.sb.from('pointage')
+                .select('id', { count: 'exact' })
+                .eq('entreprise_id', ENTREPRISE_ID)
+                .eq('date_pointage', AUJOURDHUI)
+                .eq('statut', 'present'),
+            window.sb.from('chantiers')
+                .select('id', { count: 'exact' })
+                .eq('entreprise_id', ENTREPRISE_ID)
+                .eq('statut', 'en_cours'),
+            window.sb.from('materiaux')
+                .select('prix_total')
+                .eq('entreprise_id', ENTREPRISE_ID)
+                .gte('created_at', AUJOURDHUI + 'T00:00:00')
+        ]);
 
-        // Récupération profil
-        const { data: profile, error } = await sb
-            .from('profiles')
-            .select('*')
-            .eq('id', user.id)
-            .single();
+        document.getElementById('stat-presents').innerText  = resPresents.count || 0;
+        document.getElementById('stat-chantiers').innerText = resChantiers.count || 0;
 
-        if (error || !profile) {
-            nameDisplay.innerText = "⚠️ Profil introuvable";
-            return;
-        }
-
-        // Vérifier que c'est bien un chef
-        if (profile.role !== 'chef') {
-            window.location.replace('tableau-de-bord.html');
-            return;
-        }
-
-        const nomChef = profile.full_name || 'Chef';
-        nameDisplay.innerText = `Bonjour, ${nomChef} 👋`;
-
-        // Sauvegarde locale
-        localStorage.setItem('entreprise_id', profile.entreprise_id || '');
-        localStorage.setItem('user_id',       user.id);
-        localStorage.setItem('user_nom',      nomChef);
-        localStorage.setItem('user_role',     profile.role);
+        const totalJour = resDepenses.data?.reduce((sum, m) => sum + (Number(m.prix_total) || 0), 0) || 0;
+        document.getElementById('stat-depenses').innerText =
+            totalJour >= 1000
+                ? (totalJour / 1000).toFixed(0) + 'k'
+                : String(totalJour);
 
     } catch (err) {
-        console.error("Erreur:", err);
-        nameDisplay.innerText = "🚨 Erreur de connexion";
+        console.error("Erreur stats:", err);
+    }
+}
+
+async function chargerActivite() {
+    try {
+        const debut = AUJOURDHUI + 'T00:00:00';
+
+        const [resPoint, resMat, resJournal] = await Promise.all([
+            window.sb.from('pointage')
+                .select('created_at, statut, equipe:equipe_id(nom)')
+                .eq('entreprise_id', ENTREPRISE_ID)
+                .eq('auteur_id', USER_ID)
+                .gte('created_at', debut)
+                .order('created_at', { ascending: false })
+                .limit(3),
+            window.sb.from('materiaux')
+                .select('created_at, designation, prix_total')
+                .eq('entreprise_id', ENTREPRISE_ID)
+                .eq('auteur_id', USER_ID)
+                .gte('created_at', debut)
+                .order('created_at', { ascending: false })
+                .limit(3),
+            window.sb.from('journal')
+                .select('created_at, note')
+                .eq('entreprise_id', ENTREPRISE_ID)
+                .eq('auteur_id', USER_ID)
+                .gte('created_at', debut)
+                .order('created_at', { ascending: false })
+                .limit(2)
+        ]);
+
+        const activites = [
+            ...(resPoint.data||[]).map(p => ({
+                couleur: '#ff8200',
+                texte:   `Pointage — ${p.equipe?.nom || 'ouvrier'} : ${p.statut === 'present' ? 'Présent' : 'Absent'}`,
+                heure:   new Date(p.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+            })),
+            ...(resMat.data||[]).map(m => ({
+                couleur: '#3498db',
+                texte:   `Achat — ${m.designation} : ${Number(m.prix_total||0).toLocaleString('fr-FR')} FCFA`,
+                heure:   new Date(m.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+            })),
+            ...(resJournal.data||[]).map(j => ({
+                couleur: '#009e49',
+                texte:   `Rapport — "${j.note.substring(0, 45)}${j.note.length > 45 ? '...' : ''}"`,
+                heure:   new Date(j.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+            }))
+        ].sort((a, b) => b.heure.localeCompare(a.heure)).slice(0, 6);
+
+        const container = document.getElementById('activite-liste');
+        container.innerHTML = activites.length > 0
+            ? activites.map(a => `
+                <div class="activite-item">
+                    <div class="activite-dot" style="background:${a.couleur}"></div>
+                    <p>${a.texte}</p>
+                    <small>${a.heure}</small>
+                </div>
+            `).join('')
+            : `<div class="activite-vide">Aucune action aujourd'hui.<br><span style="font-size:0.7rem;">Commencez par pointer votre équipe.</span></div>`;
+
+    } catch (err) {
+        console.error("Erreur activité:", err);
     }
 }
 
 async function deconnexion() {
-    await sb.auth.signOut();
+    await window.sb.auth.signOut();
     localStorage.clear();
     window.location.replace('login.html');
 }
 
 document.addEventListener('DOMContentLoaded', init);
-</script>
+    </script>
 </body>
 </html>
