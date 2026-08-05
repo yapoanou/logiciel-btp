@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KORE Software - Dashboard Anti-Fraude</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent-blue: #0284c7;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-orange: #f97316;
+            --accent-yellow: #eab308;
+            --surface-bg: #f8fafc;
+            --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+            --shadow-btn: 0 8px 20px -4px rgba(2, 132, 199, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--surface-bg);
+            margin: 0;
+            padding: 20px;
+            color: var(--primary);
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .header-title p {
+            margin: 4px 0 0 0;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .btn-logout {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+        }
+
+        .stat-icon.red {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        .stat-icon.orange {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--accent-orange);
+        }
+
+        .stat-icon.yellow {
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--accent-yellow);
+        }
+
+        .stat-icon.blue {
+            background: rgba(2, 132, 199, 0.1);
+            color: var(--accent-blue);
+        }
+
+        .stat-content h3 {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-content .value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-top: 4px;
+        }
+
+        /* FILTERS */
+        .filters-section {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid #f1f5f9;
+            margin-bottom: 24px;
+        }
+
+        .filters-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin: 0 0 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        select, input {
+            padding: 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: var(--primary);
+            background: #f8fafc;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--accent-blue);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+        }
+
+        .btn-filter {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--accent-blue), #0369a1);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--shadow-btn);
+            transition: all 0.2s ease;
+        }
+
+        .btn-filter:active {
+            transform: scale(0.98);
+        }
+
+        /* TABLE */
+        .table-section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid #f1f5f9;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .table-header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-header i {
+            color: var(--accent-red);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8fafc;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.9rem;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-geofencing {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        .badge-receipt {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--accent-orange);
+        }
+
+        .badge-gps {
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--accent-yellow);
+        }
+
+        .badge-blocked {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        .badge-flagged {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--accent-orange);
+        }
+
+        .badge-investigating {
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--accent-yellow);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .user-email {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .distance-badge {
+            background: rgba(2, 132, 199, 0.1);
+            color: var(--accent-blue);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .btn-view-details {
+            padding: 6px 12px;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-view-details:hover {
+            background: #0369a1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-close:hover {
+            color: var(--primary);
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .detail-label {
+            font-weight: 700;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .detail-value {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .photo-preview {
+            width: 100%;
+            max-height: 300px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-top: 12px;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* ALERT SYSTEM */
+        .alerts-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            max-width: 400px;
+        }
+
+        .alert-toast {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-left: 4px solid var(--accent-red);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .alert-toast.warning {
+            border-left-color: var(--accent-orange);
+        }
+
+        .alert-toast.info {
+            border-left-color: var(--accent-blue);
+        }
+
+        .alert-toast.success {
+            border-left-color: var(--accent-green);
+        }
+
+        .alert-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0 0 4px 0;
+            font-size: 0.95rem;
+        }
+
+        .alert-message {
+            color: #64748b;
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            transition: color 0.2s ease;
+        }
+
+        .alert-close:hover {
+            color: #64748b;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-history-section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid #f1f5f9;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .alert-history-header {
+            padding: 20px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .alert-history-header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-history-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .alert-history-item {
+            padding: 12px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+        }
+
+        .alert-history-item:last-child {
+            border-bottom: none;
+        }
+
+        .alert-history-item.critical {
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .alert-history-item.warning {
+            background: rgba(249, 115, 22, 0.05);
+        }
+
+        .alert-history-time {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            min-width: 80px;
+        }
+
+        .alert-history-text {
+            flex: 1;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .monitoring-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .monitoring-badge.inactive {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+        }
+
+        .monitoring-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        .monitoring-badge.inactive .monitoring-dot {
+            background: #9ca3af;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <h1>🚨 Dashboard Anti-Fraude</h1>
+                <p>KORE Software - Monitoring en temps réel</p>
+            </div>
+            <button class="btn-logout" onclick="deconnexion()">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </button>
+        </div>
+    </header>
+
+    <!-- ALERTS CONTAINER -->
+    <div id="alerts-container" class="alerts-container"></div>
+
+    <!-- CONTAINER -->
+    <div class="container">
+        <!-- MONITORING STATUS -->
+        <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="margin: 0; font-size: 1.2rem; color: var(--primary); font-weight: 800;">
+                    Tableau de bord anti-fraude
+                </h2>
+            </div>
+            <div id="monitoring-status" class="monitoring-badge">
+                <div class="monitoring-dot"></div>
+                <span>Monitoring actif</span>
+            </div>
+        </div>
+
+        <!-- ALERT HISTORY -->
+        <div class="alert-history-section">
+            <div class="alert-history-header">
+                <h2>
+                    <i class="fas fa-bell"></i> Historique des alertes
+                </h2>
+                <button class="btn-filter" onclick="clearAlertHistory()" style="padding: 6px 12px; font-size: 0.85rem;">
+                    <i class="fas fa-trash"></i> Effacer
+                </button>
+            </div>
+            <div class="alert-history-list" id="alert-history-list">
+                <div style="padding: 20px; text-align: center; color: #94a3b8;">
+                    <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
+                    Aucune alerte pour le moment
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon red">
+                    <i class="fas fa-ban"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Tentatives bloquées</h3>
+                    <div class="value" id="stat-blocked">0</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Violations géofencing</h3>
+                    <div class="value" id="stat-geofencing">0</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon yellow">
+                    <i class="fas fa-image"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Photos manquantes</h3>
+                    <div class="value" id="stat-photos">0</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-map-pin"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>GPS manquants</h3>
+                    <div class="value" id="stat-gps">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filters-section">
+            <h3 class="filters-title"><i class="fas fa-filter"></i> Filtres</h3>
+            <div class="filters-grid">
+                <select id="filter-chantier">
+                    <option value="">Tous les chantiers</option>
+                </select>
+                <select id="filter-type">
+                    <option value="">Tous les types</option>
+                    <option value="geofencing_violation">Violation géofencing</option>
+                    <option value="missing_receipt">Photo manquante</option>
+                    <option value="gps_missing">GPS manquant</option>
+                </select>
+                <input type="date" id="filter-date-start" placeholder="Date début">
+                <input type="date" id="filter-date-end" placeholder="Date fin">
+                <button class="btn-filter" onclick="appliquerFiltres()">
+                    <i class="fas fa-search"></i> Rechercher
+                </button>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-section">
+            <div class="table-header">
+                <h2><i class="fas fa-exclamation-circle"></i> Tentatives de fraude détectées</h2>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date/Heure</th>
+                            <th>Type</th>
+                            <th>Utilisateur</th>
+                            <th>Chantier</th>
+                            <th>Détails</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #cbd5e1;"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <i class="fas fa-check-circle"></i>
+                <p>Aucune tentative de fraude détectée</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DÉTAILS -->
+    <div id="modal-details" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Détails de la tentative</h2>
+                <button class="btn-close" onclick="fermerModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Contenu dynamique -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        KORE Software • Dashboard Anti-Fraude • Propulsé par Bâtisys Tech
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="supabase.js"></script>
+    <script src="geolocation.js"></script>
+    <script src="alert-system.js"></script>
+    <script>
+
+    let ENTREPRISE_ID = null;
+    let allFraudAttempts = [];
+    let alertManager = null;
+    let alertHistory = [];
+
+    async function init() {
+        const session = await window.requireAuth();
+        if (!session) return;
+
+        const profile = await window.getUserProfile();
+        if (!profile) return;
+
+        // Vérifier que c'est un admin
+        if (profile.role !== 'admin' && profile.role !== 'pdg') {
+            alert('Accès réservé aux administrateurs');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        ENTREPRISE_ID = profile.entreprise_id;
+
+        // Initialiser le système d'alerte
+        if (window.AlertManager) {
+            alertManager = new window.AlertManager(window.sb);
+            
+            // Démarrer le monitoring en temps réel
+            alertManager.startRealtimeMonitoring(ENTREPRISE_ID, (alert) => {
+                handleNewAlert(alert);
+            });
+        }
+
+        // Charger les chantiers pour le filtre
+        await chargerChantiers();
+
+        // Charger les données
+        await chargerDonnees();
+    }
+
+    function handleNewAlert(alert) {
+        // Ajouter à l'historique
+        alertHistory.unshift({
+            timestamp: new Date(),
+            type: alert.type,
+            message: alert.message,
+            severity: alert.severity
+        });
+
+        // Garder seulement les 50 dernières alertes
+        if (alertHistory.length > 50) {
+            alertHistory.pop();
+        }
+
+        // Afficher l'alerte visuelle
+        if (alertManager) {
+            alertManager.showVisualAlert(alert.message, alert.type);
+        }
+
+        // Mettre à jour l'historique UI
+        updateAlertHistoryUI();
+
+        // Recharger les données pour mettre à jour le tableau
+        chargerDonnees();
+    }
+
+    function updateAlertHistoryUI() {
+        const historyList = document.getElementById('alert-history-list');
+        
+        if (alertHistory.length === 0) {
+            historyList.innerHTML = `
+                <div style="padding: 20px; text-align: center; color: #94a3b8;">
+                    <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
+                    Aucune alerte pour le moment
+                </div>
+            `;
+            return;
+        }
+
+        historyList.innerHTML = alertHistory.map((alert, index) => {
+            const severity = alert.severity === 'critical' ? 'critical' : 'warning';
+            const icon = severity === 'critical' ? '🚨' : '⚠️';
+            const time = alert.timestamp.toLocaleTimeString('fr-FR');
+            
+            return `
+                <div class="alert-history-item ${severity}">
+                    <span class="alert-history-time">${time}</span>
+                    <span style="font-size: 1.2rem;">${icon}</span>
+                    <span class="alert-history-text">${alert.message}</span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function clearAlertHistory() {
+        if (confirm('Êtes-vous sûr de vouloir effacer l\'historique des alertes ?')) {
+            alertHistory = [];
+            updateAlertHistoryUI();
+        }
+    }
+
+    async function chargerChantiers() {
+        const { data } = await window.sb
+            .from('chantiers')
+            .select('id, nom_chantier')
+            .eq('entreprise_id', ENTREPRISE_ID)
+            .order('nom_chantier');
+
+        const select = document.getElementById('filter-chantier');
+        if (data && data.length > 0) {
+            select.innerHTML += data.map(c =>
+                `<option value="${c.id}">${c.nom_chantier}</option>`
+            ).join('');
+        }
+    }
+
+    async function chargerDonnees() {
+        try {
+            // Récupérer les tentatives de fraude
+            const { data: fraudData } = await window.sb
+                .from('audit_fraude')
+                .select(`
+                    *,
+                    auteur:auteur_id(full_name, email),
+                    chantier:chantier_id(nom_chantier)
+                `)
+                .eq('entreprise_id', ENTREPRISE_ID)
+                .order('timestamp', { ascending: false });
+
+            allFraudAttempts = fraudData || [];
+
+            // Calculer les stats
+            calculerStats();
+
+            // Afficher les données
+            afficherDonnees(allFraudAttempts);
+
+        } catch (error) {
+            console.error('Erreur chargement:', error);
+        }
+    }
+
+    function calculerStats() {
+        const stats = {
+            blocked: allFraudAttempts.filter(f => f.statut === 'bloqué').length,
+            geofencing: allFraudAttempts.filter(f => f.type_fraude === 'geofencing_violation').length,
+            photos: allFraudAttempts.filter(f => f.type_fraude === 'missing_receipt').length,
+            gps: allFraudAttempts.filter(f => f.type_fraude === 'gps_missing').length
+        };
+
+        document.getElementById('stat-blocked').textContent = stats.blocked;
+        document.getElementById('stat-geofencing').textContent = stats.geofencing;
+        document.getElementById('stat-photos').textContent = stats.photos;
+        document.getElementById('stat-gps').textContent = stats.gps;
+    }
+
+    function afficherDonnees(donnees) {
+        const tbody = document.getElementById('table-body');
+        const emptyState = document.getElementById('empty-state');
+
+        if (donnees.length === 0) {
+            tbody.innerHTML = '';
+            emptyState.style.display = 'block';
+            return;
+        }
+
+        emptyState.style.display = 'none';
+        tbody.innerHTML = donnees.map(fraude => `
+            <tr>
+                <td>${new Date(fraude.timestamp).toLocaleString('fr-FR')}</td>
+                <td>
+                    ${getBadgeType(fraude.type_fraude)}
+                </td>
+                <td>
+                    <div class="user-info">
+                        <span class="user-name">${fraude.auteur?.full_name || 'N/A'}</span>
+                        <span class="user-email">${fraude.auteur?.email || ''}</span>
+                    </div>
+                </td>
+                <td>${fraude.chantier?.nom_chantier || 'N/A'}</td>
+                <td>
+                    ${getDetailsBadge(fraude)}
+                </td>
+                <td>
+                    ${getBadgeStatut(fraude.statut)}
+                </td>
+                <td>
+                    <button class="btn-view-details" onclick="afficherDetails('${fraude.id}')">
+                        Détails
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function getBadgeType(type) {
+        const types = {
+            'geofencing_violation': '<span class="badge badge-geofencing">🚫 Géofencing</span>',
+            'missing_receipt': '<span class="badge badge-receipt">📸 Photo manquante</span>',
+            'gps_missing': '<span class="badge badge-gps">📍 GPS manquant</span>',
+            'chantier_gps_missing': '<span class="badge badge-gps">⚠️ Chantier non calibré</span>'
+        };
+        return types[type] || `<span class="badge">${type}</span>`;
+    }
+
+    function getDetailsBadge(fraude) {
+        if (fraude.type_fraude === 'geofencing_violation' && fraude.details?.distance) {
+            return `<span class="distance-badge">${fraude.details.distance}m / ${fraude.details.radius}m</span>`;
+        }
+        if (fraude.details?.montant) {
+            return `<span class="distance-badge">${fraude.details.montant.toLocaleString()} F</span>`;
+        }
+        return '-';
+    }
+
+    function getBadgeStatut(statut) {
+        const statuts = {
+            'bloqué': '<span class="badge badge-blocked">🚫 Bloqué</span>',
+            'signalé': '<span class="badge badge-flagged">⚠️ Signalé</span>',
+            'enquête': '<span class="badge badge-investigating">🔍 Enquête</span>'
+        };
+        return statuts[statut] || `<span class="badge">${statut}</span>`;
+    }
+
+    function afficherDetails(fraudeId) {
+        const fraude = allFraudAttempts.find(f => f.id === fraudeId);
+        if (!fraude) return;
+
+        const modalBody = document.getElementById('modal-body');
+        let html = `
+            <div class="detail-row">
+                <span class="detail-label">Date/Heure</span>
+                <span class="detail-value">${new Date(fraude.timestamp).toLocaleString('fr-FR')}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Type</span>
+                <span class="detail-value">${fraude.type_fraude}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Utilisateur</span>
+                <span class="detail-value">${fraude.auteur?.full_name || 'N/A'}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Chantier</span>
+                <span class="detail-value">${fraude.chantier?.nom_chantier || 'N/A'}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Statut</span>
+                <span class="detail-value">${fraude.statut}</span>
+            </div>
+        `;
+
+        // Afficher les détails spécifiques
+        if (fraude.details) {
+            if (fraude.details.distance) {
+                html += `
+                    <div class="detail-row">
+                        <span class="detail-label">Distance</span>
+                        <span class="detail-value">${fraude.details.distance}m / ${fraude.details.radius}m</span>
+                    </div>
+                `;
+            }
+            if (fraude.details.montant) {
+                html += `
+                    <div class="detail-row">
+                        <span class="detail-label">Montant</span>
+                        <span class="detail-value">${fraude.details.montant.toLocaleString()} F</span>
+                    </div>
+                `;
+            }
+            if (fraude.details.reason) {
+                html += `
+                    <div class="detail-row">
+                        <span class="detail-label">Raison</span>
+                        <span class="detail-value">${fraude.details.reason}</span>
+                    </div>
+                `;
+            }
+        }
+
+        modalBody.innerHTML = html;
+        document.getElementById('modal-details').classList.add('show');
+    }
+
+    function fermerModal() {
+        document.getElementById('modal-details').classList.remove('show');
+    }
+
+    function appliquerFiltres() {
+        const chantier = document.getElementById('filter-chantier').value;
+        const type = document.getElementById('filter-type').value;
+        const dateStart = document.getElementById('filter-date-start').value;
+        const dateEnd = document.getElementById('filter-date-end').value;
+
+        let filtered = allFraudAttempts;
+
+        if (chantier) {
+            filtered = filtered.filter(f => f.chantier_id === chantier);
+        }
+        if (type) {
+            filtered = filtered.filter(f => f.type_fraude === type);
+        }
+        if (dateStart) {
+            filtered = filtered.filter(f => new Date(f.timestamp) >= new Date(dateStart));
+        }
+        if (dateEnd) {
+            const endDate = new Date(dateEnd);
+            endDate.setHours(23, 59, 59, 999);
+            filtered = filtered.filter(f => new Date(f.timestamp) <= endDate);
+        }
+
+        afficherDonnees(filtered);
+    }
+
+    async function deconnexion() {
+        await window.sb.auth.signOut();
+        localStorage.clear();
+        window.location.href = 'login.html';
+    }
+
+    // Fermer modal au clic en dehors
+    document.getElementById('modal-details').addEventListener('click', (e) => {
+        if (e.target.id === 'modal-details') {
+            fermerModal();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

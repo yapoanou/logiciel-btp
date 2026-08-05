@@ -3,263 +3,778 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTP Pro CI - Pointage</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>KORE Software - Pointage Équipe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary: #2c3e50;
-            --accent: #e67e22;
-            --bg: #f0f2f5;
-            --success: #27ae60;
-            --danger: #e74c3c;
-            --glass: rgba(255, 255, 255, 0.95);
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent-blue: #0284c7;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-orange: #f97316;
+            --surface-bg: #f8fafc;
+            --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+            --shadow-btn: 0 8px 20px -4px rgba(2, 132, 199, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #f0f2f5 0%, #c3cfe2 100%);
-            margin: 0; padding-bottom: 50px; color: var(--primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--surface-bg);
+            margin: 0;
+            padding-bottom: 40px;
+            color: var(--primary);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
+        /* HEADER TOP */
         header {
-            background: var(--primary); color: white; padding: 25px; text-align: center;
-            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            position: relative;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            width: 100%;
+            padding: 20px;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
 
-        .container { width: 90%; max-width: 500px; margin: 20px auto 0; }
+        .header-content {
+            max-width: 480px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-back {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .nav-back:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .header-title {
+            text-align: center;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .header-title p {
+            margin: 2px 0 0 0;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* CONTENEUR PRINCIPAL */
+        .container {
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+        }
 
         .main-card {
-            background: var(--glass); padding: 25px; border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.3);
+            background: white;
+            border-radius: 24px;
+            padding: 24px 20px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid #f1f5f9;
         }
 
-        h2 { font-size: 1.2rem; margin-bottom: 20px; text-align: center; }
-        label { display: block; font-weight: bold; margin: 15px 0 5px; font-size: 0.9rem; color: #555; }
+        .card-header-title {
+            font-size: 1rem;
+            font-weight: 800;
+            margin: 0 0 18px 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
+        .card-header-title i {
+            color: var(--accent-blue);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        label i {
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+        }
+
+        /* SELECTS */
         select {
-            width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #ddd;
-            font-size: 1rem; background: white; outline: none; cursor: pointer;
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1.5px solid #e2e8f0;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--primary);
+            background: #f8fafc;
+            outline: none;
+            transition: all 0.2s ease;
             box-sizing: border-box;
         }
 
+        select:focus {
+            border-color: var(--accent-blue);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+        }
+
+        /* GPS STATUS CARD */
+        .gps-status-card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid var(--accent-blue);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .gps-status-card.error {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-color: var(--accent-red);
+        }
+
+        .gps-status-card.success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: var(--accent-green);
+        }
+
+        .gps-status-icon {
+            font-size: 1.5rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .gps-status-text {
+            flex: 1;
+        }
+
+        .gps-status-text .status-label {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .gps-status-text .status-detail {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* BOUTONS DE STATUT */
         .status-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
         }
 
         .btn-status {
-            padding: 15px; border: none; border-radius: 15px; font-weight: bold;
-            color: white; cursor: pointer; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            font-size: 1rem;
+            padding: 14px;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
         }
 
-        .btn-present { background: var(--success); box-shadow: 0 4px 10px rgba(39,174,96,0.3); }
-        .btn-absent  { background: var(--danger);  box-shadow: 0 4px 10px rgba(231,76,60,0.3); }
-        .btn-status.inactif { opacity: 0.4; }
+        .btn-present {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--accent-green);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
 
+        .btn-present:not(.inactif) {
+            background: var(--accent-green);
+            color: white;
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+            border-color: var(--accent-green);
+        }
+
+        .btn-absent {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--accent-red);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-absent:not(.inactif) {
+            background: var(--accent-red);
+            color: white;
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
+            border-color: var(--accent-red);
+        }
+
+        .btn-status.inactif {
+            opacity: 0.5;
+            box-shadow: none;
+        }
+
+        /* BOUTON GPS */
+        .btn-gps {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent-orange), #ea580c);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(249, 115, 22, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-gps:active {
+            transform: scale(0.98);
+        }
+
+        .btn-gps:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .btn-gps.loading {
+            opacity: 0.8;
+        }
+
+        /* BOUTON DE VALIDATION */
         .btn-valider {
-            width: 100%; padding: 20px; background: var(--primary); color: white;
-            border: none; border-radius: 20px; font-weight: bold; font-size: 1.1rem;
-            margin-top: 25px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: 0.3s;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent-blue), #0369a1);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: var(--shadow-btn);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            font-family: inherit;
         }
-        .btn-valider:disabled { background: #95a5a6; cursor: not-allowed; }
 
-        .history-section { margin-top: 35px; }
-        .history-item {
-            background: white; padding: 18px; border-radius: 20px; margin-bottom: 12px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 6px solid var(--success);
+        .btn-valider:active {
+            transform: scale(0.98);
+            box-shadow: none;
         }
-        .history-item.absent { border-left-color: var(--danger); }
+
+        .btn-valider:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* HISTORIQUE */
+        .history-section {
+            margin-top: 28px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #64748b;
+            margin: 0 0 12px 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-item {
+            background: white;
+            padding: 16px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-card);
+            border: 1px solid #f1f5f9;
+            border-left: 5px solid var(--accent-green);
+        }
+
+        .history-item.absent {
+            border-left-color: var(--accent-red);
+        }
+
+        .history-item span {
+            font-size: 0.95rem;
+        }
 
         .badge {
-            padding: 6px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: bold; color: white;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.3px;
         }
-        .badge-present { background: var(--success); }
-        .badge-absent  { background: var(--danger); }
 
-        .nav-back { position: absolute; left: 20px; top: 25px; color: white; text-decoration: none; font-size: 1.2rem; }
+        .badge-present {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+        }
+
+        .badge-absent {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        .badge-gps {
+            background: rgba(2, 132, 199, 0.1);
+            color: var(--accent-blue);
+            font-size: 0.7rem;
+            padding: 4px 8px;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .spinner {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <a href="chef-accueil.html" class="nav-back"><i class="fas fa-arrow-left"></i></a>
-    <h1 style="margin:0; font-size: 1.3rem;">📅 Pointage Équipe</h1>
-</header>
+    <!-- ENTÊTE -->
+    <header>
+        <div class="header-content">
+            <a href="chef-accueil.html" class="nav-back">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <div class="header-title">
+                <h1>Pointage Équipe</h1>
+                <p>KORE Software - Anti-Fraude</p>
+            </div>
+            <div style="width: 42px;"></div>
+        </div>
+    </header>
 
-<div class="container">
-    <div class="main-card">
-        <h2>Saisie de présence</h2>
-        
-        <label><i class="fas fa-hard-hat"></i> Chantier</label>
-        <select id="select-chantier" onchange="chargerHistorique()">
-            <option>Chargement...</option>
-        </select>
+    <!-- CONTENU PRINCIPAL -->
+    <div class="container">
+        <div class="main-card">
+            <h2 class="card-header-title"><i class="fas fa-user-check"></i> Saisie de présence</h2>
+            
+            <!-- GPS STATUS -->
+            <div id="gps-status" class="gps-status-card" style="display: none;">
+                <div class="gps-status-icon">
+                    <i class="fas fa-map-pin"></i>
+                </div>
+                <div class="gps-status-text">
+                    <div class="status-label" id="gps-label">GPS non activé</div>
+                    <div class="status-detail" id="gps-detail">Cliquez sur "Activer GPS" pour commencer</div>
+                </div>
+            </div>
 
-        <label><i class="fas fa-user"></i> Ouvrier</label>
-        <select id="select-ouvrier">
-            <option>Chargement...</option>
-        </select>
+            <div class="form-group">
+                <label for="select-chantier"><i class="fas fa-building"></i> Chantier</label>
+                <select id="select-chantier" onchange="chargerHistorique()">
+                    <option>Chargement...</option>
+                </select>
+            </div>
 
-        <label><i class="fas fa-info-circle"></i> Statut du jour</label>
-        <div class="status-grid">
-            <button class="btn-status btn-present" id="stat-present" onclick="setStatut('present')">
-                <i class="fas fa-check-circle"></i> Présent
+            <div class="form-group">
+                <label for="select-ouvrier"><i class="fas fa-hard-hat"></i> Ouvrier</label>
+                <select id="select-ouvrier">
+                    <option>Chargement...</option>
+                </select>
+            </div>
+
+            <!-- BOUTON GPS -->
+            <button class="btn-gps" onclick="activerGPS()" id="btn-gps">
+                <i class="fas fa-location-dot"></i> ACTIVER GPS
             </button>
-            <button class="btn-status btn-absent inactif" id="stat-absent" onclick="setStatut('absent')">
-                <i class="fas fa-times-circle"></i> Absent
+
+            <div class="form-group">
+                <label><i class="fas fa-clock"></i> Statut du jour</label>
+                <div class="status-grid">
+                    <button class="btn-status btn-present" id="stat-present" onclick="setStatut('present')">
+                        <i class="fas fa-check-circle"></i> Présent
+                    </button>
+                    <button class="btn-status btn-absent inactif" id="stat-absent" onclick="setStatut('absent')">
+                        <i class="fas fa-times-circle"></i> Absent
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn-valider" onclick="enregistrerPointage()" id="btn-final">
+                <i class="fas fa-check"></i> ENREGISTRER LE POINTAGE
             </button>
         </div>
 
-        <button class="btn-valider" onclick="enregistrerPointage()" id="btn-final">
-            ENREGISTRER LE POINTAGE
-        </button>
+        <!-- HISTORIQUE DU JOUR -->
+        <div class="history-section">
+            <span class="section-title"><i class="fas fa-history"></i> Pointages du jour</span>
+            <div id="historique"></div>
+        </div>
     </div>
 
-    <div class="history-section">
-        <h3 style="margin-left:10px; font-size:1rem;"><i class="fas fa-history"></i> Pointages du jour :</h3>
-        <div id="historique"></div>
-    </div>
-</div>
+    <footer>
+        KORE Software • Propulsé par Bâtisys Tech
+    </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="supabase.js"></script>
-<script>
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="supabase.js"></script>
+    <script src="geolocation.js"></script>
+    <script src="security-module.js"></script>
+    <script>
 
-let ENTREPRISE_ID = null;
-let AUTEUR_ID     = null;
-let statutSelectionne = 'present';
+    let ENTREPRISE_ID = null;
+    let AUTEUR_ID = null;
+    let statutSelectionne = 'present';
+    let currentGPSPosition = null;
+    let currentChantier = null;
+    let securityManager = null;
 
-const AUJOURDHUI = new Date().toLocaleDateString('en-CA');
+    const AUJOURDHUI = new Date().toLocaleDateString('en-CA');
 
-function setStatut(s) {
-    statutSelectionne = s;
-    document.getElementById('stat-present').classList.toggle('inactif', s !== 'present');
-    document.getElementById('stat-absent').classList.toggle('inactif',  s !== 'absent');
-}
-
-async function init() {
-    const session = await window.requireAuth();
-    if (!session) return;
-
-    const profile = await window.getUserProfile();
-    if (!profile) return;
-
-    ENTREPRISE_ID = profile.entreprise_id;
-    AUTEUR_ID     = (await window.sb.auth.getUser()).data.user?.id;
-
-    try {
-        const [resC, resE] = await Promise.all([
-            window.sb.from('chantiers')
-                .select('id, nom_chantier')
-                .eq('entreprise_id', ENTREPRISE_ID)
-                .eq('statut', 'en_cours'),
-            window.sb.from('equipe')
-                .select('id, nom')
-                .eq('entreprise_id', ENTREPRISE_ID)
-                .eq('actif', true)
-                .order('nom')
-        ]);
-
-        const selectChantier = document.getElementById('select-chantier');
-        const selectOuvrier  = document.getElementById('select-ouvrier');
-
-        selectChantier.innerHTML = resC.data?.length > 0
-            ? resC.data.map(c => `<option value="${c.id}">${c.nom_chantier}</option>`).join('')
-            : '<option value="">Aucun chantier en cours</option>';
-
-        selectOuvrier.innerHTML = resE.data?.length > 0
-            ? resE.data.map(o => `<option value="${o.id}">${o.nom}</option>`).join('')
-            : '<option value="">Aucun ouvrier trouvé</option>';
-
-        setStatut('present');
-        chargerHistorique();
-
-    } catch (err) {
-        console.error("Erreur init:", err);
+    function setStatut(s) {
+        statutSelectionne = s;
+        document.getElementById('stat-present').classList.toggle('inactif', s !== 'present');
+        document.getElementById('stat-absent').classList.toggle('inactif', s !== 'absent');
     }
-}
 
-async function enregistrerPointage() {
-    const btn         = document.getElementById('btn-final');
-    const equipe_id   = document.getElementById('select-ouvrier').value;
-    const chantier_id = document.getElementById('select-chantier').value;
+    /**
+     * Active la géolocalisation et affiche le statut
+     */
+    async function activerGPS() {
+        const btn = document.getElementById('btn-gps');
+        const statusCard = document.getElementById('gps-status');
+        const statusLabel = document.getElementById('gps-label');
+        const statusDetail = document.getElementById('gps-detail');
 
-    if (!equipe_id || equipe_id === 'Aucun ouvrier trouvé')   return alert("Veuillez sélectionner un ouvrier valide.");
-    if (!chantier_id || chantier_id === 'Aucun chantier en cours') return alert("Veuillez sélectionner un chantier.");
+        btn.disabled = true;
+        btn.classList.add('loading');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Localisation en cours...';
 
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+        try {
+            // Récupérer la position GPS
+            const position = await GeoLocationModule.getPositionWithRetry();
+            currentGPSPosition = position;
 
-    const { error } = await window.sb.from('pointage').upsert({
-        entreprise_id: ENTREPRISE_ID,
-        chantier_id:   chantier_id,
-        equipe_id:     equipe_id,
-        date_pointage: AUJOURDHUI,
-        statut:        statutSelectionne,
-        auteur_id:     AUTEUR_ID
-    }, {
-        onConflict: 'entreprise_id,chantier_id,equipe_id,date_pointage'
+            // Afficher le statut
+            statusCard.style.display = 'flex';
+            statusCard.classList.remove('error', 'success');
+            statusLabel.textContent = '📍 Position GPS capturée';
+            statusDetail.textContent = GeoLocationModule.formatPosition(position);
+
+            // Vérifier le géofencing si un chantier est sélectionné
+            const chantierSelect = document.getElementById('select-chantier');
+            if (chantierSelect.value && currentChantier) {
+                await verifierGeofencing();
+            }
+
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> GPS ACTIVÉ';
+            btn.style.background = 'linear-gradient(135deg, var(--accent-green), #059669)';
+
+        } catch (error) {
+            console.error('Erreur GPS:', error);
+            statusCard.style.display = 'flex';
+            statusCard.classList.add('error');
+            statusLabel.textContent = '❌ Erreur GPS';
+            statusDetail.textContent = error.message || 'Impossible de récupérer la position';
+
+            btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> RÉESSAYER';
+            btn.style.background = 'linear-gradient(135deg, var(--accent-red), #dc2626)';
+
+        } finally {
+            btn.disabled = false;
+            btn.classList.remove('loading');
+        }
+    }
+
+    /**
+     * Vérifie le géofencing et affiche le statut
+     */
+    async function verifierGeofencing() {
+        if (!currentGPSPosition || !currentChantier) return;
+
+        const statusCard = document.getElementById('gps-status');
+        const statusLabel = document.getElementById('gps-label');
+        const statusDetail = document.getElementById('gps-detail');
+
+        const result = GeoLocationModule.isWithinGeofence(
+            currentGPSPosition,
+            {
+                latitude: currentChantier.latitude,
+                longitude: currentChantier.longitude
+            },
+            currentChantier.rayon_geofence || 100
+        );
+
+        statusCard.classList.remove('error', 'success');
+        if (result.isWithin) {
+            statusCard.classList.add('success');
+            statusLabel.textContent = '✅ Dans la zone de géofencing';
+            statusDetail.textContent = `Distance: ${result.distance}m / ${result.radiusMeters}m`;
+        } else {
+            statusCard.classList.add('error');
+            statusLabel.textContent = '❌ Hors zone de géofencing';
+            statusDetail.textContent = `Distance: ${result.distance}m / ${result.radiusMeters}m - Pointage bloqué`;
+        }
+    }
+
+    async function init() {
+        const session = await window.requireAuth();
+        if (!session) return;
+
+        const profile = await window.getUserProfile();
+        if (!profile) return;
+
+        ENTREPRISE_ID = profile.entreprise_id;
+        AUTEUR_ID = (await window.sb.auth.getUser()).data.user?.id;
+
+        // Initialiser SecurityManager
+        securityManager = new SecurityModule.SecurityManager(window.sb);
+
+        try {
+            const [resC, resE] = await Promise.all([
+                window.sb.from('chantiers')
+                    .select('id, nom_chantier, latitude, longitude, rayon_geofence')
+                    .eq('entreprise_id', ENTREPRISE_ID)
+                    .eq('statut', 'en_cours'),
+                window.sb.from('equipe')
+                    .select('id, nom')
+                    .eq('entreprise_id', ENTREPRISE_ID)
+                    .eq('actif', true)
+                    .order('nom')
+            ]);
+
+            const selectChantier = document.getElementById('select-chantier');
+            const selectOuvrier = document.getElementById('select-ouvrier');
+
+            selectChantier.innerHTML = resC.data?.length > 0
+                ? resC.data.map(c => `<option value="${c.id}" data-chantier='${JSON.stringify(c)}'>${c.nom_chantier}</option>`).join('')
+                : '<option value="">Aucun chantier en cours</option>';
+
+            selectOuvrier.innerHTML = resE.data?.length > 0
+                ? resE.data.map(o => `<option value="${o.id}">${o.nom}</option>`).join('')
+                : '<option value="">Aucun ouvrier trouvé</option>';
+
+            // Charger le premier chantier
+            if (resC.data?.length > 0) {
+                currentChantier = resC.data[0];
+                selectChantier.value = currentChantier.id;
+            }
+
+            setStatut('present');
+            chargerHistorique();
+
+        } catch (err) {
+            console.error("Erreur init:", err);
+        }
+    }
+
+    // Mettre à jour le chantier sélectionné
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectChantier = document.getElementById('select-chantier');
+        selectChantier.addEventListener('change', (e) => {
+            const option = e.target.options[e.target.selectedIndex];
+            if (option.dataset.chantier) {
+                currentChantier = JSON.parse(option.dataset.chantier);
+                if (currentGPSPosition) {
+                    verifierGeofencing();
+                }
+            }
+            chargerHistorique();
+        });
     });
 
-    if (error) {
-        alert("❌ " + error.message);
-        console.error(error);
-    } else {
-        btn.style.background = "#27ae60";
-        btn.innerHTML = "✅ POINTAGE BIEN REÇU";
-        setTimeout(() => {
-            btn.style.background = "";
-            btn.innerText = "ENREGISTRER LE POINTAGE";
-        }, 2000);
-        chargerHistorique();
+    async function enregistrerPointage() {
+        const btn = document.getElementById('btn-final');
+        const equipe_id = document.getElementById('select-ouvrier').value;
+        const chantier_id = document.getElementById('select-chantier').value;
+
+        if (!equipe_id || equipe_id === 'Aucun ouvrier trouvé') {
+            return alert("Veuillez sélectionner un ouvrier valide.");
+        }
+        if (!chantier_id || chantier_id === 'Aucun chantier en cours') {
+            return alert("Veuillez sélectionner un chantier.");
+        }
+
+        // Vérifier le GPS
+        if (!currentGPSPosition) {
+            return alert("❌ GPS non activé. Cliquez sur 'ACTIVER GPS' d'abord.");
+        }
+
+        // Valider avec SecurityManager
+        const validation = await securityManager.validatePointage(
+            { chantier_id, equipe_id, date_pointage: AUJOURDHUI, statut: statutSelectionne },
+            currentGPSPosition,
+            currentChantier
+        );
+
+        if (!validation.valid) {
+            return alert(validation.message);
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
+        try {
+            // Calibrer le chantier au premier pointage si nécessaire
+            if (!currentChantier.latitude || !currentChantier.longitude) {
+                await securityManager.calibrateChantierGPS(chantier_id, currentGPSPosition);
+            }
+
+            // Enregistrer le pointage avec GPS
+            const result = await securityManager.recordPointageWithGPS(
+                {
+                    entreprise_id: ENTREPRISE_ID,
+                    chantier_id: chantier_id,
+                    equipe_id: equipe_id,
+                    date_pointage: AUJOURDHUI,
+                    statut: statutSelectionne,
+                    auteur_id: AUTEUR_ID
+                },
+                {
+                    latitude: currentGPSPosition.latitude,
+                    longitude: currentGPSPosition.longitude,
+                    distance: validation.distance
+                }
+            );
+
+            if (!result.success) {
+                throw new Error(result.message);
+            }
+
+            btn.style.background = "#10b981";
+            btn.innerHTML = "<i class='fas fa-check-circle'></i> POINTAGE BIEN REÇU";
+            setTimeout(() => {
+                btn.style.background = "";
+                btn.innerHTML = "<i class='fas fa-check'></i> ENREGISTRER LE POINTAGE";
+            }, 2000);
+
+            chargerHistorique();
+
+        } catch (err) {
+            console.error("Erreur:", err);
+            alert("❌ " + (err.message || "Erreur lors de l'enregistrement"));
+        } finally {
+            btn.disabled = false;
+        }
     }
 
-    btn.disabled = false;
-}
+    async function chargerHistorique() {
+        const chantier_id = document.getElementById('select-chantier').value;
+        if (!chantier_id) return;
 
-async function chargerHistorique() {
-    const chantier_id = document.getElementById('select-chantier').value;
-    if (!chantier_id) return;
+        const { data, error } = await window.sb
+            .from('pointage')
+            .select('statut, distance_m, gps_valide, equipe:equipe_id(nom)')
+            .eq('date_pointage', AUJOURDHUI)
+            .eq('chantier_id', chantier_id)
+            .order('created_at', { ascending: false });
 
-    const { data, error } = await window.sb
-        .from('pointage')
-        .select('statut, equipe:equipe_id(nom)')
-        .eq('date_pointage', AUJOURDHUI)
-        .eq('chantier_id', chantier_id);
+        const div = document.getElementById('historique');
 
-    const div = document.getElementById('historique');
-
-    if (data && data.length > 0) {
-        div.innerHTML = data.map(p => `
-            <div class="history-item ${p.statut === 'absent' ? 'absent' : ''}">
-                <span style="font-weight:bold;">${p.equipe?.nom || 'Ouvrier'}</span>
-                <span class="badge ${p.statut === 'present' ? 'badge-present' : 'badge-absent'}">
-                    ${p.statut === 'present' ? 'Présent' : 'Absent'}
-                </span>
-            </div>
-        `).join('');
-    } else {
-        div.innerHTML = `
-            <div style="text-align:center; padding:15px; color:#7f8c8d; background:white; border-radius:15px;">
-                Aucun pointage pour ce chantier aujourd'hui.
-            </div>`;
+        if (data && data.length > 0) {
+            div.innerHTML = data.map(p => `
+                <div class="history-item ${p.statut === 'absent' ? 'absent' : ''}">
+                    <div>
+                        <span style="font-weight:700; color:var(--primary);">${p.equipe?.nom || 'Ouvrier'}</span>
+                        ${p.gps_valide ? `<span class="badge badge-gps" style="margin-left: 8px;">📍 ${p.distance_m}m</span>` : ''}
+                    </div>
+                    <span class="badge ${p.statut === 'present' ? 'badge-present' : 'badge-absent'}">
+                        ${p.statut === 'present' ? 'présent' : 'absent'}
+                    </span>
+                </div>
+            `).join('');
+        } else {
+            div.innerHTML = `
+                <div style="text-align:center; padding:18px; color:#64748b; background:white; border-radius:20px; font-size:0.85rem; font-weight:600; box-shadow: var(--shadow-card);">
+                    Aucun pointage pour ce chantier aujourd'hui.
+                </div>`;
+        }
     }
-}
 
-async function deconnexion() {
-    await window.sb.auth.signOut();
-    localStorage.clear();
-    window.location.href = 'login.html';
-}
+    async function deconnexion() {
+        await window.sb.auth.signOut();
+        localStorage.clear();
+        window.location.href = 'login.html';
+    }
 
-document.addEventListener('DOMContentLoaded', init);
-</script>
+    document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>

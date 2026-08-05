@@ -3,229 +3,510 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTP Pro CI - Journal de Bord</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>KORE Software - Journal de Bord</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary: #2c3e50;
-            --accent: #009e49;
-            --bg: #f0f2f5;
-            --glass: rgba(255, 255, 255, 0.95);
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent-orange: #f97316;
+            --accent-green: #10b981;
+            --accent-blue: #0284c7;
+            --surface-bg: #f8fafc;
+            --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+            --shadow-btn: 0 8px 20px -4px rgba(16, 185, 129, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #f0f2f5 0%, #c3cfe2 100%);
-            margin: 0; padding-bottom: 50px; color: var(--primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--surface-bg);
+            margin: 0;
+            padding-bottom: 40px;
+            color: var(--primary);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
+        /* HEADER TOP */
         header {
-            background: var(--primary); color: white; padding: 25px; text-align: center;
-            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            position: relative;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            width: 100%;
+            padding: 20px;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
 
-        .container { width: 90%; max-width: 500px; margin: 20px auto 0; }
+        .header-content {
+            max-width: 480px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-back {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .header-title {
+            text-align: center;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .header-title p {
+            margin: 2px 0 0 0;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* CONTENEUR PRINCIPAL */
+        .container {
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+        }
 
         .main-card {
-            background: var(--glass); padding: 25px; border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.3);
+            background: white;
+            border-radius: 24px;
+            padding: 24px 20px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid #f1f5f9;
         }
 
-        label { display: block; font-weight: bold; margin: 15px 0 5px; font-size: 0.85rem; color: #555; }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        label i {
+            color: var(--accent-orange);
+            font-size: 0.95rem;
+        }
+
+        /* INPUTS & SELECTS */
         select, textarea {
-            width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #ddd;
-            font-size: 1rem; background: white; box-sizing: border-box; outline: none;
-            transition: 0.3s;
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1.5px solid #e2e8f0;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--primary);
+            background: #f8fafc;
+            outline: none;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
         }
-        select:focus, textarea:focus { border-color: var(--accent); }
-        textarea { height: 120px; resize: none; }
 
+        select:focus, textarea:focus {
+            border-color: var(--accent-orange);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+        }
+
+        textarea {
+            height: 130px;
+            resize: none;
+            line-height: 1.5;
+        }
+
+        /* GRILLE PHOTOS */
         .photo-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 8px;
         }
 
         .photo-box {
-            aspect-ratio: 1; border: 2px dashed var(--accent); border-radius: 15px;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden; background: rgba(0,158,73,0.05); position: relative;
+            aspect-ratio: 1;
+            border: 2px dashed #cbd5e1;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: #f8fafc;
+            position: relative;
             cursor: pointer;
+            overflow: hidden;
+            transition: all 0.2s ease;
         }
-        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-        .photo-box i { font-size: 1.5rem; color: var(--accent); }
 
+        .photo-box:active {
+            transform: scale(0.97);
+        }
+
+        .photo-box i.fa-plus {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            background: #ffffff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            transition: all 0.2s ease;
+        }
+
+        .photo-box span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .photo-box .btn-remove {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(15, 23, 42, 0.75);
+            color: white;
+            border: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            backdrop-filter: blur(4px);
+            z-index: 2;
+        }
+
+        /* BOUTON D'ENVOI */
         .btn-valider {
-            width: 100%; padding: 20px; background: var(--accent); color: white;
-            border: none; border-radius: 20px; font-weight: bold; font-size: 1.1rem;
-            margin-top: 25px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,158,73,0.3);
-            transition: 0.3s;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent-green), #059669);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-top: 24px;
+            cursor: pointer;
+            box-shadow: var(--shadow-btn);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
         }
-        .btn-valider:disabled { background: #95a5a6; cursor: not-allowed; }
 
-        .nav-back { position: absolute; left: 20px; top: 25px; color: white; text-decoration: none; font-size: 1.2rem; }
+        .btn-valider:active {
+            transform: scale(0.98);
+            box-shadow: none;
+        }
+
+        .btn-valider:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <a href="chef-accueil.html" class="nav-back"><i class="fas fa-arrow-left"></i></a>
-    <h1 style="margin:0; font-size: 1.3rem;">📝 Journal de Bord</h1>
-</header>
-
-<div class="container">
-    <div class="main-card">
-        <label><i class="fas fa-city"></i> Chantier concerné</label>
-        <select id="select-chantier">
-            <option value="">Chargement des chantiers...</option>
-        </select>
-
-        <label><i class="fas fa-comment-dots"></i> Rapport des travaux</label>
-        <textarea id="travaux" placeholder="Décrivez l'avancement, les problèmes ou les besoins..."></textarea>
-
-        <label><i class="fas fa-camera"></i> Photos d'avancement (Max 4)</label>
-        <div class="photo-grid">
-            <div class="photo-box" onclick="triggerInput(0)"><i class="fas fa-plus" id="icon-0"></i><img id="img-0" style="display:none"></div>
-            <div class="photo-box" onclick="triggerInput(1)"><i class="fas fa-plus" id="icon-1"></i><img id="img-1" style="display:none"></div>
-            <div class="photo-box" onclick="triggerInput(2)"><i class="fas fa-plus" id="icon-2"></i><img id="img-2" style="display:none"></div>
-            <div class="photo-box" onclick="triggerInput(3)"><i class="fas fa-plus" id="icon-3"></i><img id="img-3" style="display:none"></div>
+    <!-- ENTÊTE -->
+    <header>
+        <div class="header-content">
+            <a href="chef-accueil.html" class="btn-back">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <div class="header-title">
+                <h1>Journal de Bord</h1>
+                <p>KORE Software</p>
+            </div>
+            <div style="width: 42px;"></div> <!-- Espaceur pour centrage -->
         </div>
+    </header>
 
-        <input type="file" id="file-0" accept="image/*" capture="environment" hidden onchange="handleFile(0)">
-        <input type="file" id="file-1" accept="image/*" capture="environment" hidden onchange="handleFile(1)">
-        <input type="file" id="file-2" accept="image/*" capture="environment" hidden onchange="handleFile(2)">
-        <input type="file" id="file-3" accept="image/*" capture="environment" hidden onchange="handleFile(3)">
+    <!-- FORMULAIRE -->
+    <div class="container">
+        <div class="main-card">
+            
+            <div class="form-group">
+                <label for="select-chantier">
+                    <i class="fas fa-building"></i> Chantier concerné
+                </label>
+                <select id="select-chantier">
+                    <option value="">Chargement des chantiers...</option>
+                </select>
+            </div>
 
-        <button class="btn-valider" onclick="envoyerRapport()" id="btn-final">ENVOYER LE RAPPORT</button>
+            <div class="form-group">
+                <label for="travaux">
+                    <i class="fas fa-pen-to-square"></i> Rapport des travaux du jour
+                </label>
+                <textarea id="travaux" placeholder="Décrivez l'avancement, les livraisons, les problèmes rencontrés..."></textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>
+                    <i class="fas fa-camera"></i> Photos du chantier (Max 4)
+                </label>
+                <div class="photo-grid">
+                    <div class="photo-box" onclick="triggerInput(0)">
+                        <i class="fas fa-plus" id="icon-0"></i>
+                        <span id="lbl-0">Ajouter</span>
+                        <img id="img-0" style="display:none">
+                        <button type="button" class="btn-remove" id="rm-0" style="display:none;" onclick="event.stopPropagation(); removeFile(0);">
+                            <i class="fas fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="photo-box" onclick="triggerInput(1)">
+                        <i class="fas fa-plus" id="icon-1"></i>
+                        <span id="lbl-1">Ajouter</span>
+                        <img id="img-1" style="display:none">
+                        <button type="button" class="btn-remove" id="rm-1" style="display:none;" onclick="event.stopPropagation(); removeFile(1);">
+                            <i class="fas fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="photo-box" onclick="triggerInput(2)">
+                        <i class="fas fa-plus" id="icon-2"></i>
+                        <span id="lbl-2">Ajouter</span>
+                        <img id="img-2" style="display:none">
+                        <button type="button" class="btn-remove" id="rm-2" style="display:none;" onclick="event.stopPropagation(); removeFile(2);">
+                            <i class="fas fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="photo-box" onclick="triggerInput(3)">
+                        <i class="fas fa-plus" id="icon-3"></i>
+                        <span id="lbl-3">Ajouter</span>
+                        <img id="img-3" style="display:none">
+                        <button type="button" class="btn-remove" id="rm-3" style="display:none;" onclick="event.stopPropagation(); removeFile(3);">
+                            <i class="fas fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAMPS SITES/FILES CACHÉS -->
+            <input type="file" id="file-0" accept="image/*" capture="environment" hidden onchange="handleFile(0)">
+            <input type="file" id="file-1" accept="image/*" capture="environment" hidden onchange="handleFile(1)">
+            <input type="file" id="file-2" accept="image/*" capture="environment" hidden onchange="handleFile(2)">
+            <input type="file" id="file-3" accept="image/*" capture="environment" hidden onchange="handleFile(3)">
+
+            <button class="btn-valider" onclick="envoyerRapport()" id="btn-final">
+                <i class="fas fa-paper-plane"></i> ENVOYER LE RAPPORT
+            </button>
+
+        </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="supabase.js"></script>
-<script>
+    <footer>
+        KORE Software • Propulsé par Bâtisys Tech
+    </footer>
 
-let ENTREPRISE_ID = null;
-let AUTEUR_ID     = null;
-let selectedFiles = [null, null, null, null];
+    <!-- SCRIPTS ET SUPABASE -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="supabase.js"></script>
+    <script>
 
-const BUCKET = 'photos-chantiers';
+    let ENTREPRISE_ID = null;
+    let AUTEUR_ID     = null;
+    let selectedFiles = [null, null, null, null];
 
-async function init() {
-    const session = await window.requireAuth();
-    if (!session) return;
+    const BUCKET = 'photos-chantiers';
 
-    const profile = await window.getUserProfile();
-    if (!profile) return;
+    async function init() {
+        const session = await window.requireAuth();
+        if (!session) return;
 
-    ENTREPRISE_ID = profile.entreprise_id;
-    AUTEUR_ID     = (await window.sb.auth.getUser()).data.user?.id;
+        const profile = await window.getUserProfile();
+        if (!profile) return;
 
-    const { data: chantiers } = await window.sb
-        .from('chantiers')
-        .select('id, nom_chantier')
-        .eq('entreprise_id', ENTREPRISE_ID)
-        .eq('statut', 'en_cours');
+        ENTREPRISE_ID = profile.entreprise_id;
+        AUTEUR_ID     = (await window.sb.auth.getUser()).data.user?.id;
 
-    const select = document.getElementById('select-chantier');
-    if (chantiers && chantiers.length > 0) {
-        select.innerHTML = chantiers.map(c =>
-            `<option value="${c.id}">${c.nom_chantier}</option>`
-        ).join('');
-    } else {
-        select.innerHTML = '<option value="">Aucun chantier trouvé</option>';
-    }
-}
+        const { data: chantiers } = await window.sb
+            .from('chantiers')
+            .select('id, nom_chantier')
+            .eq('entreprise_id', ENTREPRISE_ID)
+            .eq('statut', 'en_cours');
 
-function triggerInput(index) {
-    document.getElementById(`file-${index}`).click();
-}
-
-function handleFile(index) {
-    const file = document.getElementById(`file-${index}`).files[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) return alert("Photo trop lourde (max 5Mo)");
-
-    selectedFiles[index] = file;
-    const img  = document.getElementById(`img-${index}`);
-    const icon = document.getElementById(`icon-${index}`);
-    img.src            = URL.createObjectURL(file);
-    img.style.display  = 'block';
-    icon.style.display = 'none';
-}
-
-async function envoyerRapport() {
-    const btn         = document.getElementById('btn-final');
-    const chantier_id = document.getElementById('select-chantier').value;
-    const texte       = document.getElementById('travaux').value.trim();
-
-    if (!chantier_id || !texte) return alert("Veuillez sélectionner un chantier et écrire un rapport.");
-    if (!AUTEUR_ID)             return alert("Session invalide, reconnectez-vous.");
-
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
-
-    try {
-        // 1. Upload photos
-        const urls = [];
-        for (let file of selectedFiles) {
-            if (!file) continue;
-
-            const ext      = file.name.split('.').pop();
-            const fileName = `${ENTREPRISE_ID}/${chantier_id}/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
-
-            const { error: upError } = await window.sb.storage
-                .from(BUCKET)
-                .upload(fileName, file);
-
-            if (upError) throw upError;
-
-            const { data } = window.sb.storage.from(BUCKET).getPublicUrl(fileName);
-            urls.push(data.publicUrl);
+        const select = document.getElementById('select-chantier');
+        if (chantiers && chantiers.length > 0) {
+            select.innerHTML = chantiers.map(c =>
+                `<option value="${c.id}">${c.nom_chantier}</option>`
+            ).join('');
+        } else {
+            select.innerHTML = '<option value="">Aucun chantier trouvé</option>';
         }
-
-        // 2. Insérer la note dans journal
-        const { error: insError } = await window.sb.from('journal').insert([{
-            chantier_id:   chantier_id,
-            note:          texte,
-            auteur_id:     AUTEUR_ID,
-            entreprise_id: ENTREPRISE_ID
-        }]);
-        if (insError) throw insError;
-
-        // 3. Insérer les photos
-        if (urls.length > 0) {
-            const { error: pErr } = await window.sb.from('photos').insert(
-                urls.map(u => ({
-                    chantier_id:   chantier_id,
-                    url:           u,
-                    auteur_id:     AUTEUR_ID,
-                    entreprise_id: ENTREPRISE_ID
-                }))
-            );
-            if (pErr) throw pErr;
-        }
-
-        alert("✅ Rapport envoyé !");
-        window.location.href = 'chef-accueil.html';
-
-    } catch (err) {
-        console.error(err);
-        alert("❌ " + err.message);
-        btn.disabled = false;
-        btn.innerText = "ENVOYER LE RAPPORT";
     }
-}
 
-async function deconnexion() {
-    await window.sb.auth.signOut();
-    localStorage.clear();
-    window.location.href = 'login.html';
-}
+    function triggerInput(index) {
+        document.getElementById(`file-${index}`).click();
+    }
 
-window.onload = init;
-</script>
+    function handleFile(index) {
+        const file = document.getElementById(`file-${index}`).files[0];
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) return alert("Photo trop lourde (max 5Mo)");
+
+        selectedFiles[index] = file;
+        const img  = document.getElementById(`img-${index}`);
+        const icon = document.getElementById(`icon-${index}`);
+        const lbl  = document.getElementById(`lbl-${index}`);
+        const rm   = document.getElementById(`rm-${index}`);
+
+        img.src            = URL.createObjectURL(file);
+        img.style.display  = 'block';
+        icon.style.display = 'none';
+        lbl.style.display  = 'none';
+        rm.style.display   = 'flex';
+    }
+
+    function removeFile(index) {
+        selectedFiles[index] = null;
+        document.getElementById(`file-${index}`).value = "";
+        
+        const img  = document.getElementById(`img-${index}`);
+        const icon = document.getElementById(`icon-${index}`);
+        const lbl  = document.getElementById(`lbl-${index}`);
+        const rm   = document.getElementById(`rm-${index}`);
+
+        img.src            = "";
+        img.style.display  = 'none';
+        icon.style.display = 'flex';
+        lbl.style.display  = 'inline';
+        rm.style.display   = 'none';
+    }
+
+    async function envoyerRapport() {
+        const btn         = document.getElementById('btn-final');
+        const chantier_id = document.getElementById('select-chantier').value;
+        const texte       = document.getElementById('travaux').value.trim();
+
+        if (!chantier_id || !texte) return alert("Veuillez sélectionner un chantier et écrire un rapport.");
+        if (!AUTEUR_ID)             return alert("Session invalide, reconnectez-vous.");
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Envoi en cours...';
+
+        try {
+            // 1. Upload photos
+            const urls = [];
+            for (let file of selectedFiles) {
+                if (!file) continue;
+
+                const ext      = file.name.split('.').pop();
+                const fileName = `${ENTREPRISE_ID}/${chantier_id}/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
+
+                const { error: upError } = await window.sb.storage
+                    .from(BUCKET)
+                    .upload(fileName, file);
+
+                if (upError) throw upError;
+
+                const { data } = window.sb.storage.from(BUCKET).getPublicUrl(fileName);
+                urls.push(data.publicUrl);
+            }
+
+            // 2. Insérer la note dans journal
+            const { error: insError } = await window.sb.from('journal').insert([{
+                chantier_id:   chantier_id,
+                note:          texte,
+                auteur_id:     AUTEUR_ID,
+                entreprise_id: ENTREPRISE_ID
+            }]);
+            if (insError) throw insError;
+
+            // 3. Insérer les photos
+            if (urls.length > 0) {
+                const { error: pErr } = await window.sb.from('photos').insert(
+                    urls.map(u => ({
+                        chantier_id:   chantier_id,
+                        url:           u,
+                        auteur_id:     AUTEUR_ID,
+                        entreprise_id: ENTREPRISE_ID
+                    }))
+                );
+                if (pErr) throw pErr;
+            }
+
+            alert("✅ Rapport envoyé avec succès !");
+            window.location.href = 'chef-accueil.html';
+
+        } catch (err) {
+            console.error(err);
+            alert("❌ " + err.message);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> ENVOYER LE RAPPORT';
+        }
+    }
+
+    window.onload = init;
+    </script>
 </body>
 </html>

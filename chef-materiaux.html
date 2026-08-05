@@ -3,247 +3,796 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTP Pro CI - Gestion Achats</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>KORE Software - Gestion Achats</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary: #2c3e50;
-            --accent: #3498db;
-            --bg: #f0f2f5;
-            --success: #27ae60;
-            --glass: rgba(255, 255, 255, 0.95);
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent-blue: #0284c7;
+            --accent-orange: #f97316;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --surface-bg: #f8fafc;
+            --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+            --shadow-btn: 0 8px 20px -4px rgba(2, 132, 199, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f0f2f5 0%, #c3cfe2 100%);
-            margin: 0; padding-bottom: 50px; color: var(--primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--surface-bg);
+            margin: 0;
+            padding-bottom: 40px;
+            color: var(--primary);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
+        /* HEADER TOP */
         header {
-            background: var(--primary); color: white; padding: 25px; text-align: center;
-            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            position: relative;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            width: 100%;
+            padding: 20px;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
 
-        .container { width: 90%; max-width: 500px; margin: -20px auto 0; }
+        .header-content {
+            max-width: 480px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-back {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .header-title {
+            text-align: center;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .header-title p {
+            margin: 2px 0 0 0;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* CONTENEUR PRINCIPAL */
+        .container {
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+        }
 
         .main-card {
-            background: var(--glass); padding: 25px; border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
+            background: white;
+            border-radius: 24px;
+            padding: 24px 20px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid #f1f5f9;
         }
 
-        h2 { font-size: 1.2rem; margin-bottom: 20px; text-align: center; }
-        label { display: block; font-weight: bold; margin: 15px 0 5px; font-size: 0.85rem; color: #555; }
+        .card-header-title {
+            font-size: 1rem;
+            font-weight: 800;
+            margin: 0 0 18px 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
+        .card-header-title i {
+            color: var(--accent-blue);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        label i {
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+        }
+
+        label .required {
+            color: var(--accent-red);
+        }
+
+        /* INPUTS & SELECTS */
         input, select {
-            width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #ddd;
-            font-size: 1rem; background: white; box-sizing: border-box; outline: none;
-            transition: 0.3s;
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1.5px solid #e2e8f0;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--primary);
+            background: #f8fafc;
+            outline: none;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
         }
 
-        input:focus { border-color: var(--accent); }
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        input:focus, select:focus {
+            border-color: var(--accent-blue);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+        }
 
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* PHOTO UPLOAD SECTION */
+        .photo-upload-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px dashed var(--accent-blue);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .photo-upload-section:hover {
+            background: linear-gradient(135deg, #e0f2fe 0%, #cffafe 100%);
+            border-color: #0369a1;
+        }
+
+        .photo-upload-section.has-photo {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: var(--accent-green);
+        }
+
+        .photo-upload-icon {
+            font-size: 2rem;
+            color: var(--accent-blue);
+            margin-bottom: 8px;
+        }
+
+        .photo-upload-section.has-photo .photo-upload-icon {
+            color: var(--accent-green);
+        }
+
+        .photo-upload-text {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .photo-upload-hint {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        #photo-input {
+            display: none;
+        }
+
+        .photo-preview {
+            margin-top: 12px;
+            border-radius: 12px;
+            max-width: 100%;
+            max-height: 200px;
+            display: none;
+        }
+
+        .photo-preview.show {
+            display: block;
+        }
+
+        /* GPS STATUS CARD */
+        .gps-status-card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid var(--accent-blue);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+
+        .gps-status-card.error {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-color: var(--accent-red);
+        }
+
+        .gps-status-card.success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: var(--accent-green);
+        }
+
+        .gps-status-icon {
+            font-size: 1.2rem;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .gps-status-text {
+            flex: 1;
+        }
+
+        .gps-status-text .status-label {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .gps-status-text .status-detail {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        /* BOUTON GPS */
+        .btn-gps {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--accent-orange), #ea580c);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(249, 115, 22, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-gps:active {
+            transform: scale(0.98);
+        }
+
+        .btn-gps:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* BOUTON DE VALIDATION */
         .btn-valider {
-            width: 100%; padding: 20px; background: var(--accent); color: white;
-            border: none; border-radius: 20px; font-weight: bold; font-size: 1.1rem;
-            margin-top: 25px; cursor: pointer; box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-            transition: 0.3s;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent-blue), #0369a1);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-top: 12px;
+            cursor: pointer;
+            box-shadow: var(--shadow-btn);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            font-family: inherit;
         }
 
-        .btn-valider:disabled { background: #95a5a6; }
+        .btn-valider:active {
+            transform: scale(0.98);
+            box-shadow: none;
+        }
+
+        .btn-valider:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* HISTORIQUE */
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #64748b;
+            margin: 24px 0 12px 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
         .purchase-item {
-            background: white; padding: 18px; border-radius: 20px; margin-bottom: 12px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 6px solid var(--accent);
+            background: white;
+            padding: 16px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-card);
+            border: 1px solid #f1f5f9;
+            border-left: 5px solid var(--accent-blue);
         }
 
-        .purchase-info b { display: block; font-size: 1rem; }
-        .purchase-info span { font-size: 0.8rem; color: #7f8c8d; }
-        .price-tag { font-weight: bold; color: var(--success); font-size: 1.1rem; }
+        .purchase-item.has-photo {
+            border-left-color: var(--accent-green);
+        }
 
-        .nav-back { position: absolute; left: 20px; top: 25px; color: white; text-decoration: none; }
+        .purchase-info b {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .purchase-info span {
+            font-size: 0.78rem;
+            color: #64748b;
+            font-weight: 500;
+            margin-top: 3px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .price-tag {
+            font-weight: 800;
+            color: var(--accent-green);
+            font-size: 1.05rem;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 6px 12px;
+            border-radius: 12px;
+        }
+
+        .badge-photo {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .spinner {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <a href="chef-accueil.html" class="nav-back"><i class="fas fa-arrow-left"></i></a>
-    <h1 style="margin:0; font-size: 1.3rem;">📦 Achats & Stocks</h1>
-</header>
-
-<div class="container">
-    <div class="main-card">
-        <h2>Nouvel Achat</h2>
-        
-        <label><i class="fas fa-building"></i> Chantier</label>
-        <select id="select-chantier" onchange="chargerHistoriqueAchats()">
-            <option>Chargement...</option>
-        </select>
-
-        <label><i class="fas fa-shopping-basket"></i> Désignation</label>
-        <input type="text" id="designation" placeholder="Ex: 50 sacs de ciment">
-
-        <div class="row">
-            <div>
-                <label><i class="fas fa-layer-group"></i> Quantité</label>
-                <input type="number" id="quantite" placeholder="Ex: 10">
+    <!-- ENTÊTE -->
+    <header>
+        <div class="header-content">
+            <a href="chef-accueil.html" class="btn-back">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <div class="header-title">
+                <h1>Achats & Stocks</h1>
+                <p>KORE Software - Anti-Fraude</p>
             </div>
-            <div>
-                <label><i class="fas fa-money-bill-wave"></i> Prix Total (F)</label>
-                <input type="number" id="prix" placeholder="Ex: 50000">
+            <div style="width: 42px;"></div>
+        </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL -->
+    <div class="container">
+        <div class="main-card">
+            <h2 class="card-header-title"><i class="fas fa-cart-plus"></i> Enregistrer un Achat</h2>
+            
+            <div class="form-group">
+                <label for="select-chantier"><i class="fas fa-building"></i> Chantier</label>
+                <select id="select-chantier" onchange="chargerHistoriqueAchats()">
+                    <option>Chargement...</option>
+                </select>
             </div>
+
+            <div class="form-group">
+                <label for="designation"><i class="fas fa-box-open"></i> Désignation</label>
+                <input type="text" id="designation" placeholder="Ex: 50 sacs de ciment">
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="quantite"><i class="fas fa-layer-group"></i> Quantité</label>
+                    <input type="number" id="quantite" placeholder="Ex: 10">
+                </div>
+                <div class="form-group">
+                    <label for="prix"><i class="fas fa-coins"></i> Prix Total (F)</label>
+                    <input type="number" id="prix" placeholder="Ex: 50000">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="mode-paiement"><i class="fas fa-wallet"></i> Mode de Paiement</label>
+                <select id="mode-paiement">
+                    <option value="Espèces">💵 Espèces</option>
+                    <option value="Mobile Money">📱 Mobile Money</option>
+                    <option value="Chèque">✍️ Chèque</option>
+                </select>
+            </div>
+
+            <!-- PHOTO DU REÇU (OBLIGATOIRE) -->
+            <div class="form-group">
+                <label><i class="fas fa-receipt"></i> Photo du Reçu <span class="required">*</span></label>
+                <div class="photo-upload-section" onclick="document.getElementById('photo-input').click()">
+                    <div class="photo-upload-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="photo-upload-text">Cliquez pour ajouter une photo</div>
+                    <div class="photo-upload-hint">JPG, PNG (max 5MB)</div>
+                    <img id="photo-preview" class="photo-preview" alt="Aperçu">
+                </div>
+                <input type="file" id="photo-input" accept="image/*" onchange="handlePhotoSelect(event)">
+            </div>
+
+            <!-- GPS STATUS -->
+            <div id="gps-status" class="gps-status-card" style="display: none;">
+                <div class="gps-status-icon">
+                    <i class="fas fa-map-pin"></i>
+                </div>
+                <div class="gps-status-text">
+                    <div class="status-label" id="gps-label">GPS non activé</div>
+                    <div class="status-detail" id="gps-detail">Cliquez sur "Capturer GPS"</div>
+                </div>
+            </div>
+
+            <!-- BOUTON GPS -->
+            <button class="btn-gps" onclick="activerGPS()" id="btn-gps">
+                <i class="fas fa-location-dot"></i> CAPTURER GPS
+            </button>
+
+            <button class="btn-valider" onclick="enregistrerAchat()" id="btn-final">
+                <i class="fas fa-check-circle"></i> VALIDER L'ACHAT
+            </button>
         </div>
 
-        <label><i class="fas fa-credit-card"></i> Mode de Paiement</label>
-        <select id="mode-paiement">
-            <option value="Espèces">💵 Espèces</option>
-            <option value="Mobile Money">📱 Mobile Money</option>
-            <option value="Chèque">✍️ Chèque</option>
-        </select>
-
-        <button class="btn-valider" onclick="enregistrerAchat()" id="btn-final">
-            VALIDER L'ACHAT
-        </button>
-    </div>
-
-    <div class="history-section" style="margin-top: 30px;">
-        <h3 style="margin-left: 10px; font-size: 1rem;"><i class="fas fa-list-ul"></i> Achats du jour :</h3>
+        <!-- HISTORIQUE DU JOUR -->
+        <span class="section-title"><i class="fas fa-receipt"></i> Achats du jour</span>
         <div id="historique-achats"></div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="supabase.js"></script>
-<script src="app-core.js"></script>
-<script>
-   
+    <footer>
+        KORE Software • Propulsé par Bâtisys Tech
+    </footer>
 
-let ENTREPRISE_ID = null;
-let AUTEUR_ID = null;
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="supabase.js"></script>
+    <script src="geolocation.js"></script>
+    <script src="security-module.js"></script>
+    <script src="app-core.js"></script>
+    <script>
+    let ENTREPRISE_ID = null;
+    let AUTEUR_ID = null;
+    let currentGPSPosition = null;
+    let selectedPhotoFile = null;
+    let securityManager = null;
 
-async function init() {
-    const session = await window.requireAuth();
-    if (!session) return;
+    /**
+     * Gère la sélection de la photo
+     */
+    function handlePhotoSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-    const profile = await window.getUserProfile();
-    if (!profile) return;
+        selectedPhotoFile = file;
 
-    ENTREPRISE_ID = profile.entreprise_id;
-    AUTEUR_ID     = (await sb.auth.getUser()).data.user?.id;
+        // Afficher l'aperçu
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const preview = document.getElementById('photo-preview');
+            preview.src = e.target.result;
+            preview.classList.add('show');
 
-    const { data: chantiers } = await sb
-        .from('chantiers')
-        .select('id, nom_chantier')
-        .eq('entreprise_id', ENTREPRISE_ID);
-
-    const select = document.getElementById('select-chantier');
-    if (chantiers && chantiers.length > 0) {
-        select.innerHTML = chantiers.map(c =>
-            `<option value="${c.id}">${c.nom_chantier}</option>`
-        ).join('');
-        chargerHistoriqueAchats();
-    } else {
-        select.innerHTML = "<option value=''>Aucun chantier actif</option>";
-    }
-}
-
-async function enregistrerAchat() {
-    const btn         = document.getElementById('btn-final');
-    const designation = document.getElementById('designation').value.trim();
-    const quantite    = Math.max(1, Number(document.getElementById('quantite').value) || 1);
-    const prix        = Number(document.getElementById('prix').value);
-    const chantier_id = document.getElementById('select-chantier').value;
-    const modeRaw     = document.getElementById('mode-paiement').value;
-
-    if (!designation || !prix || !chantier_id) return alert("Champs obligatoires manquants.");
-    if (!AUTEUR_ID) return alert("Session invalide, reconnectez-vous.");
-
-    // Convertir le mode en valeur enum
-    const modeMap = {
-        'Espèces':      'especes',
-        'Mobile Money': 'mobile_money',
-        'Chèque':       'cheque'
-    };
-    const mode = modeMap[modeRaw] || 'especes';
-
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
-
-    const { error } = await sb.from('materiaux').insert([{
-        designation:   designation,
-        quantite:      quantite,
-        prix_total:    prix,
-        prix_unitaire: Math.round(prix / quantite),
-        mode:          mode,
-        chantier_id:   chantier_id,
-        entreprise_id: ENTREPRISE_ID,
-        auteur_id:     AUTEUR_ID
-    }]);
-
-    if (error) {
-        alert("❌ " + error.message);
-    } else {
-        alert("✅ Achat enregistré !");
-        document.getElementById('designation').value = '';
-        document.getElementById('quantite').value    = '';
-        document.getElementById('prix').value        = '';
-        chargerHistoriqueAchats();
+            // Mettre à jour le style de la section upload
+            const uploadSection = document.querySelector('.photo-upload-section');
+            uploadSection.classList.add('has-photo');
+            uploadSection.querySelector('.photo-upload-text').textContent = '✅ Photo sélectionnée';
+        };
+        reader.readAsDataURL(file);
     }
 
-    btn.disabled = false;
-    btn.innerText = "VALIDER L'ACHAT";
-}
+    /**
+     * Active la géolocalisation
+     */
+    async function activerGPS() {
+        const btn = document.getElementById('btn-gps');
+        const statusCard = document.getElementById('gps-status');
+        const statusLabel = document.getElementById('gps-label');
+        const statusDetail = document.getElementById('gps-detail');
 
-async function chargerHistoriqueAchats() {
-    const chantier_id = document.getElementById('select-chantier').value;
-    if (!chantier_id) return;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Localisation...';
 
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
+        try {
+            const position = await GeoLocationModule.getPositionWithRetry();
+            currentGPSPosition = position;
 
-    const { data, error } = await sb
-        .from('materiaux')
-        .select('*')
-        .eq('chantier_id', chantier_id)
-        .gte('created_at', startOfDay.toISOString())
-        .order('created_at', { ascending: false });
+            statusCard.style.display = 'flex';
+            statusCard.classList.remove('error');
+            statusCard.classList.add('success');
+            statusLabel.textContent = '✅ Position GPS capturée';
+            statusDetail.textContent = GeoLocationModule.formatPosition(position);
 
-    if (error) console.error(error);
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> GPS ACTIVÉ';
+            btn.style.background = 'linear-gradient(135deg, var(--accent-green), #059669)';
 
-    const div = document.getElementById('historique-achats');
-    if (data && data.length > 0) {
-        div.innerHTML = data.map(m => `
-            <div class="purchase-item">
-                <div class="purchase-info">
-                    <b>${(m.designation || '').trim()} (x${Number(m.quantite) || 1})</b>
-                    <span><i class="fas fa-clock"></i> ${new Date(m.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+        } catch (error) {
+            console.error('Erreur GPS:', error);
+            statusCard.style.display = 'flex';
+            statusCard.classList.remove('success');
+            statusCard.classList.add('error');
+            statusLabel.textContent = '❌ Erreur GPS';
+            statusDetail.textContent = error.message || 'Impossible de récupérer la position';
+
+            btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> RÉESSAYER';
+            btn.style.background = 'linear-gradient(135deg, var(--accent-red), #dc2626)';
+
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async function init() {
+        const session = await window.requireAuth();
+        if (!session) return;
+
+        const profile = await window.getUserProfile();
+        if (!profile) return;
+
+        ENTREPRISE_ID = profile.entreprise_id;
+        AUTEUR_ID = (await sb.auth.getUser()).data.user?.id;
+
+        // Initialiser SecurityManager
+        securityManager = new SecurityModule.SecurityManager(window.sb);
+
+        const { data: chantiers } = await sb
+            .from('chantiers')
+            .select('id, nom_chantier')
+            .eq('entreprise_id', ENTREPRISE_ID);
+
+        const select = document.getElementById('select-chantier');
+        if (chantiers && chantiers.length > 0) {
+            select.innerHTML = chantiers.map(c =>
+                `<option value="${c.id}">${c.nom_chantier}</option>`
+            ).join('');
+            chargerHistoriqueAchats();
+        } else {
+            select.innerHTML = "<option value=''>Aucun chantier actif</option>";
+        }
+    }
+
+    async function enregistrerAchat() {
+        const btn = document.getElementById('btn-final');
+        const designation = document.getElementById('designation').value.trim();
+        const quantite = Math.max(1, Number(document.getElementById('quantite').value) || 1);
+        const prix = Number(document.getElementById('prix').value);
+        const chantier_id = document.getElementById('select-chantier').value;
+        const modeRaw = document.getElementById('mode-paiement').value;
+
+        // Validations
+        if (!designation || !prix || !chantier_id) {
+            return alert("❌ Champs obligatoires manquants.");
+        }
+        if (!AUTEUR_ID) {
+            return alert("❌ Session invalide, reconnectez-vous.");
+        }
+
+        // Valider avec SecurityManager
+        const validation = await securityManager.validateAchat(
+            { chantier_id, designation, prix_total: prix },
+            selectedPhotoFile,
+            currentGPSPosition
+        );
+
+        if (!validation.valid) {
+            return alert(validation.message);
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
+        try {
+            // Convertir le mode en valeur enum
+            const modeMap = {
+                'Espèces': 'especes',
+                'Mobile Money': 'mobile_money',
+                'Chèque': 'cheque'
+            };
+            const mode = modeMap[modeRaw] || 'especes';
+
+            // Upload photo si présente
+            let photoUrl = null;
+            if (selectedPhotoFile) {
+                const fileExt = selectedPhotoFile.name.split('.').pop().toLowerCase();
+                const fileName = `receipts/${ENTREPRISE_ID}/${Date.now()}.${fileExt}`;
+
+                const { error: uploadError } = await sb.storage
+                    .from('photos-chantiers')
+                    .upload(fileName, selectedPhotoFile, { upsert: false });
+
+                if (uploadError) {
+                    throw new Error("Upload photo : " + uploadError.message);
+                }
+
+                const { data: urlData } = sb.storage
+                    .from('photos-chantiers')
+                    .getPublicUrl(fileName);
+
+                photoUrl = urlData.publicUrl;
+            }
+
+            // Enregistrer l'achat avec GPS et photo
+            const result = await securityManager.recordAchatWithGPS(
+                {
+                    designation: designation,
+                    quantite: quantite,
+                    prix_total: prix,
+                    prix_unitaire: Math.round(prix / quantite),
+                    mode: mode,
+                    chantier_id: chantier_id,
+                    entreprise_id: ENTREPRISE_ID,
+                    auteur_id: AUTEUR_ID
+                },
+                photoUrl,
+                {
+                    latitude: currentGPSPosition?.latitude,
+                    longitude: currentGPSPosition?.longitude
+                }
+            );
+
+            if (!result.success) {
+                throw new Error(result.message);
+            }
+
+            btn.style.background = "#10b981";
+            btn.innerHTML = "<i class='fas fa-check-circle'></i> ACHAT ENREGISTRÉ";
+            setTimeout(() => {
+                btn.style.background = "";
+                btn.innerHTML = "<i class='fas fa-check-circle'></i> VALIDER L'ACHAT";
+            }, 2000);
+
+            // Reset formulaire
+            document.getElementById('designation').value = '';
+            document.getElementById('quantite').value = '';
+            document.getElementById('prix').value = '';
+            document.getElementById('photo-input').value = '';
+            document.getElementById('photo-preview').classList.remove('show');
+            document.querySelector('.photo-upload-section').classList.remove('has-photo');
+            document.querySelector('.photo-upload-text').textContent = 'Cliquez pour ajouter une photo';
+            selectedPhotoFile = null;
+            currentGPSPosition = null;
+            document.getElementById('gps-status').style.display = 'none';
+            document.getElementById('btn-gps').innerHTML = '<i class="fas fa-location-dot"></i> CAPTURER GPS';
+            document.getElementById('btn-gps').style.background = '';
+
+            chargerHistoriqueAchats();
+
+        } catch (err) {
+            console.error("Erreur:", err);
+            alert("❌ " + (err.message || "Erreur lors de l'enregistrement"));
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async function chargerHistoriqueAchats() {
+        const chantier_id = document.getElementById('select-chantier').value;
+        if (!chantier_id) return;
+
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const { data, error } = await sb
+            .from('materiaux')
+            .select('*')
+            .eq('chantier_id', chantier_id)
+            .gte('created_at', startOfDay.toISOString())
+            .order('created_at', { ascending: false });
+
+        if (error) console.error(error);
+
+        const div = document.getElementById('historique-achats');
+        if (data && data.length > 0) {
+            div.innerHTML = data.map(m => `
+                <div class="purchase-item ${m.photo_recu_url ? 'has-photo' : ''}">
+                    <div class="purchase-info">
+                        <b>${(m.designation || '').trim()} (x${Number(m.quantite) || 1})</b>
+                        <span>
+                            <i class="fas fa-clock"></i> 
+                            ${new Date(m.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                        ${m.photo_recu_url ? `<span class="badge-photo">📸 Photo</span>` : ''}
+                        ${m.latitude && m.longitude ? `<span style="font-size: 0.7rem; color: #0284c7;">📍 GPS</span>` : ''}
+                    </div>
+                    <div class="price-tag">
+                        ${Number(m.prix_total ?? (Number(m.prix_unitaire) * (Number(m.quantite) || 1))).toLocaleString()} F
+                    </div>
                 </div>
-                <div class="price-tag">
-                    ${Number(m.prix_total ?? (Number(m.prix_unitaire) * (Number(m.quantite) || 1))).toLocaleString()} F
-                </div>
-            </div>
-        `).join('');
-    } else {
-        div.innerHTML = `
-            <div style="text-align:center; padding:20px; color:#7f8c8d; background:white; border-radius:20px;">
-                Aucune dépense enregistrée aujourd'hui.
-            </div>`;
+            `).join('');
+        } else {
+            div.innerHTML = `
+                <div style="text-align:center; padding:20px; color:#64748b; background:white; border-radius:20px; font-size:0.85rem; font-weight:600; box-shadow: var(--shadow-card);">
+                    Aucune dépense enregistrée aujourd'hui.
+                </div>`;
+        }
     }
-}
 
-async function deconnexion() {
-    await sb.auth.signOut();
-    localStorage.clear();
-    window.location.href = 'login.html';
-}
+    async function deconnexion() {
+        await sb.auth.signOut();
+        localStorage.clear();
+        window.location.href = 'login.html';
+    }
 
-window.onload = init;
-</script>
+    window.onload = init;
+    </script>
 </body>
 </html>
