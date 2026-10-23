@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kore Software - Fournisseurs & Dettes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #2c3e50; 
+            --ci-orange: #ff8200; 
+            --ci-green: #009e49;
+            --bg: #f4f7f6; 
+            --text: #333; 
+        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; color: var(--text); padding-top: 5px; }
+        
+        .flag-top { height: 5px; display: flex; position: fixed; top: 0; width: 100%; z-index: 2000; }
+        .orange { background: var(--ci-orange); flex: 1; }
+        .white  { background: #fff; flex: 1; }
+        .green  { background: var(--ci-green); flex: 1; }
+
+        nav { 
+            background: var(--primary); padding: 1rem; display: flex; flex-wrap: wrap;
+            justify-content: center; align-items: center; gap: 10px; margin-top: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        nav a { 
+            color: white; text-decoration: none; font-weight: 500; padding: 8px 12px;
+            border-radius: 5px; font-size: 0.85rem; transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1); white-space: nowrap; position: relative;
+        }
+        nav a:hover { border-color: var(--ci-orange); background: rgba(255,255,255,0.1); }
+        nav a.active { background: var(--ci-orange); border-color: var(--ci-orange); }
+        .logout-btn { background: #c0392b; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.85rem; margin-left: 10px; }
+
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
+        .welcome-header { margin-bottom: 30px; }
+        .welcome-header h1 { color: var(--primary); margin: 0; font-size: 1.8rem; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid var(--ci-orange); }
+        .stat-card h3 { margin: 0; font-size: 0.8rem; color: #7f8c8d; text-transform: uppercase; }
+        .stat-card .value { font-size: 1.6rem; font-weight: bold; margin-top: 10px; color: var(--primary); }
+        .stat-card .detail { font-size: 0.7rem; color: #999; margin-top: 5px; }
+
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        h2 { font-size: 1.1rem; color: var(--primary); margin: 0 0 20px 0; border-bottom: 2px solid #f1f1f1; padding-bottom: 10px; }
+
+        .suppliers-table { width: 100%; border-collapse: collapse; }
+        .suppliers-table th { background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: var(--primary); border-bottom: 2px solid #e9ecef; }
+        .suppliers-table td { padding: 12px; border-bottom: 1px solid #e9ecef; }
+        .suppliers-table tr:hover { background: #f8f9fa; }
+
+        .debt-amount { font-weight: bold; color: var(--ci-orange); font-size: 1.1rem; }
+        .debt-paid { color: var(--ci-green); }
+        .debt-pending { color: #e74c3c; }
+
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .badge-pending { background: #ffe5e5; color: #c0392b; }
+        .badge-paid { background: #e8f5e9; color: #2e7d32; }
+
+        .purchase-card { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--ci-orange); }
+        .purchase-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; }
+        .purchase-title { font-weight: 600; color: var(--primary); }
+        .purchase-price { font-size: 1.1rem; font-weight: bold; color: var(--ci-orange); }
+        .purchase-details { font-size: 0.85rem; color: #666; margin-bottom: 10px; }
+        .purchase-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .btn-action { background: var(--ci-green); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.75rem; border: none; cursor: pointer; transition: 0.3s; }
+        .btn-action:hover { background: #008040; }
+        .btn-action.secondary { background: #3498db; }
+        .btn-action.secondary:hover { background: #2980b9; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: white; border-radius: 15px; padding: 25px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #f1f1f1; }
+        .modal-header h2 { margin: 0; font-size: 1.2rem; color: var(--primary); }
+        .modal-close { background: none; border: none; font-size: 1.5rem; color: #999; cursor: pointer; padding: 0; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; box-sizing: border-box; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--ci-orange); box-shadow: 0 0 0 3px rgba(255, 130, 0, 0.1); }
+
+        .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .btn-cancel { background: #e9ecef; color: var(--primary); padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-submit { background: var(--ci-orange); color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-submit:hover { background: #e67e00; }
+
+        .empty-state { text-align: center; padding: 40px 20px; color: #999; }
+        .empty-state i { font-size: 3rem; margin-bottom: 10px; opacity: 0.5; }
+
+        .photo-preview { max-width: 150px; max-height: 150px; border-radius: 8px; margin-top: 10px; cursor: pointer; }
+        .gps-link { color: var(--ci-orange); text-decoration: none; font-weight: 600; }
+        .gps-link:hover { text-decoration: underline; }
+
+        .loading { text-align: center; padding: 20px; color: #999; }
+        .spinner { display: inline-block; animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="flag-top"><div class="orange"></div><div class="white"></div><div class="green"></div></div>
+
+    <nav>
+        <a href="tableau-de-bord.html">📊 Dashboard</a>
+        <a href="chantiers.html">🏗️ Chantiers</a>
+        <a href="equipe.html">👥 Équipe & Pointage</a>
+        <a href="bilan.html">💰 Bilan & Matériaux</a>
+        <a href="suppliers-dashboard.html" class="active">🤝 Fournisseurs & Dettes</a>
+        <a href="admin-fraude.html">Detection de fraude</a>
+        <a href="profil.html">⚙️ Profil</a>
+        <button onclick="deconnexion()" class="logout-btn">Sortir</button>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-header">
+            <h1>Gestion des Fournisseurs 🤝</h1>
+            <p>Suivi des dettes et paiements</p>
+        </div>
+
+        <!-- STATISTIQUES -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Non Payé</h3>
+                <div class="value debt-pending" id="stat-total-non-paye">0 F</div>
+                <div class="detail" id="stat-count-non-paye">0 achats</div>
+            </div>
+            <div class="stat-card" style="border-top-color: var(--ci-green);">
+                <h3>Total Payé</h3>
+                <div class="value debt-paid" id="stat-total-paye">0 F</div>
+                <div class="detail" id="stat-count-paye">0 achats</div>
+            </div>
+            <div class="stat-card" style="border-top-color: #3498db;">
+                <h3>Nombre de Fournisseurs</h3>
+                <div class="value" id="stat-suppliers-count">0</div>
+                <div class="detail">Fournisseurs actifs</div>
+            </div>
+        </div>
+
+        <!-- TABLEAU DES FOURNISSEURS -->
+        <div class="card">
+            <h2>📋 Résumé par Fournisseur</h2>
+            <div id="suppliers-list">
+                <div class="loading"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>
+            </div>
+        </div>
+
+        <!-- ACHATS EN ATTENTE DE PAIEMENT -->
+        <div class="card">
+            <h2>📦 Achats en Attente de Paiement <span id="pending-count" style="font-size: 0.8rem; color: #999;"></span></h2>
+            <div id="pending-purchases">
+                <div class="loading"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PAIEMENT -->
+    <div id="modal-paiement" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💳 Enregistrer un Paiement</h2>
+                <button class="modal-close" onclick="fermerModalPaiement()">✕</button>
+            </div>
+            <div id="modal-paiement-body"></div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="fermerModalPaiement()">Annuler</button>
+                <button class="btn-submit" onclick="enregistrerPaiement()" id="btn-submit-paiement">
+                    <i class="fas fa-check"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DÉTAILS FOURNISSEUR -->
+    <div id="modal-supplier-details" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-supplier-name">Détails Fournisseur</h2>
+                <button class="modal-close" onclick="fermerModalFournisseur()">✕</button>
+            </div>
+            <div id="modal-supplier-body"></div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="supabase.js"></script>
+    <script src="suppliers-module.js"></script>
+    <script>
+        let ENTREPRISE_ID = null;
+        let suppliersModule = null;
+        let currentPaymentData = null;
+
+        async function init() {
+            const session = await window.requireAuth();
+            if (!session) return;
+
+            const profile = await window.getUserProfile();
+            if (!profile || profile.role !== 'pdg') {
+                window.location.replace('login.html');
+                return;
+            }
+
+            ENTREPRISE_ID = profile.entreprise_id;
+            suppliersModule = new SuppliersModule(window.sb);
+            await chargerDonnees();
+        }
+
+        async function chargerDonnees() {
+            try {
+                await Promise.all([
+                    chargerStatistiques(),
+                    chargerFournisseurs(),
+                    chargerAchatsEnAttente()
+                ]);
+            } catch (err) {
+                console.error('Erreur chargement données:', err);
+            }
+        }
+
+        async function chargerStatistiques() {
+            try {
+                const stats = await suppliersModule.getDebtStatistics(ENTREPRISE_ID);
+                document.getElementById('stat-total-non-paye').textContent = suppliersModule.formatCurrency(stats.totalNonPaye) + ' F';
+                document.getElementById('stat-count-non-paye').textContent = stats.nombreAchatNonPaye + ' achat(s)';
+                document.getElementById('stat-total-paye').textContent = suppliersModule.formatCurrency(stats.totalPaye) + ' F';
+                document.getElementById('stat-count-paye').textContent = stats.nombreAchatPaye + ' achat(s)';
+
+                const debts = await suppliersModule.getSupplierDebts(ENTREPRISE_ID);
+                document.getElementById('stat-suppliers-count').textContent = debts.length;
+            } catch (err) {
+                console.error('Erreur statistiques:', err);
+            }
+        }
+
+        async function chargerFournisseurs() {
+            try {
+                const debts = await suppliersModule.getSupplierDebts(ENTREPRISE_ID);
+                const container = document.getElementById('suppliers-list');
+
+                if (debts.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Aucun fournisseur avec dettes</p></div>';
+                    return;
+                }
+
+                let html = '<table class="suppliers-table"><thead><tr><th>Fournisseur</th><th>Catégorie</th><th>Achats Non Payés</th><th>Total Non Payé</th><th>Actions</th></tr></thead><tbody>';
+                debts.forEach(d => {
+                    html += `<tr>
+                        <td><strong>${d.nom_entreprise}</strong>${d.telephone ? '<br><small>' + d.telephone + '</small>' : ''}</td>
+                        <td>${d.categorie || '-'}</td>
+                        <td>${d.nombre_achats_non_payes}</td>
+                        <td class="debt-amount">${suppliersModule.formatCurrency(d.total_non_paye)} F</td>
+                        <td><button class="btn-action secondary" onclick="afficherDetailsFournisseur('${d.id}', '${d.nom_entreprise}')"><i class="fas fa-eye"></i> Détails</button></td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (err) {
+                console.error('Erreur fournisseurs:', err);
+            }
+        }
+
+        async function chargerAchatsEnAttente() {
+            try {
+                const purchases = await suppliersModule.getPendingPurchases(ENTREPRISE_ID);
+                const container = document.getElementById('pending-purchases');
+
+                document.getElementById('pending-count').textContent = `(${purchases.length})`;
+
+                if (purchases.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-check-circle"></i><p>Tous les achats sont payés ✓</p></div>';
+                    return;
+                }
+
+                let html = '';
+                purchases.forEach(p => {
+                    html += `<div class="purchase-card">
+                        <div class="purchase-header">
+                            <div>
+                                <div class="purchase-title">${p.designation}</div>
+                                <div class="purchase-details"><strong>${p.nom_entreprise || 'Sans fournisseur'}</strong> • ${suppliersModule.formatDate(p.created_at)}</div>
+                            </div>
+                            <div class="purchase-price">${suppliersModule.formatCurrency(p.prix_total)} F</div>
+                        </div>
+                        <div class="purchase-details">Chantier: <strong>${p.nom_chantier || '-'}</strong> • Quantité: <strong>${p.quantite}</strong></div>`;
+                    
+                    if (p.photo_recu_url) {
+                        html += `<div style="margin-bottom: 10px;"><img src="${p.photo_recu_url}" class="photo-preview" onclick="afficherPhoto('${p.photo_recu_url}')"></div>`;
+                    }
+                    
+                    if (p.latitude && p.longitude) {
+                        html += `<div style="margin-bottom: 10px; font-size: 0.85rem;">📍 <a href="https://maps.google.com/?q=${p.latitude},${p.longitude}" target="_blank" class="gps-link">Voir sur la carte</a></div>`;
+                    }
+                    
+                    html += `<div class="purchase-actions">
+                        <button class="btn-action" onclick="ouvrirModalPaiement('${p.id}', '${p.designation}', ${p.prix_total})">
+                            <i class="fas fa-credit-card"></i> Marquer comme Payé
+                        </button>
+                    </div></div>`;
+                });
+                container.innerHTML = html;
+            } catch (err) {
+                console.error('Erreur achats en attente:', err);
+            }
+        }
+
+        function ouvrirModalPaiement(materiauId, designation, montant) {
+            currentPaymentData = { materiauId, designation, montant };
+            const body = document.getElementById('modal-paiement-body');
+            body.innerHTML = `
+                <div class="form-group">
+                    <label>Achat</label>
+                    <input type="text" value="${designation}" disabled style="background: #f5f5f5;">
+                </div>
+                <div class="form-group">
+                    <label>Montant à Payer</label>
+                    <input type="number" id="input-montant" value="${montant}" disabled style="background: #f5f5f5;">
+                </div>
+                <div class="form-group">
+                    <label for="input-type-paiement">Type de Paiement <span style="color: red;">*</span></label>
+                    <select id="input-type-paiement">
+                        <option value="">-- Sélectionner --</option>
+                        <option value="wave">📱 Wave</option>
+                        <option value="orange_money">🟠 Orange Money</option>
+                        <option value="virement">🏦 Virement Bancaire</option>
+                        <option value="cheque">✍️ Chèque</option>
+                        <option value="especes">💵 Espèces</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="input-reference">Numéro de Référence <span style="color: red;">*</span></label>
+                    <input type="text" id="input-reference" placeholder="Ex: TXN123456789">
+                </div>
+                <div class="form-group">
+                    <label for="input-notes">Notes (optionnel)</label>
+                    <textarea id="input-notes" placeholder="Remarques supplémentaires..."></textarea>
+                </div>
+            `;
+            document.getElementById('modal-paiement').classList.add('active');
+        }
+
+        function fermerModalPaiement() {
+            document.getElementById('modal-paiement').classList.remove('active');
+            currentPaymentData = null;
+        }
+
+        async function enregistrerPaiement() {
+            if (!currentPaymentData) return;
+
+            const typePaiement = document.getElementById('input-type-paiement').value;
+            const reference = document.getElementById('input-reference').value.trim();
+            const notes = document.getElementById('input-notes').value.trim();
+
+            if (!typePaiement || !reference) {
+                alert('❌ Veuillez remplir tous les champs obligatoires.');
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-paiement');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
+            try {
+                const result = await suppliersModule.markAsPaid(
+                    currentPaymentData.materiauId,
+                    currentPaymentData.montant,
+                    typePaiement,
+                    reference,
+                    notes
+                );
+
+                if (!result.success) {
+                    throw new Error(result.message);
+                }
+
+                alert('✅ Paiement enregistré avec succès !');
+                fermerModalPaiement();
+                await chargerDonnees();
+
+            } catch (err) {
+                console.error('Erreur paiement:', err);
+                alert('❌ ' + (err.message || 'Erreur lors de l\'enregistrement du paiement'));
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> Enregistrer';
+            }
+        }
+
+        async function afficherDetailsFournisseur(fournisseurId, nomFournisseur) {
+            try {
+                const { data: purchases } = await window.sb
+                    .from('materiaux')
+                    .select('*')
+                    .eq('fournisseur_id', fournisseurId)
+                    .order('created_at', { ascending: false });
+
+                const history = await suppliersModule.getPaymentHistory(fournisseurId);
+
+                const body = document.getElementById('modal-supplier-body');
+                const totalNonPaye = purchases
+                    .filter(p => p.statut_paiement === 'non_paye')
+                    .reduce((sum, p) => sum + (p.prix_total || (p.prix_unitaire * p.quantite)), 0);
+
+                const totalPaye = purchases
+                    .filter(p => p.statut_paiement === 'paye')
+                    .reduce((sum, p) => sum + (p.prix_total || (p.prix_unitaire * p.quantite)), 0);
+
+                let html = `<div style="margin-bottom: 20px;">
+                    <h3 style="margin: 0 0 10px 0; color: var(--primary);">${nomFournisseur}</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="background: #ffe5e5; padding: 10px; border-radius: 6px;">
+                            <div style="font-size: 0.8rem; color: #666;">Non Payé</div>
+                            <div style="font-size: 1.2rem; font-weight: bold; color: #c0392b;">${suppliersModule.formatCurrency(totalNonPaye)} F</div>
+                        </div>
+                        <div style="background: #e8f5e9; padding: 10px; border-radius: 6px;">
+                            <div style="font-size: 0.8rem; color: #666;">Payé</div>
+                            <div style="font-size: 1.2rem; font-weight: bold; color: var(--ci-green);">${suppliersModule.formatCurrency(totalPaye)} F</div>
+                        </div>
+                    </div>
+                </div>
+                <h4 style="color: var(--primary); margin-top: 20px;">Achats</h4>`;
+
+                if (purchases.length > 0) {
+                    purchases.forEach(p => {
+                        const montant = p.prix_total || (p.prix_unitaire * p.quantite);
+                        html += `<div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid ${p.statut_paiement === 'paye' ? 'var(--ci-green)' : 'var(--ci-orange)'};">
+                            <div style="font-weight: 600; margin-bottom: 3px;">${p.designation}</div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 3px;">${suppliersModule.formatDate(p.created_at)} • ${p.quantite} unité(s)</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: bold; color: var(--ci-orange);">${suppliersModule.formatCurrency(montant)} F</span>
+                                <span class="badge ${p.statut_paiement === 'paye' ? 'badge-paid' : 'badge-pending'}">${p.statut_paiement === 'paye' ? '✓ Payé' : '⏳ En attente'}</span>
+                            </div>
+                        </div>`;
+                    });
+                } else {
+                    html += '<p style="color: #999;">Aucun achat</p>';
+                }
+
+                if (history.length > 0) {
+                    html += '<h4 style="color: var(--primary); margin-top: 20px;">Historique des Paiements</h4>';
+                    history.forEach(h => {
+                        html += `<div style="background: #f0f8ff; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #3498db;">
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 3px;">${suppliersModule.formatDate(h.date_paiement)} • ${h.type_paiement.toUpperCase()}</div>
+                            <div style="font-weight: 600; color: var(--ci-green);">${suppliersModule.formatCurrency(h.montant_paye)} F</div>
+                            <div style="font-size: 0.8rem; color: #666;">Ref: ${h.reference_paiement}</div>
+                        </div>`;
+                    });
+                }
+
+                body.innerHTML = html;
+                document.getElementById('modal-supplier-details').classList.add('active');
+            } catch (err) {
+                console.error('Erreur détails fournisseur:', err);
+            }
+        }
+
+        function fermerModalFournisseur() {
+            document.getElementById('modal-supplier-details').classList.remove('active');
+        }
+
+        function afficherPhoto(url) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; align-items: center; justify-content: center;';
+            modal.innerHTML = `<img src="${url}" style="max-width: 90%; max-height: 90%; border-radius: 10px;" onclick="this.parentElement.remove()">`;
+            document.body.appendChild(modal);
+        }
+
+        async function deconnexion() {
+            await window.sb.auth.signOut();
+            localStorage.clear();
+            window.location.replace('login.html');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

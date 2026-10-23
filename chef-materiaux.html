@@ -424,6 +424,135 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+
+        /* MODAL FOURNISSEUR */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-modal-cancel {
+            padding: 12px 20px;
+            background: #f1f5f9;
+            color: var(--primary);
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-modal-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-modal-submit {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--accent-blue), #0369a1);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-btn);
+            transition: all 0.2s ease;
+        }
+
+        .btn-modal-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4);
+        }
+
+        .btn-modal-submit:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
     </style>
 </head>
 <body>
@@ -467,6 +596,18 @@
                 <div class="form-group">
                     <label for="prix"><i class="fas fa-coins"></i> Prix Total (F)</label>
                     <input type="number" id="prix" placeholder="Ex: 50000">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="select-fournisseur"><i class="fas fa-building"></i> Fournisseur</label>
+                <div style="display: flex; gap: 8px;">
+                    <select id="select-fournisseur" style="flex: 1;">
+                        <option value="">-- Sélectionner un fournisseur --</option>
+                    </select>
+                    <button type="button" class="btn-add-supplier" onclick="ouvrirModalFournisseur()" style="padding: 14px 16px; background: var(--accent-orange); color: white; border: none; border-radius: 16px; font-weight: 700; cursor: pointer; font-size: 0.9rem; white-space: nowrap;">
+                        <i class="fas fa-plus"></i> Nouveau
+                    </button>
                 </div>
             </div>
 
@@ -519,6 +660,51 @@
         <div id="historique-achats"></div>
     </div>
 
+    <!-- MODAL CRÉATION FOURNISSEUR -->
+    <div id="modal-fournisseur" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-building"></i> Nouveau Fournisseur</h2>
+                <button class="modal-close" onclick="fermerModalFournisseur()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="input-nom-entreprise"><i class="fas fa-store"></i> Nom Entreprise <span class="required">*</span></label>
+                    <input type="text" id="input-nom-entreprise" placeholder="Ex: SARL Matériaux BTP">
+                </div>
+                <div class="form-group">
+                    <label for="input-telephone"><i class="fas fa-phone"></i> Téléphone</label>
+                    <input type="tel" id="input-telephone" placeholder="Ex: +225 07 12 34 56 78">
+                </div>
+                <div class="form-group">
+                    <label for="input-categorie"><i class="fas fa-tag"></i> Catégorie</label>
+                    <select id="input-categorie">
+                        <option value="">-- Sélectionner une catégorie --</option>
+                        <option value="Ciment">Ciment & Béton</option>
+                        <option value="Acier">Acier & Ferraille</option>
+                        <option value="Bois">Bois & Menuiserie</option>
+                        <option value="Peinture">Peinture & Vernis</option>
+                        <option value="Électricité">Électricité</option>
+                        <option value="Plomberie">Plomberie</option>
+                        <option value="Carrelage">Carrelage & Revêtement</option>
+                        <option value="Quincaillerie">Quincaillerie</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="input-contact"><i class="fas fa-user"></i> Contact Principal</label>
+                    <input type="text" id="input-contact" placeholder="Ex: Monsieur Koné">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" onclick="fermerModalFournisseur()">Annuler</button>
+                <button class="btn-modal-submit" onclick="creerFournisseur()" id="btn-create-supplier">
+                    <i class="fas fa-check-circle"></i> Créer
+                </button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         KORE Software • Propulsé par Bâtisys Tech
     </footer>
@@ -529,12 +715,14 @@
     <script src="geolocation.js"></script>
     <script src="security-module.js"></script>
     <script src="app-core.js"></script>
+    <script src="suppliers-module.js"></script>
     <script>
     let ENTREPRISE_ID = null;
     let AUTEUR_ID = null;
     let currentGPSPosition = null;
     let selectedPhotoFile = null;
     let securityManager = null;
+    let suppliersModule = null;
 
     /**
      * Gère la sélection de la photo
@@ -637,6 +825,7 @@
         const prix = Number(document.getElementById('prix').value);
         const chantier_id = document.getElementById('select-chantier').value;
         const modeRaw = document.getElementById('mode-paiement').value;
+        const fournisseur_id = document.getElementById('select-fournisseur').value || null;
 
         // Validations
         if (!designation || !prix || !chantier_id) {
@@ -690,7 +879,7 @@
                 photoUrl = urlData.publicUrl;
             }
 
-            // Enregistrer l'achat avec GPS et photo
+            // Enregistrer l'achat avec GPS, photo, fournisseur et statut de paiement
             const result = await securityManager.recordAchatWithGPS(
                 {
                     designation: designation,
@@ -700,7 +889,9 @@
                     mode: mode,
                     chantier_id: chantier_id,
                     entreprise_id: ENTREPRISE_ID,
-                    auteur_id: AUTEUR_ID
+                    auteur_id: AUTEUR_ID,
+                    fournisseur_id: fournisseur_id,
+                    statut_paiement: 'non_paye'
                 },
                 photoUrl,
                 {
@@ -724,6 +915,7 @@
             document.getElementById('designation').value = '';
             document.getElementById('quantite').value = '';
             document.getElementById('prix').value = '';
+            document.getElementById('select-fournisseur').value = '';
             document.getElementById('photo-input').value = '';
             document.getElementById('photo-preview').classList.remove('show');
             document.querySelector('.photo-upload-section').classList.remove('has-photo');
@@ -790,6 +982,125 @@
         await sb.auth.signOut();
         localStorage.clear();
         window.location.href = 'login.html';
+    }
+
+    /**
+     * Ouvrir le modal de création de fournisseur
+     */
+    function ouvrirModalFournisseur() {
+        document.getElementById('modal-fournisseur').classList.add('active');
+        document.getElementById('input-nom-entreprise').focus();
+    }
+
+    /**
+     * Fermer le modal de création de fournisseur
+     */
+    function fermerModalFournisseur() {
+        document.getElementById('modal-fournisseur').classList.remove('active');
+        // Réinitialiser le formulaire
+        document.getElementById('input-nom-entreprise').value = '';
+        document.getElementById('input-telephone').value = '';
+        document.getElementById('input-categorie').value = '';
+        document.getElementById('input-contact').value = '';
+    }
+
+    /**
+     * Créer un nouveau fournisseur
+     */
+    async function creerFournisseur() {
+        const nomEntreprise = document.getElementById('input-nom-entreprise').value.trim();
+        const telephone = document.getElementById('input-telephone').value.trim();
+        const categorie = document.getElementById('input-categorie').value;
+        const contact = document.getElementById('input-contact').value.trim();
+
+        if (!nomEntreprise) {
+            return alert('❌ Le nom de l\'entreprise est obligatoire.');
+        }
+
+        const btn = document.getElementById('btn-create-supplier');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création...';
+
+        try {
+            const result = await suppliersModule.createSupplier(ENTREPRISE_ID, {
+                nom_entreprise: nomEntreprise,
+                telephone: telephone,
+                categorie: categorie,
+                contact_principal: contact
+            });
+
+            if (!result.success) {
+                throw new Error(result.message);
+            }
+
+            // Recharger la liste des fournisseurs
+            await chargerFournisseurs();
+
+            // Sélectionner le nouveau fournisseur
+            document.getElementById('select-fournisseur').value = result.data.id;
+
+            btn.style.background = '#10b981';
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> Créé';
+            setTimeout(() => {
+                btn.style.background = '';
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Créer';
+                fermerModalFournisseur();
+            }, 1500);
+
+        } catch (err) {
+            console.error('Erreur création fournisseur:', err);
+            alert('❌ ' + (err.message || 'Erreur lors de la création du fournisseur'));
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    /**
+     * Charger la liste des fournisseurs
+     */
+    async function chargerFournisseurs() {
+        try {
+            const fournisseurs = await suppliersModule.loadSuppliers(ENTREPRISE_ID);
+            const select = document.getElementById('select-fournisseur');
+            
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">-- Sélectionner un fournisseur --</option>';
+            
+            fournisseurs.forEach(f => {
+                const option = document.createElement('option');
+                option.value = f.id;
+                option.textContent = f.nom_entreprise;
+                if (f.telephone) {
+                    option.textContent += ` (${f.telephone})`;
+                }
+                select.appendChild(option);
+            });
+
+            // Restaurer la sélection précédente si elle existe toujours
+            if (currentValue && fournisseurs.some(f => f.id === currentValue)) {
+                select.value = currentValue;
+            }
+        } catch (err) {
+            console.error('Erreur chargement fournisseurs:', err);
+        }
+    }
+
+    /**
+     * Initialisation améliorée avec gestion des fournisseurs
+     */
+    async function initWithSuppliers() {
+        // Initialiser le module des fournisseurs
+        suppliersModule = new SuppliersModule(window.sb);
+
+        // Charger les fournisseurs
+        await chargerFournisseurs();
+    }
+
+    // Modifier la fonction init existante
+    const originalInit = init;
+    async function init() {
+        await originalInit();
+        await initWithSuppliers();
     }
 
     window.onload = init;

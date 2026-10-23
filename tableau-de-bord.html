@@ -184,10 +184,12 @@
     <div class="flag-top"><div class="orange"></div><div class="white"></div><div class="green"></div></div>
 
     <nav>
-    <a href="tableau-de-bord.html">📊 Dashboard</a>
+    <a href="tableau-de-bord.html" id="nav-dashboard">📊 Dashboard</a>
     <a href="chantiers.html">🏗️ Chantiers</a>
     <a href="equipe.html">👥 Équipe & Pointage</a>
     <a href="bilan.html">💰 Bilan & Matériaux</a>
+    <a href="#" onclick="afficherOngletFournisseurs(); return false;" id="nav-suppliers">🤝 Fournisseurs & Dettes</a>
+    <a href="#" onclick="afficherOngletPartenaires(); return false;" id="nav-partenaires">👥 Gestion Partenaires</a>
     <a href="admin-fraude.html">Detection de fraude</a>
     <a href="profil.html">⚙️ Profil</a>
 
@@ -287,6 +289,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="supabase.js"></script>
     <script src="alert-system.js"></script>
+    <script src="suppliers-module.js"></script>
+    <script src="portail-partenaire.js"></script>
     <script>
 
 let ENTREPRISE_ID   = null;
@@ -701,6 +705,415 @@ async function deconnexion() {
     await window.sb.auth.signOut();
     localStorage.clear();
     window.location.replace('login.html');
+}
+
+// ========== GESTION ONGLET FOURNISSEURS ==========
+let suppliersModule = null;
+let currentPaymentData = null;
+
+async function afficherOngletFournisseurs() {
+    // Masquer le contenu principal
+    document.querySelector('.container').style.display = 'none';
+    
+    // Créer le conteneur de l'onglet s'il n'existe pas
+    let suppliersContainer = document.getElementById('suppliers-tab-container');
+    if (!suppliersContainer) {
+        suppliersContainer = document.createElement('div');
+        suppliersContainer.id = 'suppliers-tab-container';
+        suppliersContainer.style.cssText = 'max-width: 1100px; margin: 20px auto; padding: 0 15px;';
+        document.body.insertBefore(suppliersContainer, document.querySelector('footer'));
+    }
+    suppliersContainer.style.display = 'block';
+    
+    // Initialiser le module si nécessaire
+    if (!suppliersModule) {
+        suppliersModule = new SuppliersModule(window.sb);
+    }
+    
+    // Charger les données
+    await chargerOngletFournisseurs();
+    
+    // Mettre à jour le lien actif
+    document.getElementById('nav-dashboard').style.borderColor = 'rgba(255,255,255,0.1)';
+    document.getElementById('nav-suppliers').style.borderColor = 'var(--ci-orange)';
+    document.getElementById('nav-suppliers').style.background = 'rgba(255,255,255,0.1)';
+}
+
+function retournerDashboard() {
+    document.querySelector('.container').style.display = 'block';
+    const suppliersContainer = document.getElementById('suppliers-tab-container');
+    if (suppliersContainer) suppliersContainer.style.display = 'none';
+    
+    document.getElementById('nav-dashboard').style.borderColor = 'rgba(255,255,255,0.1)';
+    document.getElementById('nav-suppliers').style.borderColor = 'rgba(255,255,255,0.1)';
+    document.getElementById('nav-suppliers').style.background = 'transparent';
+}
+
+async function chargerOngletFournisseurs() {
+    const container = document.getElementById('suppliers-tab-container');
+    
+    try {
+        const stats = await suppliersModule.getDebtStatistics(ENTREPRISE_ID);
+        const debts = await suppliersModule.getSupplierDebts(ENTREPRISE_ID);
+        const purchases = await suppliersModule.getPendingPurchases(ENTREPRISE_ID);
+        
+        let html = `
+            <div style="margin-bottom: 20px;">
+                <button onclick="retournerDashboard()" style="background: #3498db; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                    ← Retour au Dashboard
+                </button>
+            </div>
+            
+            <div class="welcome-header">
+                <h1>Gestion des Fournisseurs 🤝</h1>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Non Payé</h3>
+                    <div class="value" style="color: #e74c3c;">${suppliersModule.formatCurrency(stats.totalNonPaye)} F</div>
+                    <div class="detail">${stats.nombreAchatNonPaye} achat(s)</div>
+                </div>
+                <div class="stat-card" style="border-top-color: var(--ci-green);">
+                    <h3>Total Payé</h3>
+                    <div class="value" style="color: var(--ci-green);">${suppliersModule.formatCurrency(stats.totalPaye)} F</div>
+                    <div class="detail">${stats.nombreAchatPaye} achat(s)</div>
+                </div>
+                <div class="stat-card" style="border-top-color: #3498db;">
+                    <h3>Fournisseurs Actifs</h3>
+                    <div class="value">${debts.length}</div>
+                    <div class="detail">Avec dettes</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>📋 Résumé par Fournisseur</h2>
+                ${debts.length > 0 ? `
+                    <table class="suppliers-table" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e9ecef;">Fournisseur</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e9ecef;">Catégorie</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e9ecef;">Achats Non Payés</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e9ecef;">Total Non Payé</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${debts.map(d => `
+                                <tr style="border-bottom: 1px solid #e9ecef;">
+                                    <td style="padding: 12px;"><strong>${d.nom_entreprise}</strong>${d.telephone ? '<br><small>' + d.telephone + '</small>' : ''}</td>
+                                    <td style="padding: 12px;">${d.categorie || '-'}</td>
+                                    <td style="padding: 12px;">${d.nombre_achats_non_payes}</td>
+                                    <td style="padding: 12px; font-weight: bold; color: var(--ci-orange);">${suppliersModule.formatCurrency(d.total_non_paye)} F</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                ` : '<p style="color: #999;">Aucun fournisseur avec dettes</p>'}
+            </div>
+            
+            <div class="card">
+                <h2>📦 Achats en Attente de Paiement (${purchases.length})</h2>
+                ${purchases.length > 0 ? purchases.map(p => `
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--ci-orange);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <div>
+                                <div style="font-weight: 600; color: var(--primary);">${p.designation}</div>
+                                <div style="font-size: 0.85rem; color: #666;"><strong>${p.nom_entreprise || 'Sans fournisseur'}</strong> • ${suppliersModule.formatDate(p.created_at)}</div>
+                            </div>
+                            <div style="font-size: 1.1rem; font-weight: bold; color: var(--ci-orange);">${suppliersModule.formatCurrency(p.prix_total)} F</div>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Chantier: <strong>${p.nom_chantier || '-'}</strong> • Quantité: <strong>${p.quantite}</strong></div>
+                        ${p.photo_recu_url ? `<div style="margin-bottom: 10px;"><img src="${p.photo_recu_url}" style="max-width: 150px; max-height: 150px; border-radius: 8px; cursor: pointer;" onclick="afficherPhoto('${p.photo_recu_url}')"></div>` : ''}
+                        ${p.latitude && p.longitude ? `<div style="margin-bottom: 10px; font-size: 0.85rem;">📍 <a href="https://maps.google.com/?q=${p.latitude},${p.longitude}" target="_blank" style="color: var(--ci-orange); text-decoration: none; font-weight: 600;">Voir sur la carte</a></div>` : ''}
+                        <button onclick="ouvrirModalPaiement('${p.id}', '${p.designation}', ${p.prix_total})" style="background: var(--ci-green); color: white; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; font-size: 0.75rem;">
+                            💳 Marquer comme Payé
+                        </button>
+                    </div>
+                `).join('') : '<p style="color: #999;">Tous les achats sont payés ✓</p>'}
+            </div>
+        `;
+        
+        container.innerHTML = html;
+    } catch (err) {
+        console.error('Erreur chargement onglet fournisseurs:', err);
+        container.innerHTML = '<p style="color: #e74c3c;">Erreur lors du chargement des données</p>';
+    }
+}
+
+function ouvrirModalPaiement(materiauId, designation, montant) {
+    currentPaymentData = { materiauId, designation, montant };
+    
+    const modal = document.createElement('div');
+    modal.id = 'modal-paiement-suppliers';
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;';
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 15px; padding: 25px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #f1f1f1;">
+                <h2 style="margin: 0; font-size: 1.2rem; color: var(--primary);">💳 Enregistrer un Paiement</h2>
+                <button onclick="fermerModalPaiement()" style="background: none; border: none; font-size: 1.5rem; color: #999; cursor: pointer;">✕</button>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); font-size: 0.9rem;">Achat</label>
+                <input type="text" value="${designation}" disabled style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; background: #f5f5f5; box-sizing: border-box;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); font-size: 0.9rem;">Montant à Payer</label>
+                <input type="number" id="input-montant" value="${montant}" disabled style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; background: #f5f5f5; box-sizing: border-box;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); font-size: 0.9rem;">Type de Paiement <span style="color: red;">*</span></label>
+                <select id="input-type-paiement" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; box-sizing: border-box;">
+                    <option value="">-- Sélectionner --</option>
+                    <option value="wave">📱 Wave</option>
+                    <option value="orange_money">🟠 Orange Money</option>
+                    <option value="virement">🏦 Virement Bancaire</option>
+                    <option value="cheque">✍️ Chèque</option>
+                    <option value="especes">💵 Espèces</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); font-size: 0.9rem;">Numéro de Référence <span style="color: red;">*</span></label>
+                <input type="text" id="input-reference" placeholder="Ex: TXN123456789" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; box-sizing: border-box;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary); font-size: 0.9rem;">Notes (optionnel)</label>
+                <textarea id="input-notes" placeholder="Remarques supplémentaires..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; box-sizing: border-box; font-family: inherit; resize: vertical; min-height: 80px;"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button onclick="fermerModalPaiement()" style="background: #e9ecef; color: var(--primary); padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Annuler</button>
+                <button onclick="enregistrerPaiementFournisseur()" id="btn-submit-paiement" style="background: var(--ci-orange); color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Enregistrer</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function fermerModalPaiement() {
+    const modal = document.getElementById('modal-paiement-suppliers');
+    if (modal) modal.remove();
+    currentPaymentData = null;
+}
+
+async function enregistrerPaiementFournisseur() {
+    if (!currentPaymentData) return;
+    
+    const typePaiement = document.getElementById('input-type-paiement').value;
+    const reference = document.getElementById('input-reference').value.trim();
+    const notes = document.getElementById('input-notes').value.trim();
+    
+    if (!typePaiement || !reference) {
+        alert('❌ Veuillez remplir tous les champs obligatoires.');
+        return;
+    }
+    
+    const btn = document.getElementById('btn-submit-paiement');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+    
+    try {
+        const result = await suppliersModule.markAsPaid(
+            currentPaymentData.materiauId,
+            currentPaymentData.montant,
+            typePaiement,
+            reference,
+            notes
+        );
+        
+        if (!result.success) {
+            throw new Error(result.message);
+        }
+        
+        alert('✅ Paiement enregistré avec succès !');
+        fermerModalPaiement();
+        await chargerOngletFournisseurs();
+        
+    } catch (err) {
+        console.error('Erreur paiement:', err);
+        alert('❌ ' + (err.message || 'Erreur lors de l\'enregistrement du paiement'));
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Enregistrer';
+    }
+}
+
+function afficherPhoto(url) {
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; align-items: center; justify-content: center;';
+    modal.innerHTML = `<img src="${url}" style="max-width: 90%; max-height: 90%; border-radius: 10px;" onclick="this.parentElement.remove()">`;
+    document.body.appendChild(modal);
+}
+
+// ========== GESTION ONGLET PARTENAIRES ==========
+async function afficherOngletPartenaires() {
+    // Masquer le contenu principal
+    document.querySelector('.container').style.display = 'none';
+    
+    // Créer le conteneur de l'onglet s'il n'existe pas
+    let partenairesContainer = document.getElementById('partenaires-tab-container');
+    if (!partenairesContainer) {
+        partenairesContainer = document.createElement('div');
+        partenairesContainer.id = 'partenaires-tab-container';
+        partenairesContainer.style.cssText = 'max-width: 1100px; margin: 20px auto; padding: 0 15px;';
+        document.body.insertBefore(partenairesContainer, document.querySelector('footer'));
+    }
+    partenairesContainer.style.display = 'block';
+    
+    // Charger les données
+    await chargerOngletPartenaires();
+    
+    // Mettre à jour le lien actif
+    document.getElementById('nav-dashboard').style.borderColor = 'rgba(255,255,255,0.1)';
+    document.getElementById('nav-partenaires').style.borderColor = 'var(--ci-orange)';
+    document.getElementById('nav-partenaires').style.background = 'rgba(255,255,255,0.1)';
+}
+
+function retournerDashboardPartenaires() {
+    document.querySelector('.container').style.display = 'block';
+    const partenairesContainer = document.getElementById('partenaires-tab-container');
+    if (partenairesContainer) partenairesContainer.style.display = 'none';
+    
+    document.getElementById('nav-dashboard').style.borderColor = 'rgba(255,255,255,0.1)';
+    document.getElementById('nav-partenaires').style.borderColor = 'rgba(255,255,255,0.1)';
+    document.getElementById('nav-partenaires').style.background = 'transparent';
+}
+
+async function chargerOngletPartenaires() {
+    const container = document.getElementById('partenaires-tab-container');
+    
+    try {
+        // Charger les chantiers
+        const { data: chantiers, error } = await window.sb
+            .from('chantiers')
+            .select('id, nom_chantier, code_acces, lien_acces_securise, acces_partenaires')
+            .eq('entreprise_id', ENTREPRISE_ID)
+            .order('nom_chantier', { ascending: true });
+
+        if (error) throw error;
+
+        let html = `
+            <div style="margin-bottom: 20px;">
+                <button onclick="retournerDashboardPartenaires()" style="background: #3498db; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                    ← Retour au Dashboard
+                </button>
+            </div>
+            
+            <div class="welcome-header">
+                <h1>Gestion des Partenaires 👥</h1>
+                <p>Créez et gérez les accès au portail partenaires</p>
+            </div>
+            
+            <div class="card">
+                <h2>📋 Accès Partenaires par Chantier</h2>
+                ${chantiers && chantiers.length > 0 ? `
+                    <table class="suppliers-table" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e9ecef;">Chantier</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e9ecef;">Statut</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e9ecef;">Code d'Accès</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e9ecef;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${chantiers.map(c => `
+                                <tr style="border-bottom: 1px solid #e9ecef;">
+                                    <td style="padding: 12px;"><strong>${c.nom_chantier}</strong></td>
+                                    <td style="padding: 12px;">
+                                        <span style="background: ${c.acces_partenaires ? '#dcfce7' : '#fee2e2'}; color: ${c.acces_partenaires ? '#059669' : '#c0392b'}; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
+                                            ${c.acces_partenaires ? '✓ Actif' : '✗ Inactif'}
+                                        </span>
+                                    </td>
+                                    <td style="padding: 12px;">
+                                        <code style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">${c.code_acces || '-'}</code>
+                                    </td>
+                                    <td style="padding: 12px;">
+                                        <button onclick="activerAccesPartenaire('${c.id}', '${c.nom_chantier}')" style="background: var(--ci-green); color: white; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.75rem; margin-right: 5px;">
+                                            ${c.acces_partenaires ? '🔄 Régénérer' : '✓ Activer'}
+                                        </button>
+                                        ${c.acces_partenaires ? `
+                                            <button onclick="copierLien('${c.lien_acces_securise}')" style="background: #3498db; color: white; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.75rem;">
+                                                📋 Copier Lien
+                                            </button>
+                                        ` : ''}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                ` : '<p style="color: #999;">Aucun chantier disponible</p>'}
+            </div>
+
+            <div class="card">
+                <h2>📖 Instructions pour les Partenaires</h2>
+                <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; border-left: 3px solid var(--ci-blue);">
+                    <h3 style="margin-top: 0; color: var(--primary);">Accès par Code PIN</h3>
+                    <ol style="margin: 10px 0; padding-left: 20px;">
+                        <li>Partagez le code d'accès (6 caractères) avec le partenaire</li>
+                        <li>Le partenaire accède à <strong>portail-partenaire.html</strong></li>
+                        <li>Il entre le code dans l'onglet "Code d'Accès"</li>
+                        <li>Il voit immédiatement les photos du chantier</li>
+                    </ol>
+
+                    <h3 style="margin-top: 20px; color: var(--primary);">Accès par Lien Direct</h3>
+                    <ol style="margin: 10px 0; padding-left: 20px;">
+                        <li>Cliquez sur "Copier Lien" pour obtenir le lien sécurisé</li>
+                        <li>Partagez ce lien avec le partenaire</li>
+                        <li>Le partenaire clique sur le lien</li>
+                        <li>Il est connecté automatiquement sans code requis</li>
+                    </ol>
+
+                    <p style="margin-top: 15px; color: #64748b; font-size: 0.9rem;">
+                        <strong>Lien complet :</strong> <code style="background: white; padding: 2px 6px; border-radius: 3px;">portail-partenaire.html?chantier_id=UUID</code>
+                    </p>
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML = html;
+    } catch (err) {
+        console.error('Erreur chargement onglet partenaires:', err);
+        container.innerHTML = '<p style="color: #e74c3c;">Erreur lors du chargement des données</p>';
+    }
+}
+
+async function activerAccesPartenaire(chantierIdOuCode, nomChantier) {
+    const btn = event.target;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Activation...';
+
+    try {
+        const { data, error } = await window.sb
+            .rpc('activer_acces_partenaire', {
+                p_chantier_id: chantierIdOuCode,
+                p_type_acces: 'code_pin'
+            });
+
+        if (error) throw error;
+
+        if (data.success) {
+            alert(`✅ Accès activé pour "${nomChantier}"\n\nCode d'accès: ${data.code_acces}`);
+            await chargerOngletPartenaires();
+        } else {
+            alert('❌ Erreur lors de l\'activation');
+        }
+    } catch (err) {
+        console.error('Erreur activation:', err);
+        alert('❌ ' + (err.message || 'Erreur lors de l\'activation'));
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '✓ Activer';
+    }
+}
+
+function copierLien(lienId) {
+    const urlComplete = `${window.location.origin}/portail-partenaire.html?chantier_id=${lienId}`;
+    navigator.clipboard.writeText(urlComplete).then(() => {
+        alert('✅ Lien copié dans le presse-papiers:\n\n' + urlComplete);
+    }).catch(err => {
+        console.error('Erreur copie:', err);
+        alert('Erreur lors de la copie du lien');
+    });
 }
 
 document.addEventListener('DOMContentLoaded', init);
