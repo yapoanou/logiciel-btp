@@ -6,6 +6,7 @@
     <title>Portail Partenaires - KORE Software</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="portail-partenaire.js" defer></script>
     <style>
         :root {
             --primary: #0f172a;
@@ -67,6 +68,7 @@
             align-items: center;
             justify-content: center;
             min-height: calc(100vh - 100px);
+            padding: 20px;
         }
 
         .login-card {
@@ -276,6 +278,12 @@
             transform: translateY(-2px);
         }
 
+        .btn-action:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .btn-action.secondary {
             background: var(--accent-blue);
         }
@@ -332,14 +340,6 @@
             line-height: 1.4;
         }
 
-        .photo-location {
-            font-size: 0.8rem;
-            color: var(--accent-blue);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
         /* MODAL */
         .modal {
             display: none;
@@ -371,6 +371,7 @@
             width: 100%;
             max-height: 80vh;
             object-fit: contain;
+            display: block;
         }
 
         .modal-close {
@@ -511,7 +512,7 @@
                     <label for="input-code">Code d'Accès (6 caractères)</label>
                     <input type="text" id="input-code" placeholder="Ex: ABC123" maxlength="6" style="text-transform: uppercase;">
                 </div>
-                <button class="btn-connexion" onclick="connexionParCode(event)">
+                <button id="btn-code" class="btn-connexion" onclick="connexionParCode(event)">
                     <i class="fas fa-sign-in-alt"></i> Se Connecter
                 </button>
             </div>
@@ -521,7 +522,7 @@
                 <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">
                     Vous avez reçu un lien d'accès direct ? Il vous connectera automatiquement.
                 </p>
-                <button class="btn-connexion" onclick="connexionParLien()">
+                <button id="btn-lien" class="btn-connexion" onclick="connexionParLien()">
                     <i class="fas fa-check"></i> Vérifier le Lien
                 </button>
             </div>
@@ -565,6 +566,9 @@
                 </div>
             </div>
 
+            <!-- MESSAGES (succès / erreurs de l'écran principal) -->
+            <div id="toast-message" style="display: none;"></div>
+
             <!-- GALERIE -->
             <div class="gallery-header">
                 <h2>📸 Photographies du Chantier</h2>
@@ -602,39 +606,57 @@
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="supabase.js"></script>
-    <script src="portail-partenaire.js"></script>
     <script>
+        /**
+         * PORTAIL PARTENAIRES - SCRIPT PRINCIPAL
+         * Les données viennent de la RPC portail_charger (via portail-partenaire.js).
+         * Champs photo : url, caption, created_at
+         * Champs chantier : id, nom_chantier, statut, created_at, latitude, longitude
+         */
+
         let portail = null;
         let chantierIdActuel = null;
         let codeAccesActuel = null;
         let lienAccesActuel = null;
 
+        // ---------- INITIALISATION ----------
         async function init() {
-            if (typeof PortailPartenaire === 'undefined' || !window.sb) {
-                console.error("Supabase ou PortailPartenaire n'est pas prêt.");
-                return;
-            }
-            
-            portail = new PortailPartenaire(window.sb);
+            try {
+                // Attendre que tous les scripts soient chargés
+                if (typeof PortailPartenaire === 'undefined' || !window.sb) {
+                    console.warn("Supabase ou PortailPartenaire n'est pas encore prêt, nouvelle tentative...");
+                    setTimeout(init, 500);
+                    return;
+                }
 
-            const params = new URLSearchParams(window.location.search);
-            const chantierIdParam = params.get('chantier_id');
+                portail = new PortailPartenaire(window.sb);
+                console.log('PortailPartenaire initialisé');
 
-            if (chantierIdParam) {
-                await connexionParLienDirect(chantierIdParam);
+                // Lien direct : ?lien=<valeur de lien_acces>
+                const params = new URLSearchParams(window.location.search);
+                const lienParam = params.get('lien');
+                if (lienParam) {
+                    await connexionParLienDirect(lienParam);
+                }
+            } catch (err) {
+                console.error('Erreur initialisation:', err);
+                afficherErreur('Erreur lors de l\'initialisation de l\'application');
             }
         }
 
+        // ---------- ONGLETS ----------
         function changerOnglet(onglet, evt) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
             document.getElementById(`tab-${onglet}`).classList.add('active');
             if (evt && evt.target) {
-                evt.target.closest('.tab-btn').classList.add('active');
+                const tab = evt.target.closest('.tab-btn');
+                if (tab) tab.classList.add('active');
             }
         }
 
+        // ---------- CONNEXION ----------
         async function connexionParCode(evt) {
             const code = document.getElementById('input-code').value.trim().toUpperCase();
 
@@ -643,7 +665,12 @@
                 return;
             }
 
-            const btn = evt ? evt.target.closest('button') : document.querySelector('#tab-code .btn-connexion');
+            if (!portail) {
+                afficherErreur('Le portail n\'est pas encore prêt, réessayez dans un instant');
+                return;
+            }
+
+            const btn = document.getElementById('btn-code');
             if (btn) {
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connexion...';
@@ -656,9 +683,9 @@
                     chantierIdActuel = result.chantier.id;
                     codeAccesActuel = code;
                     afficherEcranPrincipal();
-                    await portail.enregistrerVisite(chantierIdActuel);
+                    portail.enregistrerVisite(chantierIdActuel); // sans await : n'impacte pas l'affichage
                 } else {
-                    afficherErreur('Code d\'accès invalide ou expiré');
+                    afficherErreur((result && result.message) || 'Code d\'accès invalide ou expiré');
                 }
             } catch (err) {
                 console.error('Erreur connexion:', err);
@@ -672,7 +699,7 @@
         }
 
         async function connexionParLienDirect(lienId) {
-            const btn = document.querySelector('.btn-connexion');
+            const btn = document.getElementById('btn-lien');
             if (btn) {
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Vérification...';
@@ -685,9 +712,10 @@
                     chantierIdActuel = result.chantier.id;
                     lienAccesActuel = lienId;
                     afficherEcranPrincipal();
-                    await portail.enregistrerVisite(chantierIdActuel);
+                    portail.enregistrerVisite(chantierIdActuel);
                 } else {
-                    afficherErreur('Lien d\'accès invalide ou expiré');
+                    // Afficher l'onglet "Lien Direct" pour que l'erreur soit contextualisée
+                    afficherErreur((result && result.message) || 'Lien d\'accès invalide ou expiré');
                 }
             } catch (err) {
                 console.error('Erreur connexion:', err);
@@ -704,25 +732,52 @@
             afficherErreur('Veuillez utiliser le lien d\'accès direct fourni');
         }
 
+        // ---------- ÉCRAN PRINCIPAL ----------
         function afficherEcranPrincipal() {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-screen').classList.add('active');
+            try {
+                const loginScreen = document.getElementById('login-screen');
+                const mainScreen = document.getElementById('main-screen');
 
-            const c = portail.chantierActuel;
-            document.getElementById('chantier-nom').textContent = c.nom_chantier || 'Chantier Sans Nom';
-            document.getElementById('chantier-adresse').textContent = `${c.adresse || ''}, ${c.code_postal || ''} ${c.ville || ''}`;
-            document.getElementById('chantier-statut').textContent = c.statut || '-';
-            document.getElementById('chantier-debut').textContent = portail.formatDate(c.date_debut);
-            document.getElementById('chantier-fin').textContent = portail.formatDate(c.date_fin_prevue);
-            document.getElementById('chantier-photos').textContent = portail.getNombrePhotos();
+                if (!loginScreen || !mainScreen) {
+                    console.error('Écrans non trouvés');
+                    return;
+                }
 
-            afficherGalerie();
+                if (!portail || !portail.chantierActuel) {
+                    console.error('Chantier actuel non disponible');
+                    afficherErreur('Erreur: données du chantier indisponibles');
+                    return;
+                }
+
+                loginScreen.style.display = 'none';
+                mainScreen.classList.add('active');
+
+                const c = portail.chantierActuel;
+
+                const updateElement = (id, value) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = value || '-';
+                };
+
+                updateElement('chantier-nom', c.nom_chantier || 'Chantier sans nom');
+                updateElement('chantier-adresse', '');
+                updateElement('chantier-statut', c.statut || '-');
+                updateElement('chantier-debut', portail.formatDate(c.created_at));
+                updateElement('chantier-fin', '-');
+                updateElement('chantier-photos', portail.getNombrePhotos().toString());
+
+                afficherGalerie();
+            } catch (err) {
+                console.error('Erreur affichage écran principal:', err);
+                afficherErreur('Erreur lors de l\'affichage des informations');
+            }
         }
 
+        // ---------- GALERIE ----------
         function afficherGalerie() {
             const container = document.getElementById('gallery-container');
 
-            if (!portail.photos || portail.photos.length === 0) {
+            if (!portail || !portail.photos || portail.photos.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-image"></i>
@@ -732,20 +787,25 @@
                 return;
             }
 
+            const esc = (s) => String(s ?? '')
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
             let html = '<div class="gallery">';
-            portail.photos.forEach(photo => {
+            portail.photos.forEach((photo) => {
+                const url = esc(photo.url);
+                const date = photo.created_at
+                    ? portail.formatDateTime(photo.created_at)
+                    : 'Date non disponible';
+                const description = esc(photo.caption || 'Photo du chantier');
+
                 html += `
-                    <div class="photo-card" onclick="afficherPhoto('${photo.url_photo}')">
-                        <img src="${photo.url_photo}" alt="${photo.description || 'Photo'}" class="photo-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f1f5f9%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%2394a3b8%22 font-size=%2214%22%3EPhoto%3C/text%3E%3C/svg%3E'">
+                    <div class="photo-card" data-url="${url}" onclick="afficherPhoto(this.dataset.url)">
+                        <img src="${url}" alt="${description}" class="photo-image" loading="lazy"
+                             onerror="this.style.opacity=0.3; this.alt='Erreur image'">
                         <div class="photo-info">
-                            <div class="photo-date">${portail.formatDateTime(photo.date_prise_vue)}</div>
-                            <div class="photo-description">${photo.description || 'Photo du chantier'}</div>
-                            ${photo.latitude && photo.longitude ? `
-                                <div class="photo-location">
-                                    <i class="fas fa-map-pin"></i>
-                                    ${photo.latitude.toFixed(4)}, ${photo.longitude.toFixed(4)}
-                                </div>
-                            ` : ''}
+                            <div class="photo-date">${date}</div>
+                            <div class="photo-description">${description}</div>
                         </div>
                     </div>
                 `;
@@ -755,16 +815,46 @@
             container.innerHTML = html;
         }
 
+        // ---------- MODAL ----------
         function afficherPhoto(url) {
-            document.getElementById('modal-image').src = url;
-            document.getElementById('photo-modal').classList.add('active');
+            try {
+                if (!url) {
+                    console.warn('URL photo vide');
+                    return;
+                }
+                const modalImage = document.getElementById('modal-image');
+                const photoModal = document.getElementById('photo-modal');
+
+                if (!modalImage || !photoModal) {
+                    console.error('Éléments modal non trouvés');
+                    return;
+                }
+
+                modalImage.src = url;
+                photoModal.classList.add('active');
+            } catch (err) {
+                console.error('Erreur affichage photo:', err);
+            }
         }
 
         function fermerModal(event) {
-            if (event && event.target.id !== 'photo-modal') return;
-            document.getElementById('photo-modal').classList.remove('active');
+            try {
+                // Si l'événement vient d'un clic, ne fermer que si on clique sur le fond
+                if (event && event.target && event.target.id !== 'photo-modal') return;
+
+                const photoModal = document.getElementById('photo-modal');
+                if (photoModal) photoModal.classList.remove('active');
+            } catch (err) {
+                console.error('Erreur fermeture modal:', err);
+            }
         }
 
+        // Fermer avec la touche Échap
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') fermerModal();
+        });
+
+        // ---------- EXPORTS ----------
         async function exporterPDF(evt) {
             const btn = evt ? evt.target.closest('.btn-action') : null;
             if (btn) {
@@ -773,13 +863,20 @@
             }
 
             try {
+                if (!portail || typeof portail.genererPDF !== 'function') {
+                    afficherErreur('Fonction PDF non disponible');
+                    return;
+                }
+
                 const result = await portail.genererPDF();
-                if (!result || !result.success) {
-                    afficherErreur('Erreur lors de la génération du PDF');
+                if (result && result.success) {
+                    afficherSucces('PDF généré avec succès');
+                } else {
+                    afficherErreur((result && result.message) || 'Erreur lors de la génération du PDF');
                 }
             } catch (err) {
                 console.error('Erreur PDF:', err);
-                afficherErreur('Erreur lors de la génération du PDF');
+                afficherErreur('Erreur lors de la génération du PDF: ' + err.message);
             } finally {
                 if (btn) {
                     btn.disabled = false;
@@ -790,30 +887,72 @@
 
         function exporterJSON() {
             try {
-                portail.exporterJSON();
+                if (!portail || typeof portail.exporterJSON !== 'function') {
+                    afficherErreur('Fonction export non disponible');
+                    return;
+                }
+                const result = portail.exporterJSON();
+                if (result && result.success) {
+                    afficherSucces('Données exportées avec succès');
+                } else {
+                    afficherErreur((result && result.message) || 'Erreur lors de l\'export');
+                }
             } catch (err) {
                 console.error('Erreur export:', err);
                 afficherErreur('Erreur lors de l\'export');
             }
         }
 
+        // ---------- DÉCONNEXION ----------
         function deconnexion() {
             if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
                 document.getElementById('main-screen').classList.remove('active');
                 document.getElementById('login-screen').style.display = 'flex';
                 document.getElementById('input-code').value = '';
                 document.getElementById('error-message').style.display = 'none';
+                document.getElementById('toast-message').style.display = 'none';
+                document.getElementById('gallery-container').innerHTML = '';
+
+                chantierIdActuel = null;
+                codeAccesActuel = null;
+                lienAccesActuel = null;
                 portail = new PortailPartenaire(window.sb);
+
+                // Retirer ?lien=... de l'URL pour ne pas se reconnecter au rechargement
+                if (window.location.search) {
+                    history.replaceState(null, '', window.location.pathname);
+                }
             }
         }
 
+        // ---------- MESSAGES ----------
+        function afficherMessage(type, message, duree) {
+            // Si l'écran principal est visible, on utilise le toast ; sinon la zone de la carte de connexion
+            const mainActif = document.getElementById('main-screen').classList.contains('active');
+            const cible = document.getElementById(mainActif ? 'toast-message' : 'error-message');
+            if (!cible) {
+                alert(message);
+                return;
+            }
+
+            const safe = String(message || 'Une erreur est survenue')
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const icone = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            const classe = type === 'success' ? 'success-message' : 'error-message';
+
+            cible.innerHTML = `<div class="${classe}"><i class="fas ${icone}"></i> ${safe}</div>`;
+            cible.style.display = 'block';
+
+            clearTimeout(cible._timer);
+            cible._timer = setTimeout(() => { cible.style.display = 'none'; }, duree);
+        }
+
         function afficherErreur(message) {
-            const errorDiv = document.getElementById('error-message');
-            errorDiv.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-circle"></i> ${message}</div>`;
-            errorDiv.style.display = 'block';
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
+            afficherMessage('error', message, 5000);
+        }
+
+        function afficherSucces(message) {
+            afficherMessage('success', message, 3000);
         }
 
         window.onload = init;
