@@ -71,9 +71,10 @@ td{padding:12px;border-bottom:1px solid #e9ecef}
 </nav>
 
 <div class="container">
+  <div id="errBox" class="hide" style="background:#fee2e2;color:#c0392b;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-weight:600"></div>
 
   <!-- INSCRIPTION / CONNEXION -->
-  <section id="auth" class="auth card hide">
+  <section id="auth" class="auth card">
     <div class="tabs2">
       <button id="tabLogin" class="on">Connexion</button>
       <button id="tabSignup">Devenir distributeur</button>
@@ -160,6 +161,8 @@ td{padding:12px;border-bottom:1px solid #e9ecef}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="supabase.js"></script>
 <script>
+window.addEventListener('error',function(e){var b=document.getElementById('errBox');b.textContent='Erreur : '+e.message+' (ouvrez la console F12 pour le détail)';b.classList.remove('hide');});
+(function(){
 // Si ton supabase.js définit déjà window.sb, il est réutilisé. Sinon, renseigne ces deux valeurs.
 const SUPABASE_URL = 'https://TON-PROJET.supabase.co';
 const SUPABASE_ANON_KEY = 'TA-CLE-ANON';
@@ -365,7 +368,8 @@ $('btnSell').onclick = async () => {
   await refresh(); tab('ents');
 };
 
-start();
+start().catch(function(e){ screen('auth'); toast('❌', errMsg(e)); });
+})();
 </script>
 </body>
 </html>

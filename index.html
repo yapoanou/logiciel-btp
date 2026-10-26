@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kore Software - Gestion de chantier intelligente</title>
-<meta name="description" content="Pointage, matériaux, anti-fraude, fournisseurs et réseau de distributeurs agréés : le logiciel de gestion de chantier conçu pour les professionnels du BTP.">
+<meta name="description" content="Kore Software centralise le suivi des équipes, des matériaux, des dépenses et des fournisseurs pour une gestion de chantier plus claire et mieux maîtrisée.">
+<meta name="theme-color" content="#080d18">
+<meta property="og:title" content="Kore Software — La maîtrise de vos chantiers">
+<meta property="og:description" content="Le suivi des équipes, des matériaux et des dépenses dans une expérience pensée pour les professionnels du BTP.">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -35,6 +39,7 @@ header.s{background:rgba(10,16,32,.85);backdrop-filter:blur(14px);border-bottom:
 .btn-ghost{border-color:var(--bd);background:rgba(255,255,255,.05)}
 .btn-ghost:hover{background:rgba(255,255,255,.12)}
 @media(max-width:860px){.links{display:none}}
+#langToggle{font-weight:800;min-width:48px;padding-inline:12px;border-color:rgba(255,255,255,.22)}
 
 /* HERO */
 .hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:130px 24px 70px;overflow:hidden;text-align:center}
@@ -158,6 +163,122 @@ footer nav a:hover{color:#fff}
 .rv.in{opacity:1;transform:none}
 .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}html{scroll-behavior:auto}}
+
+/* KORE SOFTWARE — finition premium, identité orange / blanc / vert préservée */
+:root{
+  --o:#f28a24; --g:#078447; --n:#080d18; --n2:#101827;
+  --tx:#f4f6fa; --mut:#aab4c5; --bd:rgba(225,233,245,.12);
+}
+html{scroll-padding-top:100px}
+body{background:var(--n);letter-spacing:-.012em}
+::selection{background:rgba(242,138,36,.35);color:#fff}
+a{transition:color .22s ease}
+#progress{height:3px;box-shadow:0 0 16px rgba(242,138,36,.18)}
+header{top:3px}
+header.s{background:rgba(8,13,24,.88);border-bottom-color:rgba(255,255,255,.09);box-shadow:0 12px 34px rgba(0,0,0,.14)}
+.nav{max-width:1280px;padding:19px 28px}
+.logo{font-size:1.12rem;letter-spacing:-.04em}
+.logo i{width:38px;height:38px;border-radius:12px;box-shadow:0 7px 20px rgba(242,138,36,.15)}
+.links{gap:30px;font-size:.86rem}
+.links a{transition:color .2s}
+.btn{border-radius:9px;padding:12px 19px;font-size:.86rem;letter-spacing:-.01em}
+.btn-o{background:var(--o);box-shadow:0 7px 22px rgba(242,138,36,.16)}
+.btn-o:hover{box-shadow:0 12px 28px rgba(242,138,36,.23)}
+.btn-g{background:var(--g);box-shadow:0 7px 22px rgba(7,132,71,.18)}
+.btn-ghost{border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.025)}
+.btn-ghost:hover{background:rgba(255,255,255,.075);border-color:rgba(255,255,255,.27)}
+.hero{min-height:unset;padding:166px 28px 96px;text-align:center}
+.hero::before{background:radial-gradient(48% 48% at 13% 20%,rgba(242,138,36,.13),transparent 75%),radial-gradient(42% 48% at 87% 72%,rgba(7,132,71,.13),transparent 75%)}
+.grid-bg{background-size:68px 68px;opacity:.24}
+.hero-in{max-width:1160px}
+.pill{border-color:rgba(255,255,255,.13);background:rgba(255,255,255,.035);font-size:.76rem;letter-spacing:.02em;margin-bottom:30px}
+h1{font-size:clamp(2.6rem,5.8vw,5.35rem);line-height:1.02;letter-spacing:-.065em;font-weight:800}
+.grad{background:linear-gradient(100deg,#f5a34f 0%,#fff 48%,#82d9a8 100%);-webkit-background-clip:text;background-clip:text}
+.lead{max-width:720px;margin-top:26px;font-size:clamp(1rem,1.55vw,1.16rem);line-height:1.85;color:#b4bece}
+.hero-btns{margin-top:36px;gap:12px}
+.roles{gap:16px;margin-top:76px}
+.role{padding:30px;border-radius:15px;min-height:260px;border-color:rgba(255,255,255,.13);box-shadow:0 16px 40px rgba(0,0,0,.12)}
+.role:hover{transform:translateY(-5px)}
+.role::before{opacity:1}
+.r-pdg::before{background:linear-gradient(145deg,#f19a3e,#c96a12)}
+.r-chef::before{background:linear-gradient(145deg,#fbfcff,#e6ebf2)}
+.r-dist::before{background:linear-gradient(145deg,#07894b,#075b35)}
+.role .ico{width:50px;height:50px;border-radius:12px;font-size:1.45rem;background:rgba(255,255,255,.14)}
+.r-chef .ico{background:#111a2b}
+.role h3{font-size:1.22rem;letter-spacing:-.035em}
+.role p{font-size:.89rem;line-height:1.75}
+.tag{font-size:.62rem;letter-spacing:.12em}
+.ticker{background:#0d1422;padding:15px 0}
+.ticker div{font-size:.72rem;letter-spacing:.13em;gap:38px;animation-duration:42s}
+.stats{gap:14px;margin-top:28px!important;max-width:1160px}
+.stat{background:linear-gradient(145deg,rgba(18,28,45,.94),rgba(13,20,33,.94));border-radius:14px;padding:23px 18px;border-color:rgba(255,255,255,.1)}
+.stat b{font-size:2rem;background:linear-gradient(100deg,#f5a34f,#dfe9f4 65%,#82d9a8);-webkit-background-clip:text;background-clip:text}
+.stat span{font-size:.78rem}
+section.sec{padding:112px 28px}
+.wrap{max-width:1160px}
+.eyebrow{font-size:.7rem;letter-spacing:.19em;margin-bottom:18px}
+h2{font-size:clamp(2rem,3.8vw,3.15rem);letter-spacing:-.055em;line-height:1.09;font-weight:800}
+.sub{font-size:1rem;line-height:1.85;color:#aeb8c8}
+.feats{gap:16px;margin-top:48px}
+.feat{background:linear-gradient(145deg,rgba(18,28,45,.92),rgba(12,19,31,.92));border-radius:14px;padding:28px;border-color:rgba(255,255,255,.095)}
+.feat:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.2)}
+.feat .ic{width:48px;height:48px;border-radius:12px;font-size:1.55rem;background:rgba(255,255,255,.045)}
+.feat h3{font-size:1.05rem;letter-spacing:-.025em}
+.feat p{font-size:.88rem;line-height:1.8}
+.split{gap:70px;align-items:center}
+.checks{gap:11px}
+.checks li{padding:17px;border-radius:12px;background:rgba(255,255,255,.022);border-color:rgba(255,255,255,.09)}
+.checks li:hover{transform:translateX(3px);background:rgba(255,255,255,.045)}
+.checks b{font-size:.92rem}
+.checks span{font-size:.83rem;line-height:1.7}
+.sec-red{background:linear-gradient(180deg,#080d18,#100f17 52%,#080d18)}
+.al{border-radius:12px;padding:18px;background:rgba(17,24,39,.88);border-color:rgba(255,255,255,.09);border-left:3px solid var(--c);animation:none}
+.al:nth-child(2),.al:nth-child(4){margin-left:18px}
+.al b{font-size:.87rem}
+.al span{font-size:.76rem}
+.al .st{font-size:.62rem;letter-spacing:.06em}
+.mock{background:linear-gradient(145deg,#121c2d,#0e1523);border-radius:16px;padding:26px;border-color:rgba(255,255,255,.12);box-shadow:0 28px 70px -42px rgba(0,0,0,.85)}
+.mock h4{font-size:.7rem;letter-spacing:.15em;color:#b7c1d0}
+.row{padding:15px 0;font-size:.86rem;border-bottom-color:rgba(255,255,255,.08)}
+.row small{font-size:.72rem;margin-top:3px}
+.amt{font-size:.87rem}
+.wallet{border-radius:12px;background:linear-gradient(130deg,#087c46,#075631);padding:25px}
+.wallet b{font-size:1.85rem;letter-spacing:-.04em}
+.steps{gap:20px}
+.step{gap:14px}
+.step::before{width:34px;height:34px;border-radius:10px;font-size:.9rem;background:linear-gradient(135deg,#f2a04a,#087c46)}
+.step b{font-size:.92rem}
+.step span{display:block;margin-top:3px;line-height:1.7}
+.cta{margin:0 28px 100px}
+.cta-in{max-width:1160px;border-radius:20px;padding:1px;background:linear-gradient(120deg,rgba(242,138,36,.75),rgba(255,255,255,.22),rgba(7,132,71,.75))}
+.cta-box{border-radius:19px;padding:76px 30px;background:#0e1625}
+.cta-box::before{background:radial-gradient(45% 90% at 0% 100%,rgba(242,138,36,.12),transparent),radial-gradient(45% 90% at 100% 100%,rgba(7,132,71,.13),transparent)}
+footer{padding:42px 24px 34px;border-top-color:rgba(255,255,255,.09);font-size:.8rem}
+footer .tri{height:3px;max-width:150px;margin-bottom:24px}
+footer nav{gap:26px;margin-bottom:18px}
+@media(max-width:860px){
+ .nav{padding:14px 18px}.nav-cta{gap:7px}.nav-cta .btn{padding:10px 12px;font-size:.78rem}
+ .hero{padding:138px 20px 70px}.roles{margin-top:52px}
+ section.sec{padding:78px 20px}.split{gap:36px}
+ .cta{margin:0 18px 70px}.cta-box{padding:56px 22px}
+}
+@media(max-width:560px){
+ .logo{font-size:1rem}.logo i{width:32px;height:32px}
+ .nav-cta .btn-ghost{display:none}.nav-cta .btn{padding:10px 12px}
+ .hero{padding:122px 18px 58px}
+ h1{font-size:clamp(2.35rem,11vw,3.5rem)}
+ .lead{font-size:.97rem;line-height:1.75}
+ .hero-btns{flex-direction:column;align-items:stretch}.hero-btns .btn{justify-content:center}
+ .roles{gap:12px}.role{min-height:unset;padding:24px}
+ .stats{padding:0 18px;gap:10px}.stat{padding:18px 10px}.stat b{font-size:1.7rem}
+ .ticker div{gap:24px;font-size:.66rem}
+ section.sec{padding:68px 18px}.feats{margin-top:34px}
+ .feat{padding:23px}.mock{padding:20px}
+ .al:nth-child(2),.al:nth-child(4){margin-left:0}
+ .cta{margin:0 14px 58px}.cta-box{padding:46px 18px}
+ footer nav{gap:14px}
+}
+
 </style>
 </head>
 <body>
@@ -174,6 +295,7 @@ footer nav a:hover{color:#fff}
       <a href="#distributeurs">Distributeurs</a>
     </div>
     <div class="nav-cta">
+      <button type="button" id="langToggle" class="btn btn-ghost" aria-label="Switch language">EN</button>
       <a href="login.html" class="btn btn-ghost">Connexion</a>
       <a href="inscription.html" class="btn btn-o">Créer mon compte</a>
     </div>
@@ -184,9 +306,9 @@ footer nav a:hover{color:#fff}
 <section class="hero" id="top">
   <div class="grid-bg"></div>
   <div class="hero-in">
-    <div class="pill rv"><span class="dot"></span> Conçu pour les professionnels du BTP 🌍</div>
-    <h1 class="rv d1">Votre chantier sous contrôle,<br><span class="grad">partout, tout le temps.</span></h1>
-    <p class="lead rv d2">Pointage géolocalisé, matériaux, dettes fournisseurs et détection de fraude en temps réel. Même sans réseau, votre chantier reste protégé.</p>
+    <div class="pill rv"><span class="dot"></span> La gestion de chantier, avec une exigence professionnelle</div>
+    <h1 class="rv d1">La maîtrise de vos chantiers.<br><span class="grad">À chaque étape.</span></h1>
+    <p class="lead rv d2">Centralisez le suivi des équipes, les matériaux, les dépenses et les fournisseurs dans un espace conçu pour vous offrir une vision claire de chaque chantier — même hors connexion.</p>
     <div class="hero-btns rv d3">
       <a href="inscription.html" class="btn btn-o" style="padding:15px 30px;font-size:1rem">Commencer maintenant →</a>
       <a href="#fonctions" class="btn btn-ghost" style="padding:15px 30px;font-size:1rem">Voir les fonctions</a>
@@ -238,8 +360,8 @@ footer nav a:hover{color:#fff}
   <div class="wrap">
     <div class="center">
       <span class="eyebrow rv">Tout-en-un</span>
-      <h2 class="rv">Tout ce qu’il faut pour <span class="grad">gérer comme un pro</span></h2>
-      <p class="sub rv">Fini les carnets papier, les approximations et les pertes. Chaque montant dépensé et chaque heure travaillée sont tracés.</p>
+      <h2 class="rv">Une vision complète.<br><span class="grad">Des décisions mieux maîtrisées.</span></h2>
+      <p class="sub rv">Réunissez les informations essentielles de vos opérations dans un seul outil : suivi des équipes, contrôle des achats et visibilité financière, chantier par chantier.</p>
     </div>
     <div class="feats">
       <div class="feat rv" style="--c:var(--g)"><div class="ic">📅</div><h3>Équipe &amp; pointage</h3><p>Pointage chaque matin, calcul des fins de semaine en un clic, historique complet par ouvrier.</p></div>
@@ -257,8 +379,8 @@ footer nav a:hover{color:#fff}
   <div class="wrap split">
     <div class="sticky">
       <span class="eyebrow rv" style="color:#ff5a4d">Anti-vol &amp; anti-fraude</span>
-      <h2 class="rv">On ne triche pas<br><span class="grad">sur votre chantier.</span></h2>
-      <p class="sub rv">Le système surveille en continu et bloque la tentative avant qu’elle ne vous coûte de l’argent.</p>
+      <h2 class="rv">Renforcez le contrôle.<br><span class="grad">Préservez vos ressources.</span></h2>
+      <p class="sub rv">Des contrôles et des alertes vous aident à repérer les anomalies et à vérifier les opérations sensibles avant qu’elles ne deviennent des pertes.</p>
       <ul class="checks">
         <li class="rv"><em>📍</em><div><b>Géofencing GPS</b><span>Un pointage hors de la zone du chantier est refusé.</span></div></li>
         <li class="rv d1"><em>📸</em><div><b>Reçu photo obligatoire</b><span>Pas de preuve d’achat, pas d’enregistrement.</span></div></li>
@@ -301,7 +423,7 @@ footer nav a:hover{color:#fff}
   <div class="wrap split">
     <div>
       <span class="eyebrow rv" style="color:var(--g)">Distributeur Agréé</span>
-      <h2 class="rv">Devenez distributeur,<br><span class="grad">vendez à votre prix.</span></h2>
+      <h2 class="rv">Développez votre activité.<br><span class="grad">Grandissez avec Kore.</span></h2>
       <p class="sub rv">Cabinets, revendeurs, consultants : rejoignez notre réseau, vendez des licences à vos clients et gardez la différence. Offre Distributeur Fondateur, places limitées.</p>
       <div class="steps">
         <div class="step rv"><div><b>Inscrivez-vous</b><span>Votre demande est validée par notre équipe.</span></div></div>
@@ -328,7 +450,7 @@ footer nav a:hover{color:#fff}
   <div class="cta-in tri rv">
     <div class="cta-box">
       <h2>Prêt à <span class="grad">digitaliser vos chantiers ?</span></h2>
-      <p class="sub" style="margin:16px auto 32px">Rejoignez la nouvelle génération d’entrepreneurs du BTP.</p>
+      <p class="sub" style="margin:16px auto 32px">Passez à une gestion de chantier plus structurée, plus lisible et plus sereine.</p>
       <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
         <a href="inscription.html" class="btn btn-o" style="padding:15px 30px">Créer mon compte PDG</a>
         <a href="login.html" class="btn btn-ghost" style="padding:15px 30px">J’ai déjà un compte</a>
@@ -346,6 +468,86 @@ footer nav a:hover{color:#fff}
   </nav>
   Kore Software © 2026 · Conçu pour les professionnels du BTP partout dans le monde 🌍
 </footer>
+
+
+<script>
+(function(){
+  const translations = {
+    "Fonctions":"Features", "Sécurité":"Security", "Fournisseurs":"Suppliers", "Distributeurs":"Distributors",
+    "Connexion":"Log in", "Créer mon compte":"Create account",
+    "La gestion de chantier, avec une exigence professionnelle":"Construction management, with professional standards",
+    "La maîtrise de vos chantiers.":"Take control of your construction projects.", "À chaque étape.":"At every stage.",
+    "Centralisez le suivi des équipes, les matériaux, les dépenses et les fournisseurs dans un espace conçu pour vous offrir une vision claire de chaque chantier — même hors connexion.":"Bring team tracking, materials, expenses and suppliers together in one workspace, giving you a clear view of every project — even offline.",
+    "Commencer maintenant →":"Get started →", "Voir les fonctions":"Explore features",
+    "DIRECTION":"MANAGEMENT", "TERRAIN":"ON-SITE", "PARTENAIRE":"PARTNER",
+    "Espace PDG":"Executive dashboard", "Espace Chef de chantier":"Site manager dashboard", "Espace Distributeur Agréé":"Authorized distributor portal",
+    "Pilotez vos chantiers, vos équipes, vos finances et vos alertes de fraude en temps réel.":"Manage projects, teams, finances and fraud alerts in real time.",
+    "Pointez, photographiez les reçus et rédigez vos rapports, même hors connexion.":"Record attendance, photograph receipts and write reports, even offline.",
+    "Vendez nos licences, gérez votre portefeuille et suivez vos entreprises clientes.":"Sell licenses, manage your wallet and track your business customers.", "Accéder":"Open portal",
+    "ANTI-VOL":"THEFT PREVENTION", "DÉTECTION DE FRAUDE":"FRAUD DETECTION", "GÉOFENCING GPS":"GPS GEOFENCING", "MODE HORS-LIGNE":"OFFLINE MODE", "TEMPS RÉEL":"REAL TIME", "DISTRIBUTEURS AGRÉÉS":"AUTHORIZED DISTRIBUTORS",
+    "Espaces dédiés":"Dedicated workspaces", "Contrôles anti-fraude":"Anti-fraud controls", "Alertes en temps réel":"Real-time alerts", "Fonctionne hors-ligne":"Works offline",
+    "Tout-en-un":"ALL-IN-ONE", "Une vision complète.":"A complete overview.", "Des décisions mieux maîtrisées.":"Better-informed decisions.",
+    "Réunissez les informations essentielles de vos opérations dans un seul outil : suivi des équipes, contrôle des achats et visibilité financière, chantier par chantier.":"Bring essential operational information into one tool: team tracking, purchase controls and financial visibility for every project.",
+    "Équipe & pointage":"Team & attendance", "Pointage chaque matin, calcul des fins de semaine en un clic, historique complet par ouvrier.":"Daily attendance, one-click weekly totals and a complete history for each worker.",
+    "Matériaux & stocks":"Materials & inventory", "Matériaux de construction : suivez les livraisons, la consommation et les factures avec photo du reçu.":"Track construction material deliveries, usage and invoices, with receipt photos.",
+    "Bilan financier":"Financial overview", "Sachez si vous gagnez ou perdez de l’argent, chantier par chantier, avec graphiques en direct.":"See whether each project is making or losing money with live charts.",
+    "Fournisseurs & dettes":"Suppliers & payables", "Qui vous doit quoi, qui est payé, avec preuve de paiement mobile money, virement ou chèque.":"See what you owe and what has been paid, with proof of Mobile Money, bank transfer or cheque payments.",
+    "Portail partenaires":"Partner portal", "Partagez les photos d’avancement avec vos clients par code d’accès ou lien sécurisé.":"Share progress photos with customers using an access code or secure link.",
+    "Notifications live":"Live notifications", "Chaque pointage, achat ou rapport vous arrive instantanément, où que vous soyez.":"Receive attendance records, purchases and reports instantly, wherever you are.",
+    "Anti-vol & anti-fraude":"Theft & fraud prevention", "Renforcez le contrôle.":"Strengthen oversight.", "Préservez vos ressources.":"Protect your resources.",
+    "Des contrôles et des alertes vous aident à repérer les anomalies et à vérifier les opérations sensibles avant qu’elles ne deviennent des pertes.":"Controls and alerts help identify anomalies and verify sensitive operations before they become losses.",
+    "Géofencing GPS":"GPS geofencing", "Un pointage hors de la zone du chantier est refusé.":"Attendance outside the project site perimeter is rejected.",
+    "Reçu photo obligatoire":"Photo receipt required", "Pas de preuve d’achat, pas d’enregistrement.":"No proof of purchase, no record.",
+    "Contrôle de position":"Location check", "Une position GPS absente déclenche une alerte.":"A missing GPS location triggers an alert.",
+    "Alertes instantanées":"Instant alerts", "Bannière, son et notification en temps réel pour le PDG.":"Real-time banner, sound and notification for the executive.",
+    "Pointage hors zone bloqué":"Out-of-zone attendance blocked", "Chantier principal · il y a 2 min":"Main project · 2 min ago", "BLOQUÉ":"BLOCKED",
+    "Achat sans reçu photo":"Purchase without receipt photo", "Matériaux 50 sacs · il y a 14 min":"Materials: 50 bags · 14 min ago", "ALERTE":"ALERT",
+    "Position GPS manquante":"GPS location missing", "Chef de chantier · il y a 1 h":"Site manager · 1 hour ago", "INFO":"INFO",
+    "Pointage validé dans la zone":"Attendance verified on site", "Chantier secondaire · à l’instant":"Secondary project · just now", "OK":"OK",
+    "Dettes fournisseurs":"Supplier payables", "3 achats non payés":"3 unpaid purchases", "1 achat non payé":"1 unpaid purchase", "Payé via Mobile Money ✓":"Paid via Mobile Money ✓", "Soldé":"Settled",
+    "Chaque achat payé,":"Every purchase accounted for,", "chaque preuve gardée.":"every proof preserved.",
+    "Visualisez en un coup d’œil ce que vous devez, à qui, et pour quel chantier. Marquez un achat comme payé avec sa référence de paiement mobile, chèque ou virement.":"See at a glance what you owe, to whom, and for which project. Mark purchases as paid with a Mobile Money, cheque or bank transfer reference.",
+    "Photo du reçu et position GPS":"Receipt photo and GPS location", "L’achat est vérifiable depuis votre bureau.":"Verify the purchase from your office.", "Paiement tracé":"Traceable payment", "Type de paiement et numéro de référence enregistrés.":"Payment type and reference number recorded.",
+    "Distributeur Agréé":"Authorized Distributor", "Développez votre activité.":"Grow your business.", "Grandissez avec Kore.":"Grow with Kore.",
+    "Cabinets, revendeurs, consultants : rejoignez notre réseau, vendez des licences à vos clients et gardez la différence. Offre Distributeur Fondateur, places limitées.":"Consultancies, resellers and advisors: join our network, sell licenses to your customers and keep the margin. Founding Distributor offer, limited places.",
+    "Inscrivez-vous":"Sign up", "Votre demande est validée par notre équipe.":"Our team will review your application.", "Rechargez votre portefeuille":"Top up your wallet", "Par paiement mobile, au montant que vous voulez.":"Pay by mobile payment in the amount you choose.", "Activez vos clients":"Activate your customers", "Accès immédiat pour l’entreprise, marge pour vous.":"Immediate business access, margin for you.",
+    "Devenir distributeur →":"Become a distributor →", "Se connecter":"Log in", "Solde du portefeuille":"Wallet balance", "Dernières opérations":"Recent transactions", "Entreprise BTP Partenaire":"Partner construction company", "Activation":"Activation", "Recharge":"Top-up", "Renouvellement":"Renewal",
+    "Prêt à ":"Ready to ", "digitaliser vos chantiers ?":"digitize your construction projects?", "Passez à une gestion de chantier plus structurée, plus lisible et plus sereine.":"Move to more structured, transparent and stress-free project management.", "Créer mon compte PDG":"Create executive account", "J’ai déjà un compte":"I already have an account",
+    "Conçu pour les professionnels du BTP partout dans le monde 🌍":"Built for construction professionals around the world 🌍"
+  };
+  const reverse = Object.fromEntries(Object.entries(translations).map(([fr,en])=>[en,fr]));
+  const originalTexts = new WeakMap();
+  function walk(root, dict){
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(node=>{
+      const raw=node.nodeValue, trimmed=raw.trim();
+      if(!trimmed) return;
+      if(!originalTexts.has(node)) originalTexts.set(node,raw);
+      const source=originalTexts.get(node), key=source.trim();
+      if(dict[key]!==undefined){
+        const leading=source.match(/^\s*/)[0], trailing=source.match(/\s*$/)[0];
+        node.nodeValue=leading+dict[key]+trailing;
+      }
+    });
+  }
+  const attrs=[['title','Kore Software - Gestion de chantier intelligente','Kore Software - Smart Construction Management'],['content','Kore Software centralise le suivi des équipes, des matériaux, des dépenses et des fournisseurs pour une gestion de chantier plus claire et mieux maîtrisée.','Kore Software brings teams, materials, expenses and suppliers together for clearer, more controlled construction management.']];
+  function setLanguage(lang){
+    const dict=lang==='en'?translations:reverse;
+    walk(document.body,dict);
+    document.documentElement.lang=lang;
+    document.getElementById('langToggle').textContent=lang==='fr'?'EN':'FR';
+    document.getElementById('langToggle').setAttribute('aria-label',lang==='fr'?'Switch to English':'Passer en français');
+    document.querySelectorAll('meta[name="description"]').forEach(m=>m.content=lang==='en'?attrs[1][2]:attrs[1][1]);
+    document.title=lang==='en'?attrs[0][2]:attrs[0][1];
+    try{localStorage.setItem('kore-language',lang)}catch(e){}
+  }
+  const button=document.getElementById('langToggle');
+  if(button){button.addEventListener('click',()=>setLanguage(document.documentElement.lang==='fr'?'en':'fr'));}
+  let saved='fr'; try{saved=localStorage.getItem('kore-language')||'fr'}catch(e){}
+  if(saved==='en') setLanguage('en');
+})();
+</script>
 
 <script>
 (function(){
