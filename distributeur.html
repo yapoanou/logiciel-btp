@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kore Software - Espace Distributeur</title>
+<style>
+:root{--primary:#2c3e50;--ci-orange:#ff8200;--ci-green:#009e49;--bg:#f4f7f6;--text:#333}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);margin:0;color:var(--text);padding-top:5px}
+.flag-top{height:5px;display:flex;position:fixed;top:0;width:100%;z-index:2000}
+.orange{background:var(--ci-orange);flex:1}.white{background:#fff;flex:1}.green{background:var(--ci-green);flex:1}
+nav{background:var(--primary);padding:1rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;margin-top:5px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+nav .brand{color:#fff;font-weight:700;margin-right:10px}
+nav a{color:#fff;text-decoration:none;font-weight:500;padding:8px 12px;border-radius:5px;font-size:.85rem;transition:.3s;border:1px solid rgba(255,255,255,.1);white-space:nowrap}
+nav a:hover,nav a.on{border-color:var(--ci-orange);background:rgba(255,255,255,.1)}
+.logout-btn{background:#c0392b;color:#fff;padding:8px 15px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;font-size:.85rem;margin-left:10px}
+.container{max-width:1100px;margin:20px auto;padding:0 15px}
+.welcome-header{margin-bottom:30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}
+.welcome-header h1{color:var(--primary);margin:0;font-size:1.8rem}
+.welcome-header p{margin:4px 0 0;color:#7f8c8d}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:30px}
+.stat-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,.05);border-top:4px solid var(--ci-orange)}
+.stat-card h3{margin:0;font-size:.8rem;color:#7f8c8d;text-transform:uppercase}
+.stat-card .value{font-size:1.6rem;font-weight:bold;margin-top:10px;color:var(--primary)}
+.stat-card .detail{font-size:.7rem;color:#999;margin-top:5px}
+.card{background:#fff;padding:20px;border-radius:15px;box-shadow:0 4px 6px rgba(0,0,0,.05);margin-bottom:25px}
+h2{font-size:1.1rem;color:var(--primary);margin:0 0 20px;border-bottom:2px solid #f1f1f1;padding-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.btn-action{background:var(--ci-green);color:#fff;padding:9px 16px;border-radius:6px;border:0;font-weight:bold;font-size:.85rem;cursor:pointer}
+.btn-action:disabled{opacity:.5;cursor:not-allowed}
+.btn-orange{background:var(--ci-orange)}
+.btn-link{background:none;border:0;color:var(--ci-orange);font-weight:700;cursor:pointer;font-size:.8rem}
+.badge{padding:4px 8px;border-radius:4px;font-size:.7rem;font-weight:bold}
+.b-ok{background:#e8f5e9;color:#2e7d32}.b-warn{background:#fff3e0;color:#e67e22}.b-err{background:#fee2e2;color:#c0392b}.b-mut{background:#eef0f2;color:#7f8c8d}
+label{display:block;font-weight:600;margin:12px 0 5px;color:var(--primary);font-size:.9rem}
+input,select{width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:.95rem;font-family:inherit}
+input:focus,select:focus{outline:0;border-color:var(--ci-orange)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th{background:#f8f9fa;padding:12px;text-align:left;font-weight:600;border-bottom:2px solid #e9ecef}
+td{padding:12px;border-bottom:1px solid #e9ecef}
+.tw{overflow-x:auto}
+.pos{color:var(--ci-green);font-weight:bold}.neg{color:#e74c3c;font-weight:bold}
+.sum{background:#f8f9fa;border-left:4px solid var(--ci-orange);border-radius:8px;padding:14px;margin:14px 0;font-size:.9rem}
+.sum div{display:flex;justify-content:space-between;gap:10px;padding:4px 0}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chips button{background:#f1f1f1;border:1px solid #e0e0e0;padding:7px 12px;border-radius:99px;cursor:pointer;font-size:.8rem}
+.auth{max-width:440px;margin:40px auto}
+.tabs2{display:flex;margin-bottom:18px;border-bottom:2px solid #f1f1f1}
+.tabs2 button{flex:1;background:none;border:0;padding:12px;font-weight:700;color:#95a5a6;cursor:pointer;font-size:.95rem;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tabs2 button.on{color:var(--primary);border-bottom-color:var(--ci-orange)}
+.note{font-size:.8rem;color:#7f8c8d;margin-top:10px}
+.center{text-align:center;padding:30px 10px}
+.toast{position:fixed;bottom:30px;right:20px;background:var(--primary);color:#fff;padding:14px 20px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.2);font-weight:600;font-size:.85rem;display:flex;align-items:center;gap:10px;z-index:9999;transform:translateX(130%);transition:transform .3s ease-out;max-width:320px}
+.toast.visible{transform:translateX(0)}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="flag-top"><div class="orange"></div><div class="white"></div><div class="green"></div></div>
+
+<nav>
+  <span class="brand">🇨🇮 Kore Software · Distributeur</span>
+  <span id="tabs" class="hide" style="display:contents">
+    <a href="#" data-tab="dash" class="on">📊 Dashboard</a>
+    <a href="#" data-tab="wallet">💳 Portefeuille</a>
+    <a href="#" data-tab="ents">🏢 Mes entreprises</a>
+    <a href="#" data-tab="sell">🛒 Vendre / Renouveler</a>
+  </span>
+  <button class="logout-btn hide" id="btnOut">Sortir</button>
+</nav>
+
+<div class="container">
+
+  <!-- INSCRIPTION / CONNEXION -->
+  <section id="auth" class="auth card hide">
+    <div class="tabs2">
+      <button id="tabLogin" class="on">Connexion</button>
+      <button id="tabSignup">Devenir distributeur</button>
+    </div>
+
+    <div id="formLogin">
+      <label for="lEmail">E-mail</label><input id="lEmail" type="email" autocomplete="username">
+      <label for="lPwd">Mot de passe</label><input id="lPwd" type="password" autocomplete="current-password">
+      <button class="btn-action" id="btnIn" style="width:100%;margin-top:18px">Se connecter</button>
+    </div>
+
+    <div id="formSignup" class="hide">
+      <label for="sNom">Nom du cabinet / de la structure *</label><input id="sNom" placeholder="Ex : Cabinet Bâti Conseil">
+      <label for="sContact">Téléphone *</label><input id="sContact" type="tel" placeholder="+225 07 00 00 00 00">
+      <label for="sVille">Ville *</label><input id="sVille" placeholder="Abidjan">
+      <label for="sEmail">E-mail *</label><input id="sEmail" type="email" autocomplete="username">
+      <label for="sPwd">Mot de passe (8 caractères minimum) *</label><input id="sPwd" type="password" autocomplete="new-password">
+      <label for="sPwd2">Confirmer le mot de passe *</label><input id="sPwd2" type="password" autocomplete="new-password">
+      <button class="btn-action btn-orange" id="btnUp" style="width:100%;margin-top:18px">Envoyer ma demande</button>
+      <p class="note">Votre demande est examinée par notre équipe. Vous pourrez recharger votre portefeuille et vendre des licences dès sa validation.</p>
+    </div>
+  </section>
+
+  <!-- EN ATTENTE DE VALIDATION -->
+  <section id="pending" class="card center hide">
+    <div style="font-size:2.5rem">🕐</div>
+    <h2 style="justify-content:center;border:0">Demande en cours de validation</h2>
+    <p>Merci <b id="pName"></b>. Notre équipe examine votre demande et vous contactera sur le numéro indiqué.<br>Revenez vous connecter après validation.</p>
+    <button class="btn-action" id="btnOut2">Se déconnecter</button>
+  </section>
+
+  <!-- APPLICATION -->
+  <section id="app" class="hide">
+    <div class="welcome-header">
+      <div>
+        <h1>Bonjour, <span id="dNom">Distributeur</span> 👋</h1>
+        <p>Espace Distributeur Agréé - Gestion de vos licences</p>
+      </div>
+      <div class="badge b-warn" style="padding:10px;font-size:.85rem" id="dBadge"></div>
+    </div>
+
+    <div id="tab-dash">
+      <div class="stats-grid" id="stats"></div>
+      <div class="card"><h2>⚡ Dernières opérations</h2><div class="tw" id="lastMov"></div></div>
+    </div>
+
+    <div id="tab-wallet" class="hide">
+      <div class="card">
+        <h2>💳 Recharger mon portefeuille</h2>
+        <p style="margin:0;font-size:.9rem">Solde actuel : <b id="soldeW"></b> · Paiement par Mobile Money</p>
+        <label for="montant">Montant (FCFA)</label>
+        <input id="montant" type="number" min="5000" step="1000" placeholder="100000">
+        <div class="chips" id="chips"></div>
+        <button class="btn-action" id="btnRech" style="margin-top:16px">Recharger</button>
+      </div>
+      <div class="card"><h2>📜 Historique</h2><div class="tw" id="allMov"></div></div>
+    </div>
+
+    <div id="tab-ents" class="hide">
+      <div class="card"><h2>🏢 Mes entreprises</h2><div class="tw" id="entList"></div></div>
+    </div>
+
+    <div id="tab-sell" class="hide">
+      <div class="card">
+        <h2>1. Entreprise cliente</h2>
+        <label for="selEnt">Entreprise existante</label>
+        <select id="selEnt"></select>
+        <label for="newNom">… ou créer une nouvelle entreprise</label>
+        <input id="newNom" placeholder="Nom de l’entreprise">
+        <button class="btn-action btn-orange" id="btnNew" style="margin-top:12px">Créer l’entreprise</button>
+      </div>
+      <div class="card">
+        <h2>2. Plan de licence</h2>
+        <select id="selPlan"></select>
+        <div class="sum" id="sum">Choisissez une entreprise et un plan.</div>
+        <button class="btn-action" id="btnSell" disabled>✓ Valider et activer</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"><span id="toast-icon">🔔</span><span id="toast-msg"></span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase.js"></script>
+<script>
+// Si ton supabase.js définit déjà window.sb, il est réutilisé. Sinon, renseigne ces deux valeurs.
+const SUPABASE_URL = 'https://TON-PROJET.supabase.co';
+const SUPABASE_ANON_KEY = 'TA-CLE-ANON';
+const FN_RECHARGE = 'creer-paiement-recharge'; // Edge Function (étape suivante)
+
+const sb = window.sb || supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const $ = id => document.getElementById(id);
+const fcfa = n => Number(n || 0).toLocaleString('fr-FR') + ' FCFA';
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fdate = d => d ? new Date(d).toLocaleDateString('fr-FR') : '—';
+const TYPES = {recharge:'💳 Recharge', activation:'✅ Activation', renouvellement:'🔄 Renouvellement', remboursement:'↩️ Remboursement'};
+let D = null, plans = [], ents = [], lic = {}, movs = [], solde = 0, busy = false;
+
+function toast(icon, msg){
+  $('toast-icon').textContent = icon; $('toast-msg').textContent = msg;
+  const t = $('toast'); t.classList.add('visible');
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('visible'), 4500);
+}
+const errMsg = e => (e && e.message) ? e.message : 'Erreur inconnue';
+
+function screen(name){
+  ['auth','pending','app'].forEach(s => $(s).classList.toggle('hide', s !== name));
+  $('tabs').classList.toggle('hide', name !== 'app');
+  $('btnOut').classList.toggle('hide', name === 'auth');
+}
+function tab(name){
+  document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.tab === name));
+  ['dash','wallet','ents','sell'].forEach(t => $('tab-' + t).classList.toggle('hide', t !== name));
+}
+$('tabs').addEventListener('click', e => { const a = e.target.closest('a'); if (a) { e.preventDefault(); tab(a.dataset.tab); } });
+
+$('tabLogin').onclick = () => { $('tabLogin').classList.add('on'); $('tabSignup').classList.remove('on'); $('formLogin').classList.remove('hide'); $('formSignup').classList.add('hide'); };
+$('tabSignup').onclick = () => { $('tabSignup').classList.add('on'); $('tabLogin').classList.remove('on'); $('formSignup').classList.remove('hide'); $('formLogin').classList.add('hide'); };
+
+// ---------- Inscription ----------
+$('btnUp').onclick = async () => {
+  const nom = $('sNom').value.trim(), contact = $('sContact').value.trim(), ville = $('sVille').value.trim();
+  const email = $('sEmail').value.trim(), pwd = $('sPwd').value;
+  if (nom.length < 2 || contact.length < 8 || ville.length < 2 || !email) return toast('❌', 'Veuillez remplir tous les champs.');
+  if (pwd.length < 8) return toast('❌', 'Mot de passe : 8 caractères minimum.');
+  if (pwd !== $('sPwd2').value) return toast('❌', 'Les mots de passe ne correspondent pas.');
+  $('btnUp').disabled = true;
+  const { data, error } = await sb.auth.signUp({
+    email, password: pwd,
+    options: { data: { nom_distributeur: nom, contact, ville } }
+  });
+  $('btnUp').disabled = false;
+  if (error) return toast('❌', errMsg(error));
+  if (data.session) return start();
+  toast('📧', 'Vérifiez votre e-mail pour confirmer votre compte, puis connectez-vous.');
+  $('tabLogin').click(); $('lEmail').value = email;
+};
+
+// ---------- Connexion ----------
+$('btnIn').onclick = async () => {
+  const { error } = await sb.auth.signInWithPassword({ email: $('lEmail').value.trim(), password: $('lPwd').value });
+  if (error) return toast('❌', 'E-mail ou mot de passe incorrect.');
+  start();
+};
+$('lPwd').addEventListener('keydown', e => { if (e.key === 'Enter') $('btnIn').click(); });
+async function logout(){ await sb.auth.signOut(); location.reload(); }
+$('btnOut').onclick = logout; $('btnOut2').onclick = logout;
+
+async function start(){
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return screen('auth');
+
+  let { data: d } = await sb.from('distributeurs').select('*').maybeSingle();
+  if (!d) {
+    const m = session.user.user_metadata || {};
+    if (!m.nom_distributeur) { await sb.auth.signOut(); screen('auth'); return toast('❌', 'Ce compte n’est pas un compte distributeur.'); }
+    const { error } = await sb.rpc('inscrire_distributeur', { p_nom: m.nom_distributeur, p_contact: m.contact || '', p_ville: m.ville || '' });
+    if (error) { screen('auth'); return toast('❌', errMsg(error)); }
+    ({ data: d } = await sb.from('distributeurs').select('*').maybeSingle());
+  }
+  if (!d) { screen('auth'); return toast('❌', 'Compte introuvable.'); }
+  D = d;
+  if (D.statut === 'en_attente') { $('pName').textContent = D.nom; return screen('pending'); }
+  if (D.statut === 'suspendu') { await sb.auth.signOut(); screen('auth'); return toast('⛔', 'Votre compte distributeur est suspendu.'); }
+
+  $('dNom').textContent = D.nom;
+  $('dBadge').textContent = D.est_fondateur ? 'Distributeur Fondateur 🇨🇮' : 'Distributeur Agréé 🇨🇮';
+  screen('app'); tab('dash');
+  await refresh();
+}
+
+// ---------- Données ----------
+async function refresh(){
+  const [w, m, e, l, p] = await Promise.all([
+    sb.from('portefeuilles').select('solde_fcfa').maybeSingle(),
+    sb.from('mouvements_portefeuille').select('*').order('created_at', { ascending: false }).limit(50),
+    sb.from('entreprises').select('id,nom,acces_actif').eq('distributeur_id', D.id).order('nom'),
+    sb.from('licences').select('entreprise_id,date_fin,statut').eq('statut', 'active').order('date_fin', { ascending: false }),
+    sb.from('plans_licence').select('*').eq('actif', true).order('prix_public_fcfa')
+  ]);
+  solde = w.data ? w.data.solde_fcfa : 0;
+  movs = m.data || []; ents = e.data || []; plans = p.data || [];
+  lic = {}; (l.data || []).forEach(x => { if (!lic[x.entreprise_id]) lic[x.entreprise_id] = x.date_fin; });
+  render();
+}
+
+function etat(id){
+  const fin = lic[id];
+  if (!fin) return ['En attente', 'b-mut'];
+  const j = Math.ceil((new Date(fin) - new Date(new Date().toDateString())) / 864e5);
+  if (j < -7) return ['Expirée', 'b-err'];
+  if (j < 0) return ['Délai de grâce', 'b-warn'];
+  if (j <= 30) return ['Expire dans ' + j + ' j', 'b-warn'];
+  return ['Active', 'b-ok'];
+}
+
+function movTable(rows){
+  if (!rows.length) return '<p style="color:#999;margin:0">Aucune opération.</p>';
+  return '<table><thead><tr><th>Date</th><th>Type</th><th>Montant</th></tr></thead><tbody>' + rows.map(r =>
+    '<tr><td>' + fdate(r.created_at) + '</td><td>' + (TYPES[r.type] || esc(r.type)) + '</td><td class="' +
+    (r.montant_fcfa >= 0 ? 'pos' : 'neg') + '">' + (r.montant_fcfa >= 0 ? '+' : '') + fcfa(r.montant_fcfa) + '</td></tr>').join('') + '</tbody></table>';
+}
+
+function render(){
+  const etats = ents.map(x => etat(x.id)[0]);
+  const actives = etats.filter(s => s === 'Active' || s.startsWith('Expire dans')).length;
+  const arenouv = etats.filter(s => s.startsWith('Expire dans') || s === 'Délai de grâce').length;
+  $('stats').innerHTML =
+    '<div class="stat-card" style="border-top-color:var(--ci-green)"><h3>Solde portefeuille</h3><div class="value" style="color:var(--ci-green)">' + fcfa(solde) + '</div><div class="detail">Disponible pour activer des licences</div></div>' +
+    '<div class="stat-card"><h3>Entreprises actives</h3><div class="value">' + actives + '</div></div>' +
+    '<div class="stat-card" style="border-top-color:#3498db"><h3>À renouveler (30 j)</h3><div class="value">' + arenouv + '</div></div>' +
+    '<div class="stat-card"><h3>Entreprises au total</h3><div class="value">' + ents.length + '</div></div>';
+  $('lastMov').innerHTML = movTable(movs.slice(0, 5));
+  $('allMov').innerHTML = movTable(movs);
+  $('soldeW').textContent = fcfa(solde);
+
+  $('entList').innerHTML = ents.length
+    ? '<table><thead><tr><th>Entreprise</th><th>Statut</th><th>Fin de licence</th><th></th></tr></thead><tbody>' + ents.map(x => {
+        const s = etat(x.id);
+        return '<tr><td><strong>' + esc(x.nom) + '</strong></td><td><span class="badge ' + s[1] + '">' + s[0] + '</span></td><td>' +
+          fdate(lic[x.id]) + '</td><td><button class="btn-link" data-sell="' + x.id + '">' + (lic[x.id] ? '🔄 Renouveler' : '✓ Activer') + '</button></td></tr>';
+      }).join('') + '</tbody></table>'
+    : '<p style="color:#999;margin:0">Aucune entreprise. Créez-en une dans « Vendre / Renouveler ».</p>';
+
+  const keep = $('selEnt').value, kp = $('selPlan').value;
+  $('selEnt').innerHTML = '<option value="">-- Choisir --</option>' + ents.map(x => '<option value="' + x.id + '">' + esc(x.nom) + '</option>').join('');
+  $('selPlan').innerHTML = '<option value="">-- Choisir --</option>' + plans.map(x => '<option value="' + x.id + '">' + esc(x.nom) + ' · ' + x.duree_mois + ' mois · ' + fcfa(x.prix_public_fcfa) + '</option>').join('');
+  if (keep) $('selEnt').value = keep;
+  if (kp) $('selPlan').value = kp;
+  $('chips').innerHTML = [50000, 100000, 250000, 500000].map(v => '<button data-amt="' + v + '">' + fcfa(v) + '</button>').join('');
+  updateSum();
+}
+
+$('entList').addEventListener('click', e => { const id = e.target.dataset.sell; if (id) { $('selEnt').value = id; tab('sell'); updateSum(); } });
+$('chips').addEventListener('click', e => { if (e.target.dataset.amt) $('montant').value = e.target.dataset.amt; });
+
+// ---------- Recharge ----------
+$('btnRech').onclick = async () => {
+  const montant = parseInt($('montant').value, 10);
+  if (!montant || montant < 5000) return toast('❌', 'Montant minimum : 5 000 FCFA.');
+  if (busy) return; busy = true; $('btnRech').disabled = true;
+  try {
+    const { data: id, error } = await sb.rpc('initier_recharge', { p_montant: montant });
+    if (error) throw error;
+    const { data, error: e2 } = await sb.functions.invoke(FN_RECHARGE, { body: { recharge_id: id } });
+    if (e2 || !data || !data.url) throw new Error('Le service de paiement n’est pas encore disponible.');
+    location.href = data.url;
+  } catch (e) { toast('❌', errMsg(e)); }
+  busy = false; $('btnRech').disabled = false;
+};
+
+// ---------- Vente / renouvellement ----------
+$('btnNew').onclick = async () => {
+  const nom = $('newNom').value.trim();
+  if (nom.length < 2) return toast('❌', 'Saisissez le nom de l’entreprise.');
+  const { data, error } = await sb.rpc('creer_entreprise_distributeur', { p_nom: nom });
+  if (error) return toast('❌', errMsg(error));
+  $('newNom').value = ''; await refresh(); $('selEnt').value = data; updateSum(); toast('✅', 'Entreprise créée.');
+};
+$('selEnt').onchange = updateSum; $('selPlan').onchange = updateSum;
+
+async function updateSum(){
+  const ent = $('selEnt').value, plan = plans.find(p => p.id === $('selPlan').value);
+  $('btnSell').disabled = true;
+  if (!ent || !plan) { $('sum').textContent = 'Choisissez une entreprise et un plan.'; return; }
+  const { data: gros, error } = await sb.rpc('prix_gros_pour', { p_entreprise: ent, p_plan: plan.id });
+  if (error) { $('sum').textContent = errMsg(error); return; }
+  const renew = !!lic[ent], ok = solde >= gros;
+  $('sum').innerHTML =
+    '<div><span>Opération</span><b>' + (renew ? '🔄 Renouvellement' : '✅ Première activation') + '</b></div>' +
+    '<div><span>Prix public conseillé</span><b>' + fcfa(plan.prix_public_fcfa) + '</b></div>' +
+    '<div><span>Vous payez (prélevé sur votre solde)</span><b>' + fcfa(gros) + '</b></div>' +
+    '<div><span>Votre marge si vente au prix public</span><b class="pos">' + fcfa(plan.prix_public_fcfa - gros) + '</b></div>' +
+    '<div><span>Solde actuel</span><b class="' + (ok ? '' : 'neg') + '">' + fcfa(solde) + '</b></div>' +
+    (ok ? '' : '<div class="neg">Solde insuffisant : rechargez votre portefeuille.</div>');
+  $('btnSell').disabled = !ok;
+}
+
+$('btnSell').onclick = async () => {
+  if (busy) return;
+  const nom = (ents.find(x => x.id === $('selEnt').value) || {}).nom;
+  if (!confirm('Confirmer l’opération pour « ' + nom + ' » ?\nLe montant sera prélevé de votre portefeuille.')) return;
+  busy = true; $('btnSell').disabled = true;
+  const { error } = await sb.rpc('activer_licence', { p_entreprise: $('selEnt').value, p_plan: $('selPlan').value });
+  busy = false;
+  if (error) { toast('❌', errMsg(error)); return updateSum(); }
+  toast('✅', 'Licence activée : l’entreprise a maintenant accès.');
+  await refresh(); tab('ents');
+};
+
+start();
+</script>
+</body>
+</html>
