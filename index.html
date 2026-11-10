@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kore Software - Gestion de chantier intelligente</title>
-<meta name="description" content="Kore Software centralise le suivi des équipes, des matériaux, des dépenses et des fournisseurs pour une gestion de chantier plus claire et mieux maîtrisée.">
-<meta name="theme-color" content="#080d18">
-<meta property="og:title" content="Kore Software — La maîtrise de vos chantiers">
+<title>BâtiOS - Gestion de chantier intelligente</title>
+<meta name="description" content="BâtiOS centralise le suivi des équipes, des matériaux, des dépenses et des fournisseurs pour une gestion de chantier plus claire et mieux maîtrisée.">
+<meta name="theme-color" content="#fffaf3">
+<meta property="og:title" content="BâtiOS — La maîtrise de vos chantiers">
 <meta property="og:description" content="Le suivi des équipes, des matériaux et des dépenses dans une expérience pensée pour les professionnels du BTP.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -164,7 +164,7 @@ footer nav a:hover{color:#fff}
 .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}html{scroll-behavior:auto}}
 
-/* KORE SOFTWARE — finition premium, identité orange / blanc / vert préservée */
+/* BÂTIOS — finition premium, identité orange / blanc / vert préservée */
 :root{
   --o:#f28a24; --g:#078447; --n:#080d18; --n2:#101827;
   --tx:#f4f6fa; --mut:#aab4c5; --bd:rgba(225,233,245,.12);
@@ -279,6 +279,79 @@ footer nav{gap:26px;margin-bottom:18px}
  footer nav{gap:14px}
 }
 
+/* ============================================================
+   THÈME CLAIR : ORANGE + BLANC + TOUCHE DE VERT (doit rester en dernier)
+   ============================================================ */
+:root{
+  --o:#ff7a00; --g:#0f9d58;
+  --n:#fffaf3; --n2:#ffffff;
+  --tx:#1c1510; --mut:#6e6256;
+  --bd:rgba(60,35,10,.10);
+  --shadow:0 18px 44px -22px rgba(120,60,0,.28);
+}
+body{background:var(--n);color:var(--tx)}
+::selection{background:rgba(255,122,0,.25);color:#1c1510}
+.tri{background:linear-gradient(90deg,#ff7a00,#ffb347 68%,#0f9d58)}
+
+header.s{background:rgba(255,250,243,.86);border-bottom-color:var(--bd);box-shadow:0 10px 30px -18px rgba(120,60,0,.25)}
+.links a:hover,footer nav a:hover{color:var(--tx)}
+.btn-o{background:linear-gradient(135deg,#ff8a1f,#ff6a00);box-shadow:0 10px 24px -10px rgba(255,106,0,.55)}
+.btn-o:hover{box-shadow:0 16px 32px -10px rgba(255,106,0,.6)}
+.btn-g{background:var(--g);box-shadow:0 10px 24px -10px rgba(15,157,88,.5)}
+.btn-ghost{background:#fff;border-color:rgba(60,35,10,.16);color:var(--tx)}
+.btn-ghost:hover{background:#fff4e6;border-color:rgba(255,122,0,.45)}
+#langToggle{border-color:rgba(60,35,10,.2)}
+
+.hero::before{background:
+  radial-gradient(46% 52% at 12% 18%,rgba(255,138,31,.28),transparent 72%),
+  radial-gradient(34% 40% at 90% 70%,rgba(15,157,88,.14),transparent 72%),
+  radial-gradient(40% 40% at 60% 0%,rgba(255,200,140,.35),transparent 70%)}
+.grid-bg{opacity:.5;background-image:linear-gradient(rgba(60,35,10,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(60,35,10,.07) 1px,transparent 1px)}
+.pill{background:#fff;border-color:rgba(255,122,0,.28);color:#8a4300;box-shadow:0 8px 22px -14px rgba(255,122,0,.5)}
+.grad{background:linear-gradient(100deg,#ff7a00 0%,#ff9d3d 55%,#0f9d58 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead,.sub{color:var(--mut)}
+.eyebrow{color:var(--o)}
+.sec-red .eyebrow{color:var(--o)!important}
+
+.role{box-shadow:var(--shadow);border-color:rgba(60,35,10,.08)}
+.r-pdg::before{background:linear-gradient(145deg,#ff9a2e,#ff6a00)}
+.r-pdg:hover{box-shadow:0 32px 60px -24px rgba(255,106,0,.7)}
+.r-chef{color:var(--tx);border-color:rgba(255,122,0,.25)}
+.r-chef::before{background:linear-gradient(145deg,#ffffff,#fff3e4)}
+.r-chef .ico,.r-chef .go i,.r-chef .tag{background:var(--o);color:#fff}
+.r-chef:hover{box-shadow:0 32px 60px -24px rgba(255,122,0,.4)}
+.r-dist::before{background:linear-gradient(145deg,#12a862,#0b7a45)}
+.r-dist:hover{box-shadow:0 32px 60px -24px rgba(15,157,88,.6)}
+
+.ticker{background:linear-gradient(90deg,#ff7a00,#ff9a2e);border-block:0}
+.ticker div{color:#fff}
+.ticker b,.ticker b:nth-child(3n),.ticker b:nth-child(3n+2){color:rgba(255,255,255,.65)}
+
+.stat{background:#fff;border-color:var(--bd);box-shadow:var(--shadow)}
+.stat b{background:linear-gradient(100deg,#ff7a00,#ffa04a 60%,#0f9d58);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.feat{background:#fff;border-color:var(--bd);box-shadow:var(--shadow)}
+.feat:hover{border-color:rgba(255,122,0,.4);box-shadow:0 26px 50px -24px rgba(255,106,0,.4)}
+.feat .ic{background:rgba(255,122,0,.1)}
+.feat:nth-child(3n){--c:var(--g)!important}
+.checks li{background:#fff;border-color:var(--bd);box-shadow:0 10px 26px -20px rgba(120,60,0,.3)}
+.checks li:hover{background:#fff7ec;border-color:rgba(255,122,0,.35)}
+
+.sec-red{background:linear-gradient(180deg,#fffaf3,#ffefdc 50%,#fffaf3)}
+.al{background:#fff;border-color:var(--bd);box-shadow:var(--shadow)}
+
+.mock{background:#fff;border-color:var(--bd);box-shadow:var(--shadow)}
+.mock h4{color:var(--mut)}
+.row{border-bottom-color:var(--bd)}
+
+#distributeurs{background:linear-gradient(180deg,#fffaf3,#eef9f2 50%,#fffaf3)!important}
+.step::before{background:linear-gradient(135deg,#ff8a1f,#0f9d58)}
+
+.cta-in{background:linear-gradient(120deg,#ff7a00,#ffd2a1 55%,#0f9d58)}
+.cta-box{background:#fff}
+.cta-box::before{background:radial-gradient(50% 90% at 0% 100%,rgba(255,138,31,.2),transparent),radial-gradient(45% 90% at 100% 100%,rgba(15,157,88,.12),transparent)}
+
+footer{background:#fff;border-top-color:var(--bd)}
 </style>
 </head>
 <body>
@@ -287,7 +360,7 @@ footer nav{gap:26px;margin-bottom:18px}
 
 <header id="hd">
   <div class="nav">
-    <a href="#top" class="logo"><i>🏗️</i> Kore <span style="color:var(--g)">Software</span></a>
+    <a href="#top" class="logo"><i>🏗️</i><span>Bâti<span style="color:var(--g)">OS</span></span></a>
     <div class="links">
       <a href="#fonctions">Fonctions</a>
       <a href="#securite">Sécurité</a>
@@ -423,7 +496,7 @@ footer nav{gap:26px;margin-bottom:18px}
   <div class="wrap split">
     <div>
       <span class="eyebrow rv" style="color:var(--g)">Distributeur Agréé</span>
-      <h2 class="rv">Développez votre activité.<br><span class="grad">Grandissez avec Kore.</span></h2>
+      <h2 class="rv">Développez votre activité.<br><span class="grad">Grandissez avec BâtiOS.</span></h2>
       <p class="sub rv">Cabinets, revendeurs, consultants : rejoignez notre réseau, vendez des licences à vos clients et gardez la différence. Offre Distributeur Fondateur, places limitées.</p>
       <div class="steps">
         <div class="step rv"><div><b>Inscrivez-vous</b><span>Votre demande est validée par notre équipe.</span></div></div>
@@ -466,7 +539,7 @@ footer nav{gap:26px;margin-bottom:18px}
     <a href="login.html?role=chef">Espace Chef de chantier</a>
     <a href="distributeur.html">Espace Distributeur Agréé</a>
   </nav>
-  Kore Software © 2026 · Conçu pour les professionnels du BTP partout dans le monde 🌍
+  BâtiOS Corporation © 2026 · Conçu pour les professionnels du BTP partout dans le monde 🌍
 </footer>
 
 
@@ -508,7 +581,7 @@ footer nav{gap:26px;margin-bottom:18px}
     "Chaque achat payé,":"Every purchase accounted for,", "chaque preuve gardée.":"every proof preserved.",
     "Visualisez en un coup d’œil ce que vous devez, à qui, et pour quel chantier. Marquez un achat comme payé avec sa référence de paiement mobile, chèque ou virement.":"See at a glance what you owe, to whom, and for which project. Mark purchases as paid with a Mobile Money, cheque or bank transfer reference.",
     "Photo du reçu et position GPS":"Receipt photo and GPS location", "L’achat est vérifiable depuis votre bureau.":"Verify the purchase from your office.", "Paiement tracé":"Traceable payment", "Type de paiement et numéro de référence enregistrés.":"Payment type and reference number recorded.",
-    "Distributeur Agréé":"Authorized Distributor", "Développez votre activité.":"Grow your business.", "Grandissez avec Kore.":"Grow with Kore.",
+    "Distributeur Agréé":"Authorized Distributor", "Développez votre activité.":"Grow your business.", "Grandissez avec BâtiOS.":"Grow with BâtiOS.",
     "Cabinets, revendeurs, consultants : rejoignez notre réseau, vendez des licences à vos clients et gardez la différence. Offre Distributeur Fondateur, places limitées.":"Consultancies, resellers and advisors: join our network, sell licenses to your customers and keep the margin. Founding Distributor offer, limited places.",
     "Inscrivez-vous":"Sign up", "Votre demande est validée par notre équipe.":"Our team will review your application.", "Rechargez votre portefeuille":"Top up your wallet", "Par paiement mobile, au montant que vous voulez.":"Pay by mobile payment in the amount you choose.", "Activez vos clients":"Activate your customers", "Accès immédiat pour l’entreprise, marge pour vous.":"Immediate business access, margin for you.",
     "Devenir distributeur →":"Become a distributor →", "Se connecter":"Log in", "Solde du portefeuille":"Wallet balance", "Dernières opérations":"Recent transactions", "Entreprise BTP Partenaire":"Partner construction company", "Activation":"Activation", "Recharge":"Top-up", "Renouvellement":"Renewal",
@@ -531,7 +604,7 @@ footer nav{gap:26px;margin-bottom:18px}
       }
     });
   }
-  const attrs=[['title','Kore Software - Gestion de chantier intelligente','Kore Software - Smart Construction Management'],['content','Kore Software centralise le suivi des équipes, des matériaux, des dépenses et des fournisseurs pour une gestion de chantier plus claire et mieux maîtrisée.','Kore Software brings teams, materials, expenses and suppliers together for clearer, more controlled construction management.']];
+  const attrs=[['title','BâtiOS - Gestion de chantier intelligente','BâtiOS - Smart Construction Management'],['content','BâtiOS centralise le suivi des équipes, des matériaux, des dépenses et des fournisseurs pour une gestion de chantier plus claire et mieux maîtrisée.','BâtiOS brings teams, materials, expenses and suppliers together for clearer, more controlled construction management.']];
   function setLanguage(lang){
     const dict=lang==='en'?translations:reverse;
     walk(document.body,dict);

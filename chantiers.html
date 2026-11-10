@@ -1,111 +1,244 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTP Pro CI - Gestion des Chantiers</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-        :root { 
-            --primary: #2c3e50; 
-            --ci-orange: #ff8200; 
-            --ci-green: #009e49;
-            --bg: #f4f7f6; 
-        }
-        body { background-color: var(--bg); font-family: 'Inter', sans-serif; margin: 0; padding-top: 5px; }
-        
-        .flag-top { height: 5px; display: flex; position: fixed; top: 0; width: 100%; z-index: 2000; }
-        .orange { background: var(--ci-orange); flex: 1; }
-        .white  { background: #fff; flex: 1; }
-        .green  { background: var(--ci-green); flex: 1; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fffaf3">
+<title>BâtiOS — Gestion des chantiers</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+:root {
+  --navy:#101b2d;
+  --navy2:#192840;
+  --gold:#c9a76a;
+  --gold-light:#f0dfb8;
+  --bg:#f4f6fa;
+  --text:#182438;
+  --ink:#101b2d;
+  --muted:#8290a4;
+  --mut:#8290a4;
+  --line:#e8edf3;
+  --green:#13866b;
+  --shadow:0 12px 40px rgba(23,39,64,.055);
+}
+*{-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px}
+::selection{background:rgba(201,167,106,.3)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.app{min-height:100vh}
 
-        nav { 
-            background: var(--primary); padding: 1rem; display: flex; flex-wrap: wrap;
-            justify-content: center; align-items: center; gap: 10px; margin-top: 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        nav a { 
-            color: white; text-decoration: none; font-weight: 500; padding: 8px 12px;
-            border-radius: 5px; font-size: 0.85rem; transition: 0.3s;
-            border: 1px solid rgba(255,255,255,0.1); white-space: nowrap;
-        }
-        nav a:hover { border-color: var(--ci-orange); background: rgba(255,255,255,0.1); }
-        .active-link { background: var(--ci-orange) !important; color: white; border-color: var(--ci-orange); }
-        .logout-btn { background: #c0392b; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.85rem; margin-left: 10px; }
+/* ===== SIDEBAR ===== */
+.sidebar{
+  position:fixed;inset:0 auto 0 0;width:252px;
+  background:var(--navy);color:white;padding:28px 17px;
+  display:flex;flex-direction:column;z-index:1200;overflow-y:auto;
+}
+.brand{display:flex;align-items:center;gap:12px;padding:0 10px 32px;text-decoration:none}
+.brand-mark{
+  width:43px;height:43px;border-radius:13px;display:grid;place-items:center;
+  color:var(--gold-light);font:800 23px Manrope,sans-serif;
+  border:1px solid rgba(201,167,106,.55);
+  background:linear-gradient(145deg,#263650,#101b2d);
+}
+.brand-name{font:800 19px Manrope,sans-serif;letter-spacing:2px}
+.brand-sub{font-size:9px;letter-spacing:2.1px;color:#9ba8ba;margin-top:4px}
+.nav-label{font-size:9px;font-weight:700;letter-spacing:1.8px;color:#74839a;padding:0 13px;margin:15px 0 12px}
+.nav-list{display:grid;gap:6px}
+.nav-link{
+  color:#aeb9ca;padding:12px 13px;border-radius:9px;display:flex;align-items:center;gap:12px;
+  font-size:12px;transition:.2s;border:1px solid transparent;text-decoration:none;
+}
+.nav-link:hover{background:#ffffff0c;color:#fff}
+.nav-link.active{background:linear-gradient(100deg,#c9a76a24,#c9a76a09);border-color:#c9a76a32;color:#f0dfb8}
+.nav-icon{width:19px;text-align:center;font-size:16px}
+.nav-bottom{margin-top:auto}
+.sidebar-footer{
+  margin-top:20px;padding:16px 12px;border-top:1px solid #ffffff14;
+  color:#8290a4;font-size:10px;line-height:1.8;
+}
+.sidebar-footer strong{color:#d9c69f;letter-spacing:1px}
+.logout-btn{
+  width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:9px;
+  background:transparent;color:#e8b4ae;border:1px solid rgba(232,180,174,.35);
+  border-radius:9px;padding:11px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;
+}
+.logout-btn:hover{background:rgba(232,180,174,.1)}
 
-        .card { background: white; border-radius: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
-        .status-msg { display: none; padding: 12px 14px; border-radius: 10px; font-weight: 700; margin-bottom: 14px; position: sticky; top: 70px; z-index: 1000; }
-        .status-success { background: #e8f8ef; color: #0f7a3d; border: 1px solid #b7e4c7; }
-        .status-error   { background: #fdecec; color: #b42318; border: 1px solid #f7b9b9; }
+/* ===== MAIN / TOPBAR ===== */
+.main{margin-left:252px;min-height:100vh}
+.topbar{
+  height:76px;background:#ffffffed;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 42px;position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);
+}
+.breadcrumb{font-size:12px;color:var(--muted)}
+.breadcrumb strong{color:var(--text)}
+.top-actions{display:flex;align-items:center;gap:15px}
+.secure{display:flex;align-items:center;gap:8px;font-size:11px;color:#65748a}
+.secure-dot{width:7px;height:7px;background:#1ba77c;border-radius:50%;box-shadow:0 0 0 4px #1ba77c18}
+.top-avatar{
+  width:37px;height:37px;border-radius:12px;display:grid;place-items:center;
+  background:#f2e9d7;color:#765a2c;font-weight:800;border:1px solid #e9d9b8;
+}
+.notif-cloche{
+  position:relative;width:37px;height:37px;border-radius:12px;display:grid;place-items:center;
+  background:#fff;border:1px solid var(--line);cursor:pointer;font-size:15px;
+}
+.notif-badge{
+  position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;
+  border-radius:99px;background:#e5484d;color:#fff;font-size:9px;font-weight:700;
+  display:grid;place-items:center;
+}
+.notif-badge:empty{display:none}
+.mobile-menu{display:none}
+.eyebrow{color:#a27e42;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
 
-        .badge-en_cours { background: #dcfce7; color: #15803d; }
-        .badge-termine  { background: #dbeafe; color: #1d4ed8; }
-        .badge-suspendu { background: #fef9c3; color: #a16207; }
+/* ===== CONTENU ===== */
+h1.titre{font:800 clamp(25px,3vw,34px) Manrope,sans-serif;letter-spacing:-1.2px;color:var(--navy)}
+.card{background:#fff;border:1px solid #e9edf3!important;border-radius:14px;box-shadow:var(--shadow)}
+.card h2{font-family:Manrope,sans-serif;font-weight:800;font-size:15px;color:var(--navy);border-bottom-color:var(--line)!important}
+.card input{background:#fbfcfe;border:1px solid #e4e9f0;border-radius:8px;transition:.2s;font-size:12px}
+.card input:hover{border-color:#c8d1dd}
+.card input:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px #c9a76a19}
+#btn-add-chantier{background:var(--navy);box-shadow:0 4px 12px #101b2d19;border-radius:8px;font-size:12px;transition:transform .2s,background .2s}
+#btn-add-chantier:hover{background:#233650}
+#btn-add-chantier:disabled{opacity:.6;cursor:not-allowed}
 
-        .select-statut {
-            border: none; background: transparent; font-size: 0.75rem;
-            font-weight: 700; cursor: pointer; outline: none; padding: 2px 4px;
-            border-radius: 6px;
-        }
+.status-msg{display:none;padding:12px 14px;border-radius:10px;font-weight:600;margin-bottom:14px;position:sticky;top:90px;z-index:1000;box-shadow:0 10px 24px -14px rgba(20,33,61,.3)}
+.status-success{background:#e8f6ee;color:#0b6b3a;border:1px solid #b7e4c7}
+.status-error{background:#fdecec;color:#b42318;border:1px solid #f7b9b9}
 
-        .filtre-btn { transition: 0.2s; }
-        .filtre-btn.actif { outline: 2px solid var(--ci-orange); }
-    </style>
+.badge-en_cours{background:#e6f4ec;color:#0b6b3a}
+.badge-termine{background:#e6f0fa;color:#1d4ed8}
+.badge-suspendu{background:#fdf3d8;color:#946200}
+.select-statut{border:none;background:transparent;font-size:.75rem;font-weight:700;cursor:pointer;outline:none;padding:2px 4px;border-radius:6px}
+
+.filtre-btn{transition:.2s}
+.filtre-btn.actif{outline:2px solid var(--gold);outline-offset:1px}
+.chantier-item{background:#fff;border:1px solid var(--line);border-radius:12px;transition:.2s}
+.chantier-item:hover{border-color:#e3d3b0;background:#fdfaf3;box-shadow:0 12px 28px -18px rgba(201,167,106,.55)}
+
+footer.page-foot{text-align:center;padding:25px 10px;color:#a0aaba;font-size:9px;letter-spacing:.4px}
+footer.page-foot span{color:#a27e42;font-weight:700;letter-spacing:1px}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1050px){
+  .sidebar{width:220px}
+  .main{margin-left:220px}
+  .topbar{padding:0 25px}
+}
+@media(max-width:760px){
+  .sidebar{width:260px;transform:translateX(-100%);transition:transform .25s}
+  .sidebar.open{transform:translateX(0);box-shadow:15px 0 50px #101b2d30}
+  .main{margin-left:0}
+  .mobile-menu{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);background:white;border-radius:9px;cursor:pointer}
+  .topbar{height:65px;padding:0 17px}
+  .top-actions{gap:10px}
+  .secure{font-size:0;gap:0}
+  .secure-dot{width:8px;height:8px}
+  .status-msg{top:78px}
+}
+@media(max-width:430px){
+  .breadcrumb{font-size:10px}
+  .top-avatar{width:33px;height:33px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+  <link rel="stylesheet" href="batios-theme.css">
 </head>
 <body>
-    
-    <div class="flag-top"><div class="orange"></div><div class="white"></div><div class="green"></div></div>
+<div class="app">
 
-    <nav>
-    <a href="tableau-de-bord.html">📊 Dashboard</a>
-    <a href="chantiers.html">🏗️ Chantiers</a>
-    <a href="equipe.html">👥 Équipe & Pointage</a>
-    <a href="bilan.html">💰 Bilan & Matériaux</a>
-    <a href="admin-fraude.html">Detection de fraude</a>
-    <a href="profil.html">⚙️ Profil</a>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="tableau-de-bord.html" style="color:white">
+      <div class="brand-mark">B</div>
+      <div>
+        <div class="brand-name">BâtiOS</div>
+        <div class="brand-sub">PLATEFORME BTP</div>
+      </div>
+    </a>
 
-    <div class="notif-cloche" id="notif-cloche" onclick="togglePanel()">
-        🔔
-        <div class="notif-badge" id="notif-badge"></div>
+    <div class="nav-label">ESPACE DE TRAVAIL</div>
+    <nav class="nav-list">
+      <a class="nav-link" href="tableau-de-bord.html" id="nav-dashboard"><span class="nav-icon">▦</span> Tableau de bord</a>
+      <a class="nav-link active" href="chantiers.html"><span class="nav-icon">▤</span> Gestion des chantiers</a>
+      <a class="nav-link" href="equipe.html"><span class="nav-icon">♧</span> Équipe & pointage</a>
+      <a class="nav-link" href="bilan.html"><span class="nav-icon">◈</span> Bilan & matériaux</a>
+      <a class="nav-link" href="tableau-de-bord.html#fournisseurs" id="nav-suppliers"><span class="nav-icon">⇄</span> Fournisseurs & dettes</a>
+      <a class="nav-link" href="tableau-de-bord.html#partenaires" id="nav-partenaires"><span class="nav-icon">❖</span> Gestion partenaires</a>
+      <a class="nav-link" href="admin-fraude.html"><span class="nav-icon">⬡</span> Détection de fraude</a>
+    </nav>
+
+    <div class="nav-label">CONFIGURATION</div>
+    <nav class="nav-list">
+      <a class="nav-link" href="profil.html"><span class="nav-icon">⚙</span> Profil entreprise</a>
+    </nav>
+
+    <div class="nav-bottom">
+      <button onclick="deconnexion()" class="logout-btn" type="button">↪ Se déconnecter</button>
+      <div class="sidebar-footer">
+        CONÇU POUR LES PROFESSIONNELS<br>
+        <strong>BâtiOS Corporation</strong><br>
+        Gestion BTP nouvelle génération
+      </div>
     </div>
+  </aside>
 
-    <button onclick="deconnexion()" class="logout-btn">Sortir</button>
-</nav>
-
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="mobile-menu" id="mobile-menu" aria-label="Ouvrir le menu">☰</button>
+        <div class="breadcrumb">Espace de travail <span style="margin:0 7px;color:#c2cad5">/</span> <strong>Gestion des chantiers</strong></div>
+      </div>
+      <div class="top-actions">
+        <div class="notif-cloche" id="notif-cloche" onclick="togglePanel()">
+            🔔
+            <div class="notif-badge" id="notif-badge"></div>
+        </div>
+        <div class="secure"><span class="secure-dot"></span> Espace sécurisé</div>
+        <div class="top-avatar" aria-label="Profil">B</div>
+      </div>
+    </header>
 
     <div class="max-w-7xl mx-auto px-4 py-8">
         <div id="status-msg" class="status-msg"></div>
         
         <div class="mb-10">
-            <h1 class="text-3xl font-extrabold text-slate-800">Gestion des Projets</h1>
-            <p class="text-slate-500">Suivi et pilotage de vos chantiers actifs en Côte d'Ivoire.</p>
+            <div class="eyebrow">BâtiOS / PROJETS</div>
+            <h1 class="titre text-3xl">Gestion des projets</h1>
+            <p class="text-slate-500 mt-1">Suivi et pilotage de vos chantiers actifs en Côte d'Ivoire.</p>
         </div>
 
         <div class="grid lg:grid-cols-3 gap-8">
             <!-- Zone Création PDG -->
             <div class="lg:col-span-1" id="zone-creation">
-                <div class="card p-6 sticky top-24 border border-slate-100">
-                    <h2 class="text-xl font-bold mb-6 text-slate-800 border-b pb-4">➕ Nouveau Projet</h2>
+                <div class="card p-6 sticky top-24 border">
+                    <h2 class="text-xl mb-6 border-b pb-4">➕ Nouveau projet</h2>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Nom du chantier</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Nom du chantier</label>
                             <input type="text" id="nom_chantier_input" placeholder="ex: Villa 4, Cocody"
-                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-green-500">
+                                class="w-full p-3 border outline-none">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Nom du client</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Nom du client</label>
                             <input type="text" id="client_nom_input" placeholder="ex: M. Koné"
-                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-green-500">
+                                class="w-full p-3 border outline-none">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Contact client (optionnel)</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Contact client (optionnel)</label>
                             <input type="tel" id="client_tel_input" placeholder="0700000000"
-                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-green-500">
+                                class="w-full p-3 border outline-none">
                         </div>
                         <button id="btn-add-chantier" onclick="ajouterChantier()"
-                            class="bg-green-600 hover:bg-green-700 text-white w-full py-4 rounded-xl font-bold text-lg mt-4 shadow-lg transition-all active:scale-95">
+                            class="text-white w-full py-4 font-bold text-base mt-4 transition-all active:scale-95">
                             CRÉER LE CHANTIER
                         </button>
                     </div>
@@ -114,8 +247,8 @@
 
             <!-- Liste chantiers -->
             <div class="lg:col-span-2" id="zone-liste">
-                <div class="card p-6 min-h-[400px] border border-slate-100">
-                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-4">📋 Liste des Chantiers</h2>
+                <div class="card p-6 min-h-[400px] border">
+                    <h2 class="text-xl mb-4 border-b pb-4">📋 Liste des chantiers</h2>
 
                     <!-- Filtres rapides -->
                     <div class="flex gap-2 mb-5 flex-wrap" id="zone-filtres">
@@ -143,7 +276,11 @@
                 </div>
             </div>
         </div>
+
+        <footer class="page-foot">© <span>BâtiOS Corporation</span> · SOLUTIONS DE GESTION POUR LE BTP</footer>
     </div>
+  </main>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="supabase.js"></script>
@@ -256,7 +393,7 @@ function afficherChantiers(liste) {
         const badgeClass = { en_cours: 'badge-en_cours', termine: 'badge-termine', suspendu: 'badge-suspendu' }[c.statut] || 'badge-en_cours';
 
         return `
-        <div class="flex items-start justify-between p-5 border border-slate-100 rounded-2xl hover:border-orange-200 hover:bg-orange-50/30 transition-all shadow-sm gap-4">
+        <div class="chantier-item flex items-start justify-between p-5 gap-4">
             <div class="flex-1 min-w-0">
                 <h3 class="font-bold text-slate-800 text-lg truncate">${c.nom_chantier}</h3>
                 <div class="flex items-center gap-3 mt-2 flex-wrap">
@@ -339,6 +476,20 @@ async function deconnexion() {
 }
 
 window.onload = init;
+    </script>
+
+    <!-- Menu mobile (habillage uniquement) -->
+    <script>
+    document.getElementById('mobile-menu').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.toggle('open');
+    });
+    document.addEventListener('click', event => {
+        const sb = document.getElementById('sidebar');
+        const burger = document.getElementById('mobile-menu');
+        if (window.innerWidth <= 760 && !sb.contains(event.target) && !burger.contains(event.target)) {
+            sb.classList.remove('open');
+        }
+    });
     </script>
 </body>
 </html>

@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* ============================================================
+   BâtiOS — THÈME PREMIUM pour les pages SANS barre latérale :
+   achats du chef (mobile), portail partenaires, fournisseurs & dettes.
+   À charger EN DERNIER dans le <head> :
+   <link rel="stylesheet" href="batios-pages.css">
+   ============================================================ */
+:root{
+  /* page achats du chef */
+  --primary:#1f1710; --primary-light:#2b2015;
+  --accent-blue:#ec7a1a; --accent-orange:#d9680f; --accent-green:#0f9d58;
+  --surface-bg:#fcf9f4;
+  --shadow-card:0 1px 2px rgba(60,35,10,.04),0 22px 44px -30px rgba(90,50,10,.28);
+  --shadow-btn:0 12px 24px -12px rgba(224,105,15,.7);
+  /* portail partenaires */
+  --ink:#1f1710; --orange:#ec7a1a; --green:#0f9d58; --bg:#fcf9f4; --mut:#7a6d60; --line:rgba(60,35,10,.1);
+  --shadow:0 1px 2px rgba(60,35,10,.04),0 22px 44px -30px rgba(90,50,10,.28);
+  /* fournisseurs & dettes */
+  --ci-orange:#ec7a1a; --ci-green:#0f9d58; --text:#1f1710;
+}
+body{font-family:'Inter',system-ui,sans-serif;background-color:#fcf9f4;color:#1f1710}
+::selection{background:rgba(236,122,26,.22)}
+:focus-visible{outline:2px solid #ec7a1a}
+input:focus,select:focus,textarea:focus{border-color:#ec7a1a!important;box-shadow:0 0 0 4px rgba(236,122,26,.14)!important}
+.tri{background:linear-gradient(90deg,#ec7a1a,#f6b26b 55%,#0f9d58)}
+
+/* ===== EN-TÊTES : espresso + lueur orange ===== */
+header{
+  background:radial-gradient(60% 130% at 100% 0%,rgba(236,122,26,.42),transparent 65%),
+             radial-gradient(45% 90% at 0% 100%,rgba(15,157,88,.22),transparent 70%),
+             linear-gradient(135deg,#2b2015,#1a130c)!important;
+  box-shadow:0 18px 36px -22px rgba(31,23,16,.7)!important;
+}
+.header-title p,header p{color:#d9cdbf!important}
+header h1,.login-card h2,.header-info h2,.gallery-header h2{font-family:'Inter',system-ui,sans-serif;letter-spacing:-.03em;font-weight:800}
+
+/* ===== BOUTONS ===== */
+.btn-valider,.btn-modal-submit,.btn-connexion,.btn-submit,.btn-action.secondary{
+  background:linear-gradient(135deg,#f08a2e,#e0690f)!important;color:#fff!important;
+  box-shadow:0 12px 24px -12px rgba(224,105,15,.7)!important;
+}
+.btn-action.secondary{border:0!important}
+.btn-valider:disabled,.btn-modal-submit:disabled,.btn-connexion:disabled{background:#d9cfc3!important;box-shadow:none!important}
+.btn-modal-submit:hover,.btn-submit:hover,.btn-connexion:hover{box-shadow:0 16px 28px -12px rgba(224,105,15,.75)!important}
+.btn-gps{background:linear-gradient(135deg,#14a862,#0c7a46);box-shadow:0 10px 22px -12px rgba(15,157,88,.65)}
+.btn-add-supplier{background:linear-gradient(135deg,#f08a2e,#e0690f)!important}
+.tab-btn.active{border-bottom-color:#ec7a1a}
+
+/* ===== ACHATS DU CHEF ===== */
+.photo-upload-section{background:linear-gradient(135deg,#fff8ef,#fdf0e0);border-color:#ec7a1a}
+.photo-upload-section:hover{background:linear-gradient(135deg,#fdf0e0,#fbe6cc);border-color:#d9680f}
+.gps-status-card{background:linear-gradient(135deg,#fff8ef,#fdf0e0);border-color:#ec7a1a}
+.purchase-item{border-color:rgba(60,35,10,.07)}
+.main-card{border-color:rgba(60,35,10,.07)}
+span[style*="#0284c7"]{color:#0f9d58!important}
+.btn-back{background:rgba(255,255,255,.12)}
+
+/* ===== PORTAIL PARTENAIRES ===== */
+.modal{background:rgba(31,23,16,.82)!important}
+.modal-close{background:rgba(31,23,16,.7)}
+.info-item{background:#fcf9f4;border-color:rgba(60,35,10,.07)}
+
+/* ===== FOURNISSEURS & DETTES (menu du haut) ===== */
+nav{background:rgba(255,255,255,.88)!important;backdrop-filter:blur(14px);border-bottom:1px solid rgba(60,35,10,.08);box-shadow:0 14px 30px -24px rgba(90,50,10,.4)!important}
+nav a{color:#7a6d60!important;border-color:rgba(60,35,10,.08)!important;font-weight:500}
+nav a:hover{background:#fdf3e8!important;color:#b35400!important;border-color:rgba(236,122,26,.35)!important}
+nav a.active{background:linear-gradient(100deg,rgba(236,122,26,.16),rgba(236,122,26,.05))!important;color:#c2570a!important;border-color:rgba(236,122,26,.35)!important;font-weight:700}
+.logout-btn{background:transparent!important;color:#b45309!important;border:1px solid rgba(180,83,9,.3)!important}
+.logout-btn:hover{background:rgba(180,83,9,.07)!important}
+.stat-card,.card{border-radius:16px;box-shadow:var(--shadow-card,0 1px 2px rgba(60,35,10,.04),0 22px 44px -30px rgba(90,50,10,.28))}
+.stat-card[style*="#3498db"]{border-top-color:#e0a030!important}
+.suppliers-table th{background:#fcf9f4}
+.purchase-card{background:#fcf9f4}
+[style*="#f0f8ff"]{background:#fff8ef!important;border-left-color:#ec7a1a!important}
+.debt-amount,.purchase-price{color:#d9680f}
+h1,h2{letter-spacing:-.03em}
+
+/* ===== BARRE LATÉRALE AUTOMATIQUE (batios-sidebar.js) ===== */
+.batios-sidebar{position:fixed;inset:0 auto 0 0;width:252px;background:#fff;border-right:1px solid rgba(60,35,10,.08);box-shadow:20px 0 50px -40px rgba(90,50,10,.35);padding:28px 17px;display:flex;flex-direction:column;z-index:2500;overflow-y:auto;font-family:'Inter',system-ui,sans-serif}
+.bsb-brand{display:flex;align-items:center;gap:12px;padding:0 10px 30px}
+.bsb-mark{width:43px;height:43px;border-radius:13px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:23px;background:linear-gradient(135deg,#f08a2e,#e0690f);box-shadow:0 12px 24px -12px rgba(224,105,15,.7)}
+.bsb-name{font-weight:800;font-size:20px;letter-spacing:-.03em;color:#1f1710}
+.bsb-sub{font-size:9px;letter-spacing:2px;color:#a09384;margin-top:3px}
+.bsb-label{font-size:9px;font-weight:700;letter-spacing:1.8px;color:#b5a899;padding:0 13px;margin:6px 0 12px}
+.bsb-nav{display:grid;gap:6px}
+.bsb-link{display:flex;align-items:center;gap:12px;padding:12px 13px;border-radius:10px;font-size:12px;font-weight:500;color:#7a6d60;text-decoration:none;border:1px solid transparent;transition:.2s}
+.bsb-link:hover{background:#fdf3e8;color:#b35400}
+.bsb-link.active{background:linear-gradient(100deg,rgba(236,122,26,.14),rgba(236,122,26,.04));border-color:rgba(236,122,26,.18);color:#c2570a;font-weight:600;box-shadow:inset 3px 0 0 #ec7a1a}
+.bsb-icon{width:19px;text-align:center;font-size:16px}
+.bsb-bottom{margin-top:auto}
+.bsb-logout{width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:9px;background:transparent;color:#b45309;border:1px solid rgba(180,83,9,.28);border-radius:9px;padding:11px 13px;font:600 12px 'Inter',system-ui,sans-serif;cursor:pointer;transition:.2s}
+.bsb-logout:hover{background:rgba(180,83,9,.07)}
+.bsb-foot{margin-top:18px;padding:14px 12px 0;border-top:1px solid rgba(60,35,10,.08);color:#a09384;font-size:10px;line-height:1.8}
+.bsb-foot strong{color:#c2570a;letter-spacing:.5px}
+.bsb-burger{display:none;width:42px;height:42px;border-radius:14px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.12);color:#fff;font-size:18px;cursor:pointer;align-items:center;justify-content:center}
+.bsb-backdrop{display:none}
+body.has-batios-sidebar{padding-left:252px}
+body.has-batios-sidebar .modal-overlay,body.has-batios-sidebar .modal{z-index:3000}
+@media(max-width:760px){
+  body.has-batios-sidebar{padding-left:0}
+  .batios-sidebar{transform:translateX(-100%);transition:transform .25s;width:270px}
+  .batios-sidebar.open{transform:translateX(0);box-shadow:15px 0 50px rgba(31,23,16,.25)}
+  .bsb-burger{display:flex}
+  .bsb-burger.flottant{position:fixed;top:14px;right:14px;z-index:2000;background:#1f1710;border-color:transparent}
+  .bsb-backdrop.open{display:block;position:fixed;inset:0;background:rgba(31,23,16,.45);z-index:2400}
+}

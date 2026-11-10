@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* ============================================================
+   BâtiOS — THÈME PREMIUM : ivoire · orange cuivré · touche de vert
+   À charger EN DERNIER dans le <head> de chaque page :
+   <link rel="stylesheet" href="batios-theme.css">
+   Réglages rapides : les variables juste en dessous.
+   ============================================================ */
+:root{
+  --navy:#1f1710; --navy2:#2b2015;
+  --gold:#ec7a1a; --gold-dark:#d9680f; --gold-light:#b35400;
+  --bg:#fcf9f4; --text:#1f1710; --muted:#7a6d60; --mut:#7a6d60;
+  --line:rgba(60,35,10,.08); --green:#0f9d58;
+  --shadow:0 1px 2px rgba(60,35,10,.04),0 22px 44px -30px rgba(90,50,10,.28);
+  --primary:#1f1710; --ink:#1f1710;
+  --ci-orange:#ec7a1a; --ci-green:#0f9d58; --ci-blue:#e0a030;
+}
+::selection{background:rgba(236,122,26,.22);color:#1f1710}
+:focus-visible{outline:2px solid #ec7a1a;outline-offset:2px}
+
+/* Police unique (comme la page d'accueil), sans toucher aux icônes */
+body *:not(.fas):not(.far):not(.fab):not(i){font-family:'Inter',system-ui,sans-serif}
+h1,h2,h3{letter-spacing:-.035em}
+
+/* ===== FOND : ivoire très doux ===== */
+body{
+  background-color:#fcf9f4;
+  background-image:
+    radial-gradient(42% 30% at 100% 0%,rgba(236,122,26,.10),transparent 70%),
+    radial-gradient(38% 30% at 0% 100%,rgba(15,157,88,.06),transparent 70%);
+  background-attachment:fixed;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(60,35,10,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(60,35,10,.035) 1px,transparent 1px);
+  background-size:72px 72px;
+  -webkit-mask-image:radial-gradient(ellipse at 65% 15%,#000 5%,transparent 65%);
+  mask-image:radial-gradient(ellipse at 65% 15%,#000 5%,transparent 65%);
+}
+body::after{
+  content:"";position:fixed;top:0;left:0;right:0;height:3px;z-index:3000;pointer-events:none;
+  background:linear-gradient(90deg,#ec7a1a,#f6b26b 55%,#0f9d58);
+}
+.main{position:relative;z-index:1}
+
+/* ===== BARRE LATÉRALE : blanche, élégante ===== */
+.sidebar{background:#fff;color:#1f1710;border-right:1px solid var(--line);box-shadow:20px 0 50px -40px rgba(90,50,10,.35)}
+.sidebar.open{box-shadow:15px 0 50px rgba(60,35,10,.18)}
+.brand{color:#1f1710!important}
+.brand-mark{background:linear-gradient(135deg,#f08a2e,#e0690f);color:#fff;border:0;box-shadow:0 12px 24px -12px rgba(224,105,15,.7)}
+.brand-name{letter-spacing:-.03em;font-size:20px;font-weight:800;color:#1f1710}
+.brand-sub{color:#a09384;letter-spacing:2px}
+.nav-label{color:#b5a899}
+.nav-link{color:#7a6d60;font-weight:500;border-radius:10px}
+.nav-link:hover{background:#fdf3e8;color:#b35400}
+.nav-link.active,.nav-link.on{background:linear-gradient(100deg,rgba(236,122,26,.14),rgba(236,122,26,.04));border-color:rgba(236,122,26,.18);color:#c2570a;font-weight:600;box-shadow:inset 3px 0 0 #ec7a1a}
+.nav-link[style*="background: rgba(255, 255, 255, 0.1)"]{background:linear-gradient(100deg,rgba(236,122,26,.14),rgba(236,122,26,.04))!important;color:#c2570a!important;font-weight:600;box-shadow:inset 3px 0 0 #ec7a1a}
+body:has(#suppliers-tab-container[style*="display: block"]) #nav-suppliers,
+body:has(#partenaires-tab-container[style*="display: block"]) #nav-partenaires{color:#c2570a!important}
+body:has(#suppliers-tab-container[style*="display: block"]) #nav-dashboard.active,
+body:has(#partenaires-tab-container[style*="display: block"]) #nav-dashboard.active{background:transparent;border-color:transparent;color:#7a6d60;box-shadow:none;font-weight:500}
+.sidebar-footer{color:#a09384;border-top-color:var(--line)}
+.sidebar-footer strong{color:#c2570a}
+.logout-btn{color:#b45309;border-color:rgba(180,83,9,.28)}
+.logout-btn:hover{background:rgba(180,83,9,.07)}
+
+/* ===== BARRE DU HAUT ===== */
+.topbar{background:rgba(255,255,255,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.top-avatar{background:linear-gradient(135deg,#f08a2e,#e0690f);color:#fff;border:0;box-shadow:0 8px 18px -10px rgba(224,105,15,.7)}
+.secure-dot{background:#0f9d58;box-shadow:0 0 0 4px rgba(15,157,88,.15)}
+.eyebrow{color:#d9680f!important;letter-spacing:2.2px}
+.eyebrow::before{content:"";display:inline-block;width:18px;height:2px;border-radius:2px;margin-right:10px;vertical-align:middle;background:linear-gradient(90deg,#ec7a1a,#0f9d58)}
+h1{color:#1f1710;font-weight:800}
+
+/* ===== BOUTONS : orange cuivré, sobre ===== */
+.btn-action,.btn-primary,.btn-pdf,.btn-save,#btn-save,#btn-reg{
+  background:linear-gradient(135deg,#f08a2e,#e0690f)!important;color:#fff!important;border-radius:10px!important;font-weight:600!important;
+  box-shadow:0 10px 22px -12px rgba(224,105,15,.7)!important;
+}
+.btn-action:hover,.btn-primary:hover,.btn-pdf:hover,.btn-save:hover{background:linear-gradient(135deg,#f59a45,#d9680f)!important;transform:translateY(-1px)}
+.btn-action:disabled,.btn-pdf:disabled,.btn-save:disabled,#btn-save:disabled{background:#d9cfc3!important;box-shadow:none!important}
+.btn-orange{background:linear-gradient(135deg,#14a862,#0c7a46)!important;box-shadow:0 10px 22px -12px rgba(15,157,88,.65)!important}
+.btn-link{color:#d9680f}
+button[style*="#3498db"]{background:linear-gradient(135deg,#f08a2e,#e0690f)!important}
+.tab-btn.active{background:linear-gradient(135deg,#f08a2e,#e0690f);color:#fff;box-shadow:0 10px 20px -12px rgba(224,105,15,.75)}
+.close-btn{border-color:rgba(236,122,26,.3);background:rgba(236,122,26,.07);color:#b35400}
+
+/* ===== CARTES : blanches, fines, aérées ===== */
+.stat-card,.card,.chart-card,.panel,.card-stat,.card-membre,.fraud-stats-card,.tabs,.mock{border-radius:16px;border-color:rgba(60,35,10,.07);box-shadow:var(--shadow)}
+.stat-card,.card-stat,.card-membre{transition:transform .25s,box-shadow .25s}
+.stat-card:hover,.card-stat:hover,.card-membre:hover{transform:translateY(-3px);box-shadow:0 1px 2px rgba(60,35,10,.04),0 28px 50px -30px rgba(224,105,15,.45)}
+.stat-card{border-top-width:3px}
+.stats-grid .stat-card:nth-child(even){border-top-color:#0f9d58}
+.stat-card[style*="#3498db"]{border-top-color:#e0a030!important}
+h2{border-bottom-color:rgba(60,35,10,.07)}
+.avatar{background:#fdf3e8;color:#b35400;border-color:#f6dcc0}
+.panel-icon{background:#fdf3e8}
+#total-global{color:#d9680f!important}
+.notif-header{background:linear-gradient(135deg,#2b2015,#1f1710)}
+.notif-item.non-lue{background:#fff8ef;border-left-color:#ec7a1a}
+.toast{background:#1f1710}
+.sum{border-left-color:#ec7a1a}
+.chips button:hover{border-color:#ec7a1a;background:#fff8ef}
+.tabs2 button.on{border-bottom-color:#ec7a1a}
+input:focus,select:focus,textarea:focus,#search-worker:focus{border-color:#ec7a1a!important;box-shadow:0 0 0 3px rgba(236,122,26,.16)!important}
+.page-foot span,footer span{color:#d9680f!important}
+.badge[style*="#fff3e0"]{background:#fdf3e8!important;color:#d9680f!important}
+
+/* ===== ALERTES ANTI-FRAUDE ===== */
+.fraud-alert-banner.warning{background:linear-gradient(135deg,#f08a2e,#d9680f);box-shadow:0 10px 25px rgba(217,104,15,.22)}
+.fraud-alert-banner.info{background:linear-gradient(135deg,#e0a030,#c78414);box-shadow:0 10px 25px rgba(199,132,20,.2)}
+.fraud-stats-card.warning{border-left-color:#ec7a1a}
+.fraud-stats-card.info{border-left-color:#e0a030}
+
+/* ===== PROFIL ENTREPRISE : bandeau espresso, lueur orange, filet vert ===== */
+.hero{
+  background:radial-gradient(55% 120% at 100% 0%,rgba(236,122,26,.42),transparent 65%),
+             radial-gradient(45% 80% at 0% 100%,rgba(15,157,88,.28),transparent 70%),
+             linear-gradient(135deg,#2b2015,#1a130c);
+  box-shadow:0 28px 56px -30px rgba(31,23,16,.75);
+}
+.hero-overline{color:#f6b26b}
+.hero p{color:#d9cdbf}
+.company-mark{background:linear-gradient(135deg,#f08a2e,#e0690f);border:0;color:#fff;box-shadow:0 14px 28px -14px rgba(224,105,15,.8)}
+.hero-meta{border-left-color:rgba(255,255,255,.14)}
+.hero-meta small{color:#b9ab9b}
+.hero-meta strong{color:#f6b26b}
+.hero:before{border-color:rgba(246,178,107,.22);box-shadow:0 0 0 28px rgba(246,178,107,.05),0 0 0 58px rgba(246,178,107,.03)}
+.status-pill span{background:#0f9d58}
+.security-banner{background:rgba(15,157,88,.06);border-color:rgba(15,157,88,.25)}
+
+/* ===== COULEURS TAILWIND (équipe, bilan) ===== */
+.border-blue-500,.border-blue-400{border-color:#e0a030!important}
+.border-purple-500{border-color:#ec7a1a!important}
+.border-blue-100{border-color:#f6dcc0!important}
+.bg-blue-50{background:#fff8ef!important}
+.bg-blue-500{background:#e0a030!important}
+.text-blue-700,.text-blue-600{color:#b35400!important}
+#modal-membre{background:rgba(31,23,16,.45)}

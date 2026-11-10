@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KORE Software - Gestion Achats</title>
+    <title>BâtiOS - Gestion Achats</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
@@ -554,6 +554,7 @@
             transform: none;
         }
     </style>
+  <link rel="stylesheet" href="batios-pages.css">
 </head>
 <body>
 
@@ -565,7 +566,7 @@
             </a>
             <div class="header-title">
                 <h1>Achats & Stocks</h1>
-                <p>KORE Software - Anti-Fraude</p>
+                <p>BâtiOS - Anti-Fraude</p>
             </div>
             <div style="width: 42px;"></div>
         </div>
@@ -706,7 +707,7 @@
     </div>
 
     <footer>
-        KORE Software • Propulsé par Bâtisys Tech
+        BâtiOS Corporation
     </footer>
 
     <!-- SCRIPTS -->
@@ -1097,13 +1098,12 @@
     }
 
     // Modifier la fonction init existante
-    const originalInit = init;
-    async function init() {
-        await originalInit();
-        await initWithSuppliers();
-    }
-
-    window.onload = init;
+    async function initPage() {
+    await init();
+    await initWithSuppliers();
+}
+window.onload = initPage;
     </script>
+    <script src="batios-sidebar.js" data-titre="Achats & stocks"></script>
 </body>
 </html>

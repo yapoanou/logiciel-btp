@@ -1,295 +1,222 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KORE Software - Journal de Bord</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary: #0f172a;
-            --primary-light: #1e293b;
-            --accent-orange: #f97316;
-            --accent-green: #10b981;
-            --accent-blue: #0284c7;
-            --surface-bg: #f8fafc;
-            --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
-            --shadow-btn: 0 8px 20px -4px rgba(16, 185, 129, 0.35);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fffaf3">
+<title>BâtiOS — Journal de bord</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#101b2d;
+  --navy2:#192840;
+  --gold:#c9a76a;
+  --gold-light:#f0dfb8;
+  --bg:#f4f6fa;
+  --text:#182438;
+  --muted:#8290a4;
+  --line:#e8edf3;
+  --green:#13866b;
+  --shadow:0 12px 40px rgba(23,39,64,.055);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px}
+button{font-family:inherit}
+a{text-decoration:none}
+::selection{background:rgba(201,167,106,.3)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.app{min-height:100vh}
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+/* ===== SIDEBAR ===== */
+.sidebar{
+  position:fixed;inset:0 auto 0 0;width:252px;
+  background:var(--navy);color:white;padding:28px 17px;
+  display:flex;flex-direction:column;z-index:1200;overflow-y:auto;
+}
+.brand{display:flex;align-items:center;gap:12px;padding:0 10px 32px;color:white}
+.brand-mark{
+  width:43px;height:43px;border-radius:13px;display:grid;place-items:center;
+  color:var(--gold-light);font:800 23px Manrope,sans-serif;
+  border:1px solid rgba(201,167,106,.55);
+  background:linear-gradient(145deg,#263650,#101b2d);
+}
+.brand-name{font:800 19px Manrope,sans-serif;letter-spacing:2px}
+.brand-sub{font-size:9px;letter-spacing:2.1px;color:#9ba8ba;margin-top:4px}
+.nav-label{font-size:9px;font-weight:700;letter-spacing:1.8px;color:#74839a;padding:0 13px;margin:15px 0 12px}
+.nav-list{display:grid;gap:6px}
+.nav-link{
+  color:#aeb9ca;padding:12px 13px;border-radius:9px;display:flex;align-items:center;gap:12px;
+  font-size:12px;transition:.2s;border:1px solid transparent;
+}
+.nav-link:hover{background:#ffffff0c;color:#fff}
+.nav-link.active{background:linear-gradient(100deg,#c9a76a24,#c9a76a09);border-color:#c9a76a32;color:#f0dfb8}
+.nav-icon{width:19px;text-align:center;font-size:15px}
+.nav-bottom{margin-top:auto}
+.sidebar-footer{
+  margin-top:20px;padding:16px 12px;border-top:1px solid #ffffff14;
+  color:#8290a4;font-size:10px;line-height:1.8;
+}
+.sidebar-footer strong{color:#d9c69f;letter-spacing:1px}
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--surface-bg);
-            margin: 0;
-            padding-bottom: 40px;
-            color: var(--primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+/* ===== MAIN / TOPBAR ===== */
+.main{margin-left:252px;min-height:100vh}
+.topbar{
+  height:76px;background:#ffffffed;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 42px;position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);
+}
+.breadcrumb{font-size:12px;color:var(--muted)}
+.breadcrumb strong{color:var(--text)}
+.top-actions{display:flex;align-items:center;gap:15px}
+.secure{display:flex;align-items:center;gap:8px;font-size:11px;color:#65748a}
+.secure-dot{width:7px;height:7px;background:#1ba77c;border-radius:50%;box-shadow:0 0 0 4px #1ba77c18}
+.top-avatar{
+  width:37px;height:37px;border-radius:12px;display:grid;place-items:center;
+  background:#f2e9d7;color:#765a2c;font-weight:800;border:1px solid #e9d9b8;
+}
+.mobile-menu{display:none}
+.content{max-width:760px;margin:auto;padding:34px 42px 40px}
+.eyebrow{color:#a27e42;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
 
-        /* HEADER TOP */
-        header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: white;
-            width: 100%;
-            padding: 20px;
-            border-bottom-left-radius: 28px;
-            border-bottom-right-radius: 28px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-        }
+/* ===== EN-TÊTE DE PAGE ===== */
+.page-heading{margin-bottom:29px}
+.page-heading h1{font:800 clamp(25px,3vw,34px) Manrope,sans-serif;letter-spacing:-1.2px;margin:0;color:var(--navy)}
+.page-desc{margin:10px 0 0;color:var(--muted);font-size:12px;line-height:1.7}
+.btn-back{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:11px;font-weight:700;color:#7a6032}
+.btn-back:hover{color:var(--navy)}
 
-        .header-content {
-            max-width: 480px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+/* ===== FORMULAIRE ===== */
+.main-card{background:#fff;border-radius:14px;padding:25px;box-shadow:var(--shadow);border:1px solid #e9edf3}
+.form-group{margin-bottom:21px}
+label{display:flex;align-items:center;gap:8px;font-weight:700;font-size:10px;color:#526176;margin-bottom:9px}
+label i{color:#a27e42;font-size:12px}
+select,textarea{
+  width:100%;border:1px solid #e4e9f0;border-radius:8px;background:#fbfcfe;color:var(--text);
+  font-family:inherit;font-size:12px;outline:none;transition:.2s;
+}
+select{height:47px;padding:0 13px}
+textarea{padding:13px;height:150px;resize:none;line-height:1.6}
+select:hover,textarea:hover{border-color:#c8d1dd}
+select:focus,textarea:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px #c9a76a19}
 
-        .btn-back {
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.2s ease;
-        }
+/* Photos */
+.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px}
+.photo-box{
+  aspect-ratio:1;border:2px dashed #d3dae4;border-radius:12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  background:#fbfcfe;position:relative;cursor:pointer;overflow:hidden;transition:.2s;
+}
+.photo-box:hover{border-color:var(--gold);background:#fdfaf3}
+.photo-box:active{transform:scale(.97)}
+.photo-box i.fa-plus{
+  font-size:1rem;color:#98a4b4;background:#fff;width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.06);
+}
+.photo-box span{font-size:10px;font-weight:600;color:#98a4b4}
+.photo-box img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
+.photo-box .btn-remove{
+  position:absolute;top:8px;right:8px;background:rgba(16,27,45,.75);color:white;border:none;
+  width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;backdrop-filter:blur(4px);z-index:2;cursor:pointer;
+}
 
-        .btn-back:active {
-            transform: scale(0.92);
-            background: rgba(255, 255, 255, 0.2);
-        }
+.btn-valider{
+  width:100%;padding:15px;background:var(--navy);color:white;border:none;border-radius:8px;
+  font-weight:700;font-size:12px;margin-top:26px;cursor:pointer;box-shadow:0 4px 12px #101b2d19;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:transform .2s,background .2s;
+}
+.btn-valider:hover{background:#233650;transform:translateY(-1px)}
+.btn-valider:active{transform:scale(.99)}
+.btn-valider:disabled{background:#a8afbd;box-shadow:none;cursor:not-allowed;transform:none}
 
-        .header-title {
-            text-align: center;
-        }
+footer.page-foot{text-align:center;padding:25px 10px;color:#a0aaba;font-size:9px;letter-spacing:.4px}
+footer.page-foot span{color:#a27e42;font-weight:700;letter-spacing:1px}
 
-        .header-title h1 {
-            margin: 0;
-            font-size: 1.15rem;
-            font-weight: 800;
-            letter-spacing: -0.3px;
-        }
-
-        .header-title p {
-            margin: 2px 0 0 0;
-            font-size: 0.75rem;
-            color: #94a3b8;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* CONTENEUR PRINCIPAL */
-        .container {
-            width: 100%;
-            max-width: 480px;
-            padding: 20px;
-        }
-
-        .main-card {
-            background: white;
-            border-radius: 24px;
-            padding: 24px 20px;
-            box-shadow: var(--shadow-card);
-            border: 1px solid #f1f5f9;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-
-        label i {
-            color: var(--accent-orange);
-            font-size: 0.95rem;
-        }
-
-        /* INPUTS & SELECTS */
-        select, textarea {
-            width: 100%;
-            padding: 14px 16px;
-            border-radius: 16px;
-            border: 1.5px solid #e2e8f0;
-            font-family: inherit;
-            font-size: 0.95rem;
-            color: var(--primary);
-            background: #f8fafc;
-            outline: none;
-            transition: all 0.2s ease;
-            box-sizing: border-box;
-        }
-
-        select:focus, textarea:focus {
-            border-color: var(--accent-orange);
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
-        }
-
-        textarea {
-            height: 130px;
-            resize: none;
-            line-height: 1.5;
-        }
-
-        /* GRILLE PHOTOS */
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        .photo-box {
-            aspect-ratio: 1;
-            border: 2px dashed #cbd5e1;
-            border-radius: 18px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            background: #f8fafc;
-            position: relative;
-            cursor: pointer;
-            overflow: hidden;
-            transition: all 0.2s ease;
-        }
-
-        .photo-box:active {
-            transform: scale(0.97);
-        }
-
-        .photo-box i.fa-plus {
-            font-size: 1.2rem;
-            color: #94a3b8;
-            background: #ffffff;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-            transition: all 0.2s ease;
-        }
-
-        .photo-box span {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #94a3b8;
-        }
-
-        .photo-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .photo-box .btn-remove {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(15, 23, 42, 0.75);
-            color: white;
-            border: none;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            backdrop-filter: blur(4px);
-            z-index: 2;
-        }
-
-        /* BOUTON D'ENVOI */
-        .btn-valider {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--accent-green), #059669);
-            color: white;
-            border: none;
-            border-radius: 18px;
-            font-weight: 800;
-            font-size: 1rem;
-            margin-top: 24px;
-            cursor: pointer;
-            box-shadow: var(--shadow-btn);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-valider:active {
-            transform: scale(0.98);
-            box-shadow: none;
-        }
-
-        .btn-valider:disabled {
-            background: #cbd5e1;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        footer {
-            margin-top: auto;
-            padding: 20px;
-            font-size: 0.75rem;
-            color: #94a3b8;
-            font-weight: 600;
-            text-align: center;
-        }
-    </style>
+/* ===== RESPONSIVE ===== */
+@media(max-width:1050px){
+  .sidebar{width:220px}
+  .main{margin-left:220px}
+  .topbar{padding:0 25px}
+  .content{padding:28px 25px}
+}
+@media(max-width:760px){
+  .sidebar{width:260px;transform:translateX(-100%);transition:transform .25s}
+  .sidebar.open{transform:translateX(0);box-shadow:15px 0 50px #101b2d30}
+  .main{margin-left:0}
+  .mobile-menu{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);background:white;border-radius:9px;cursor:pointer}
+  .topbar{height:65px;padding:0 17px}
+  .top-actions{gap:10px}
+  .secure{font-size:0;gap:0}
+  .secure-dot{width:8px;height:8px}
+  .content{padding:22px 16px 30px}
+  .main-card{padding:20px 17px}
+  .photo-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:430px){
+  .breadcrumb{font-size:10px}
+  .top-avatar{width:33px;height:33px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+  <link rel="stylesheet" href="batios-theme.css">
 </head>
 <body>
+<div class="app">
 
-    <!-- ENTÊTE -->
-    <header>
-        <div class="header-content">
-            <a href="chef-accueil.html" class="btn-back">
-                <i class="fas fa-chevron-left"></i>
-            </a>
-            <div class="header-title">
-                <h1>Journal de Bord</h1>
-                <p>KORE Software</p>
-            </div>
-            <div style="width: 42px;"></div> <!-- Espaceur pour centrage -->
-        </div>
-    </header>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">B</div>
+      <div>
+        <div class="brand-name">BâtiOS</div>
+        <div class="brand-sub">PLATEFORME BTP</div>
+      </div>
+    </div>
 
-    <!-- FORMULAIRE -->
-    <div class="container">
+    <div class="nav-label">ESPACE TERRAIN</div>
+    <nav class="nav-list">
+      <a class="nav-link" href="chef-accueil.html"><span class="nav-icon"><i class="fas fa-house"></i></span> Accueil</a>
+      <a class="nav-link" href="chef-pointages.html"><span class="nav-icon"><i class="fas fa-user-check"></i></span> Pointage d'équipe</a>
+      <a class="nav-link" href="chef-materiaux.html"><span class="nav-icon"><i class="fas fa-truck-loading"></i></span> Achats & matériaux</a>
+      <a class="nav-link active" href="chef-journal.html"><span class="nav-icon"><i class="fas fa-clipboard-list"></i></span> Journal de bord</a>
+    </nav>
+
+    <div class="nav-bottom">
+      <div class="sidebar-footer">
+        CONÇU POUR LES PROFESSIONNELS<br>
+        <strong>BâtiOS Corporation</strong><br>
+        Gestion BTP nouvelle génération
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="mobile-menu" id="mobile-menu" aria-label="Ouvrir le menu">☰</button>
+        <div class="breadcrumb">Espace terrain <span style="margin:0 7px;color:#c2cad5">/</span> <strong>Journal de bord</strong></div>
+      </div>
+      <div class="top-actions">
+        <div class="secure"><span class="secure-dot"></span> Espace sécurisé</div>
+        <div class="top-avatar" aria-label="Profil">B</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-heading">
+        <div class="eyebrow">BâtiOS / TERRAIN</div>
+        <h1>Journal de bord</h1>
+        <p class="page-desc">Signalez l'avancement du chantier, les livraisons et les incidents du jour.</p>
+        <a href="chef-accueil.html" class="btn-back"><i class="fas fa-chevron-left"></i> Retour à l'accueil</a>
+      </div>
+
+      <!-- FORMULAIRE -->
         <div class="main-card">
             
             <div class="form-group">
@@ -362,11 +289,11 @@
             </button>
 
         </div>
-    </div>
 
-    <footer>
-        KORE Software • Propulsé par Bâtisys Tech
-    </footer>
+      <footer class="page-foot">© <span>BâtiOS Corporation</span> · PROPULSÉ PAR BÂTISYS TECH</footer>
+    </div>
+  </main>
+</div>
 
     <!-- SCRIPTS ET SUPABASE -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -507,6 +434,20 @@
     }
 
     window.onload = init;
+    </script>
+
+    <!-- Menu mobile (habillage uniquement) -->
+    <script>
+    document.getElementById('mobile-menu').addEventListener('click', function () {
+        document.getElementById('sidebar').classList.toggle('open');
+    });
+    document.addEventListener('click', function (event) {
+        var sb = document.getElementById('sidebar');
+        var burger = document.getElementById('mobile-menu');
+        if (window.innerWidth <= 760 && !sb.contains(event.target) && !burger.contains(event.target)) {
+            sb.classList.remove('open');
+        }
+    });
     </script>
 </body>
 </html>

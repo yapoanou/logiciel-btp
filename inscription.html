@@ -1,70 +1,95 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTP PRO CI - Inscription Business PDG</title>
-    <style>
-        :root { --primary: #009e49; --secondary: #2c3e50; --accent: #ff8200; --safe: #2ecc71; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--secondary); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: #333; }
-        
-        .card { background: white; padding: 35px; border-radius: 20px; width: 100%; max-width: 480px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); text-align: center; position: relative; }
-        
-        .flag-mini { height: 4px; display: flex; margin-bottom: 20px; border-radius: 2px; overflow: hidden; }
-        .orange { background: var(--accent); flex: 1; }
-        .white { background: #eee; flex: 1; }
-        .green { background: var(--primary); flex: 1; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BâtiOS - Inscription Business PDG</title>
+<meta name="theme-color" content="#fffaf3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--o:#ff7a00;--g:#0f9d58;--n:#fffaf3;--n2:#ffffff;--tx:#1c1510;--mut:#6e6256;--bd:rgba(60,35,10,.12);--shadow:0 24px 60px -30px rgba(120,60,0,.35)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--n);color:var(--tx);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:36px 18px;letter-spacing:-.012em;line-height:1.6;
+ background-image:radial-gradient(46% 50% at 10% 12%,rgba(255,138,31,.26),transparent 72%),radial-gradient(38% 44% at 92% 88%,rgba(15,157,88,.14),transparent 72%),radial-gradient(36% 36% at 65% 0%,rgba(255,200,140,.3),transparent 70%)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(60,35,10,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(60,35,10,.07) 1px,transparent 1px);background-size:68px 68px;opacity:.5;mask-image:radial-gradient(ellipse at center,#000 15%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse at center,#000 15%,transparent 75%)}
+.tri{background:linear-gradient(90deg,#ff7a00,#ffb347 68%,#0f9d58)}
+.top{position:fixed;top:0;left:0;right:0;height:3px;z-index:50}
+.wrap{position:relative;width:100%;max-width:500px}
+.back{display:inline-block;color:var(--mut);font-size:.85rem;text-decoration:none;margin-bottom:16px;transition:color .2s}
+.back:hover{color:var(--o)}
+.card{background:var(--n2);border:1px solid var(--bd);border-radius:16px;padding:34px 30px;box-shadow:var(--shadow)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem;letter-spacing:-.04em}
+.logo i{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-style:normal;background:linear-gradient(135deg,var(--o),var(--g));box-shadow:0 8px 20px -8px rgba(255,122,0,.6)}
+.logo em{font-style:normal}
+.logo em span{color:var(--g)}
+h1{font-size:1.75rem;font-weight:800;letter-spacing:-.05em;line-height:1.15;margin-top:22px}
+.subtitle{color:var(--mut);font-size:.93rem;margin-top:6px}
+.guide-trigger{display:inline-flex;align-items:center;gap:6px;margin:16px 0 8px;background:none;border:0;color:#0b7a45;font:600 .86rem inherit;font-family:inherit;cursor:pointer;width:auto;padding:0}
+.guide-trigger:hover{text-decoration:underline}
+label{display:block;font-size:.8rem;font-weight:600;color:var(--mut);margin:14px 0 6px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+input,select{width:100%;padding:13px 14px;background:#fffdf9;color:var(--tx);border:1px solid rgba(60,35,10,.18);border-radius:9px;font:inherit;font-size:.95rem;outline:0;transition:.2s}
+input::placeholder{color:#a89c8e}
+input:focus,select:focus{border-color:var(--o);background:#fff;box-shadow:0 0 0 3px rgba(255,122,0,.18)}
+option{background:#fff;color:var(--tx)}
+.plan-container{margin-top:18px;padding:16px;border:1px solid rgba(255,122,0,.25);border-left:3px solid var(--o);border-radius:11px;background:rgba(255,122,0,.07)}
+.plan-container label{margin-top:0}
+.security-box{display:flex;gap:13px;align-items:flex-start;margin-top:18px;padding:15px;border-radius:11px;background:rgba(15,157,88,.09);border:1px solid rgba(15,157,88,.35)}
+.security-box .ic{font-size:1.4rem}
+.security-text{font-size:.8rem;color:#4d5a50;line-height:1.55}
+.security-text b{display:block;color:#0b7a45;font-size:.86rem;margin-bottom:2px}
+.security-text b+b,.security-text b.in{display:inline;color:var(--tx);font-size:inherit}
+#btn-reg{width:100%;margin-top:22px;padding:15px;border:0;border-radius:9px;background:linear-gradient(135deg,#ff8a1f,#ff6a00);color:#fff;font:700 .95rem inherit;font-family:inherit;cursor:pointer;box-shadow:0 10px 24px -10px rgba(255,106,0,.6);transition:.25s}
+#btn-reg:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(255,106,0,.65)}
+#btn-reg:disabled{background:#cfc3b6;box-shadow:none;transform:none;cursor:not-allowed}
+.login-link{display:block;text-align:center;margin-top:20px;color:var(--mut);text-decoration:none;font-size:.88rem}
+.login-link b{color:var(--o)}
+.login-link:hover b{text-decoration:underline}
+:focus-visible{outline:2px solid var(--o);outline-offset:2px}
 
-        h2 { color: var(--secondary); margin-bottom: 5px; font-size: 1.8rem; }
-        p.subtitle { color: #7f8c8d; margin-bottom: 20px; font-size: 0.95rem; }
-        
-        .guide-trigger { color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-bottom: 15px; cursor: pointer; border-bottom: 2px dashed var(--primary); }
-
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        input, select { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 1rem; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 5px rgba(0,158,73,0.2); }
-        
-        .plan-container { background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 12px; padding: 15px; margin: 15px 0; text-align: left; }
-        .plan-header { font-weight: bold; color: var(--secondary); margin-bottom: 5px; display: block; font-size: 0.9rem; }
-        
-        .security-box { background: #e8f5e9; border: 1px solid var(--safe); border-radius: 10px; padding: 12px; margin: 15px 0; display: flex; align-items: center; gap: 12px; text-align: left; }
-        .security-text { font-size: 0.8rem; color: #2e7d32; line-height: 1.3; }
-        .security-text b { display: block; color: var(--secondary); margin-bottom: 2px; }
-
-        button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.1rem; transition: 0.3s; }
-        button:hover { background: #007a39; transform: translateY(-2px); }
-        button:disabled { background: #95a5a6; cursor: not-allowed; }
-
-        .login-link { margin-top: 20px; display: block; color: var(--accent); text-decoration: none; font-weight: bold; font-size: 0.9rem; }
-
-        /* Modal Guide */
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
-        .modal-content { background: white; margin: 5% auto; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; text-align: left; position: relative; max-height: 85vh; overflow-y: auto; }
-        .close-guide { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #999; }
-        .guide-step { margin-bottom: 20px; display: flex; gap: 15px; }
-        .step-num { background: var(--accent); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
-    </style>
+/* Guide */
+.modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(40,22,5,.45);backdrop-filter:blur(6px);overflow-y:auto;padding:20px}
+.modal-content{position:relative;max-width:500px;margin:5vh auto;background:var(--n2);border:1px solid var(--bd);border-radius:16px;padding:30px;box-shadow:var(--shadow)}
+.close-guide{position:absolute;right:18px;top:12px;font-size:1.6rem;cursor:pointer;color:var(--mut)}
+.close-guide:hover{color:var(--o)}
+.modal h3{font-size:1.2rem;font-weight:800;letter-spacing:-.03em}
+.modal .intro{color:var(--mut);font-size:.9rem;margin:6px 0 24px}
+.guide-step{display:flex;gap:14px;margin-bottom:20px}
+.step-num{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:.9rem;color:#fff;background:linear-gradient(135deg,#ff8a1f,#0f9d58)}
+.guide-step h4{font-size:.95rem}
+.guide-step p{font-size:.86rem;color:var(--mut);line-height:1.65}
+.close-btn{width:100%;padding:13px;border-radius:9px;border:1px solid rgba(255,122,0,.35);background:rgba(255,122,0,.08);color:#b35400;font:700 .88rem inherit;font-family:inherit;cursor:pointer;transition:.2s}
+.close-btn:hover{background:rgba(255,122,0,.16)}
+@media(max-width:480px){.card{padding:26px 20px}.grid-2{grid-template-columns:1fr;gap:0}h1{font-size:1.5rem}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
 </head>
 <body>
+<div class="top tri"></div>
 
+<div class="wrap">
+    <a href="index.html" class="back">← Retour à l'accueil</a>
     <div class="card">
-        <div class="flag-mini"><div class="orange"></div><div class="white"></div><div class="green"></div></div>
-        <h2>🏗️ BTP PRO CI</h2>
-        <p class="subtitle">Ouverture de compte Administrateur (PDG)</p>
+        <div class="logo"><i>🏗️</i><em>Bâti<span>OS</span></em></div>
+        <h1>Ouvrez votre espace PDG</h1>
+        <p class="subtitle">Créez le compte administrateur de votre entreprise.</p>
 
-        <span class="guide-trigger" onclick="toggleGuide(true)">💡 Comment fonctionne l'application ?</span>
-        
-        <input type="text" id="nom-ent" placeholder="Nom de l'entreprise">
+        <button type="button" class="guide-trigger" onclick="toggleGuide(true)">💡 Comment fonctionne l'application ?</button>
+
+        <label for="nom-ent">Nom de l'entreprise</label>
+        <input type="text" id="nom-ent" placeholder="Ex : Construct'Pro" autocomplete="organization">
         <div class="grid-2">
-            <input type="text" id="ville-ent" placeholder="Ville">
-            <input type="tel" id="contact-ent" placeholder="Contact direct">
+            <div><label for="ville-ent">Ville</label><input type="text" id="ville-ent" placeholder="Abidjan"></div>
+            <div><label for="contact-ent">Contact direct</label><input type="tel" id="contact-ent" placeholder="+225 07 00 00 00 00" autocomplete="tel"></div>
         </div>
-        
-        <input type="email" id="email" placeholder="Email professionnel">
-        <input type="password" id="password" placeholder="Mot de passe (6 car. min)">
+        <label for="email">Email professionnel</label>
+        <input type="email" id="email" placeholder="vous@entreprise.com" autocomplete="username">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" placeholder="6 caractères minimum" autocomplete="new-password">
 
         <div class="plan-container">
-            <span class="plan-header">Votre Forfait Business :</span>
+            <label for="choix-forfait">Votre forfait Business</label>
             <select id="choix-forfait">
                 <option value="mensuel">📅 Pack Mensuel - 45 000 FCFA</option>
                 <option value="trimestriel">💎 Pack Trimestriel - 120 000 FCFA</option>
@@ -72,47 +97,35 @@
         </div>
 
         <div class="security-box">
-            <span style="font-size: 1.5rem;">🛡️</span>
+            <span class="ic">🛡️</span>
             <div class="security-text">
-                <b>Protection SaaS "Anti-Fuite" Activée</b>
-                Données isolées par technologie <b>RLS</b>. Vos prix et chantiers sont strictement confidentiels.
+                <b>Protection anti-fuite activée</b>
+                Données isolées par technologie <b class="in">RLS</b>. Vos prix et vos chantiers restent strictement confidentiels.
             </div>
         </div>
 
         <button id="btn-reg" onclick="handleRegister()">CRÉER MON ESPACE SÉCURISÉ</button>
-        <a href="login.html" class="login-link">Déjà un compte ? Connexion</a>
+        <a href="login.html" class="login-link">Déjà un compte ? <b>Connexion</b></a>
     </div>
+</div>
 
-    <!-- Modal Guide -->
-    <div id="guideModal" class="modal">
-        <div class="modal-content">
-            <span class="close-guide" onclick="toggleGuide(false)">&times;</span>
-            <h3 style="color: var(--primary); margin-top: 0;">📖 Guide de démarrage rapide</h3>
-            <p style="font-size: 0.9rem; margin-bottom: 25px;">Maîtrisez votre business en 4 étapes simples :</p>
-            <div class="guide-step">
-                <div class="step-num">1</div>
-                <div><h4>Configuration</h4><p>Inscrivez votre entreprise pour activer votre tableau de bord PDG.</p></div>
-            </div>
-            <div class="guide-step">
-                <div class="step-num">2</div>
-                <div><h4>Équipe</h4><p>Créez des accès sécurisés pour vos Chefs de chantier.</p></div>
-            </div>
-            <div class="guide-step">
-                <div class="step-num">3</div>
-                <div><h4>Terrain</h4><p>Vos chefs pointent les ouvriers et matériaux en temps réel.</p></div>
-            </div>
-            <div class="guide-step">
-                <div class="step-num">4</div>
-                <div><h4>Contrôle</h4><p>Visualisez vos marges et dépenses sans quitter votre bureau.</p></div>
-            </div>
-            <button style="background: var(--secondary); color: white; border: none; padding: 10px; width: 100%; border-radius: 10px; cursor: pointer;" onclick="toggleGuide(false)">J'AI COMPRIS</button>
-        </div>
+<div id="guideModal" class="modal">
+    <div class="modal-content">
+        <span class="close-guide" onclick="toggleGuide(false)">&times;</span>
+        <h3>📖 Guide de démarrage rapide</h3>
+        <p class="intro">Maîtrisez votre activité en 4 étapes simples :</p>
+        <div class="guide-step"><div class="step-num">1</div><div><h4>Configuration</h4><p>Inscrivez votre entreprise pour activer votre tableau de bord PDG.</p></div></div>
+        <div class="guide-step"><div class="step-num">2</div><div><h4>Équipe</h4><p>Créez des accès sécurisés pour vos chefs de chantier.</p></div></div>
+        <div class="guide-step"><div class="step-num">3</div><div><h4>Terrain</h4><p>Vos chefs pointent les ouvriers et les matériaux en temps réel.</p></div></div>
+        <div class="guide-step"><div class="step-num">4</div><div><h4>Contrôle</h4><p>Visualisez vos marges et vos dépenses sans quitter votre bureau.</p></div></div>
+        <button class="close-btn" onclick="toggleGuide(false)">J'AI COMPRIS</button>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    <script src="supabase.js"></script>
-    <script>
-         const sbClient = window.sb;
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase.js"></script>
+<script>
+const sbClient = window.sb;
 
 function toggleGuide(show) {
     document.getElementById('guideModal').style.display = show ? 'block' : 'none';
@@ -171,7 +184,7 @@ async function handleRegister() {
         localStorage.setItem('user_nom',      nomEnt);
         localStorage.setItem('entreprise_id', entRow.id);
 
-        alert("✅ Bienvenue ! Votre espace BTP PRO CI est prêt.");
+        alert("✅ Bienvenue ! Votre espace BâtiOS est prêt.");
         window.location.href = 'tableau-de-bord.html';
 
     } catch (err) {
@@ -181,6 +194,6 @@ async function handleRegister() {
         btn.disabled  = false;
     }
 }
-    </script>
+</script>
 </body>
 </html>

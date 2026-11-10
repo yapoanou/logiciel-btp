@@ -1,137 +1,266 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTP Pro CI - Bilan Direction</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-        :root { 
-            --primary: #2c3e50; 
-            --ci-orange: #ff8200; 
-            --ci-green: #009e49;
-            --bg: #f4f7f6; 
-        }
-        body { background-color: var(--bg); font-family: 'Inter', sans-serif; margin: 0; padding-top: 5px; }
-        
-        .flag-top { height: 5px; display: flex; position: fixed; top: 0; width: 100%; z-index: 2000; }
-        .orange { background: var(--ci-orange); flex: 1; }
-        .white  { background: #fff; flex: 1; }
-        .green  { background: var(--ci-green); flex: 1; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fffaf3">
+<title>BâtiOS — Bilan & matériaux</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+:root {
+  --navy:#101b2d;
+  --navy2:#192840;
+  --gold:#c9a76a;
+  --gold-light:#f0dfb8;
+  --bg:#f4f6fa;
+  --text:#182438;
+  --ink:#101b2d;
+  --muted:#8290a4;
+  --mut:#8290a4;
+  --line:#e8edf3;
+  --green:#13866b;
+  --shadow:0 12px 40px rgba(23,39,64,.055);
+}
+*{-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px}
+::selection{background:rgba(201,167,106,.3)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.app{min-height:100vh}
 
-        nav { 
-            background: var(--primary); padding: 1rem; display: flex; flex-wrap: wrap;
-            justify-content: center; align-items: center; gap: 10px; margin-top: 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        nav a { 
-            color: white; text-decoration: none; font-weight: 500; padding: 8px 12px;
-            border-radius: 5px; font-size: 0.85rem; transition: 0.3s;
-            border: 1px solid rgba(255,255,255,0.1); white-space: nowrap;
-        }
-        nav a:hover { border-color: var(--ci-orange); background: rgba(255,255,255,0.1); }
-        .active-link { background: var(--ci-orange) !important; color: white; border-color: var(--ci-orange); }
-        .logout-btn { background: #c0392b; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.85rem; margin-left: 10px; }
+/* ===== SIDEBAR ===== */
+.sidebar{
+  position:fixed;inset:0 auto 0 0;width:252px;
+  background:var(--navy);color:white;padding:28px 17px;
+  display:flex;flex-direction:column;z-index:1200;overflow-y:auto;
+}
+.brand{display:flex;align-items:center;gap:12px;padding:0 10px 32px;text-decoration:none}
+.brand-mark{
+  width:43px;height:43px;border-radius:13px;display:grid;place-items:center;
+  color:var(--gold-light);font:800 23px Manrope,sans-serif;
+  border:1px solid rgba(201,167,106,.55);
+  background:linear-gradient(145deg,#263650,#101b2d);
+}
+.brand-name{font:800 19px Manrope,sans-serif;letter-spacing:2px}
+.brand-sub{font-size:9px;letter-spacing:2.1px;color:#9ba8ba;margin-top:4px}
+.nav-label{font-size:9px;font-weight:700;letter-spacing:1.8px;color:#74839a;padding:0 13px;margin:15px 0 12px}
+.nav-list{display:grid;gap:6px}
+.nav-link{
+  color:#aeb9ca;padding:12px 13px;border-radius:9px;display:flex;align-items:center;gap:12px;
+  font-size:12px;transition:.2s;border:1px solid transparent;text-decoration:none;
+}
+.nav-link:hover{background:#ffffff0c;color:#fff}
+.nav-link.active{background:linear-gradient(100deg,#c9a76a24,#c9a76a09);border-color:#c9a76a32;color:#f0dfb8}
+.nav-icon{width:19px;text-align:center;font-size:16px}
+.nav-bottom{margin-top:auto}
+.sidebar-footer{
+  margin-top:20px;padding:16px 12px;border-top:1px solid #ffffff14;
+  color:#8290a4;font-size:10px;line-height:1.8;
+}
+.sidebar-footer strong{color:#d9c69f;letter-spacing:1px}
+.logout-btn{
+  width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:9px;
+  background:transparent;color:#e8b4ae;border:1px solid rgba(232,180,174,.35);
+  border-radius:9px;padding:11px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;
+}
+.logout-btn:hover{background:rgba(232,180,174,.1)}
 
-        .card-stat { transition: transform 0.2s; background: white; border-radius: 1rem; }
-        .card-stat:hover { transform: translateY(-5px); }
+/* ===== MAIN / TOPBAR ===== */
+.main{margin-left:252px;min-height:100vh}
+.topbar{
+  height:76px;background:#ffffffed;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 42px;position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);
+}
+.breadcrumb{font-size:12px;color:var(--muted)}
+.breadcrumb strong{color:var(--text)}
+.top-actions{display:flex;align-items:center;gap:15px}
+.secure{display:flex;align-items:center;gap:8px;font-size:11px;color:#65748a}
+.secure-dot{width:7px;height:7px;background:#1ba77c;border-radius:50%;box-shadow:0 0 0 4px #1ba77c18}
+.top-avatar{
+  width:37px;height:37px;border-radius:12px;display:grid;place-items:center;
+  background:#f2e9d7;color:#765a2c;font-weight:800;border:1px solid #e9d9b8;
+}
+.notif-cloche{
+  position:relative;width:37px;height:37px;border-radius:12px;display:grid;place-items:center;
+  background:#fff;border:1px solid var(--line);cursor:pointer;font-size:15px;
+}
+.notif-badge{
+  position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;
+  border-radius:99px;background:#e5484d;color:#fff;font-size:9px;font-weight:700;
+  display:grid;place-items:center;
+}
+.notif-badge:empty{display:none}
+.mobile-menu{display:none}
+.eyebrow{color:#a27e42;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
 
-        .btn-pdf {
-            background: var(--ci-green); color: white; padding: 10px 20px; border: none;
-            border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer;
-            transition: 0.3s; display: flex; align-items: center; gap: 8px;
-        }
-        .btn-pdf:hover { background: #007a39; transform: translateY(-2px); }
-        .btn-pdf:disabled { background: #95a5a6; cursor: not-allowed; transform: none; }
+/* ===== CONTENU ===== */
+h1.titre{font:800 clamp(25px,3vw,34px) Manrope,sans-serif;letter-spacing:-1.2px;color:var(--navy)}
+.panel{background:#fff;border:1px solid #e9edf3;border-radius:14px;box-shadow:var(--shadow)}
+.panel h2{font-family:Manrope,sans-serif;font-weight:800;font-size:14px;color:var(--navy)}
+#select-chantier{background:#fbfcfe;border:1px solid #e4e9f0;border-radius:8px;color:var(--text);transition:.2s}
+#select-chantier:hover{border-color:#c8d1dd}
+#select-chantier:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px #c9a76a19}
 
-        .btn-print {
-            background: #64748b; color: white; padding: 10px 20px; border: none;
-            border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer;
-            transition: 0.3s; display: flex; align-items: center; gap: 8px;
-        }
-        .btn-print:hover { background: #475569; }
+.card-stat{background:#fff;border:1px solid #e9edf3;border-radius:14px;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s}
+.card-stat:hover{transform:translateY(-2px)}
+.card-stat>div:first-child{font-size:.75rem;font-weight:600;color:var(--muted)}
+.card-stat [id]{font-family:Manrope,sans-serif;font-weight:800;letter-spacing:-.5px;color:var(--navy)}
+#total-global{color:#a27e42!important}
 
-        @media print {
-            nav, .flag-top, .btn-pdf, .btn-print, select, label { display: none !important; }
-            body { background: white; padding: 0; }
-            .card-stat { border: 1px solid #eee; box-shadow: none; }
-        }
-    </style>
+.btn-pdf{background:var(--navy);color:#fff;padding:11px 18px;border:none;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer;transition:transform .2s,background .2s;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px #101b2d19}
+.btn-pdf:hover{background:#233650;transform:translateY(-1px)}
+.btn-pdf:disabled{background:#a8afbd;box-shadow:none;cursor:not-allowed;transform:none}
+.btn-print{background:#fff;color:var(--navy);padding:11px 18px;border:1px solid #e4e9f0;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:8px}
+.btn-print:hover{background:#f4f6fa;border-color:#c8d1dd}
+
+#container-materiaux table tr:hover td{background:#fbfcfe}
+
+footer.page-foot{text-align:center;padding:25px 10px;color:#a0aaba;font-size:9px;letter-spacing:.4px}
+footer.page-foot span{color:#a27e42;font-weight:700;letter-spacing:1px}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1050px){
+  .sidebar{width:220px}
+  .main{margin-left:220px}
+  .topbar{padding:0 25px}
+}
+@media(max-width:760px){
+  .sidebar{width:260px;transform:translateX(-100%);transition:transform .25s}
+  .sidebar.open{transform:translateX(0);box-shadow:15px 0 50px #101b2d30}
+  .main{margin-left:0}
+  .mobile-menu{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);background:white;border-radius:9px;cursor:pointer}
+  .topbar{height:65px;padding:0 17px}
+  .top-actions{gap:10px}
+  .secure{font-size:0;gap:0}
+  .secure-dot{width:8px;height:8px}
+}
+@media(max-width:430px){
+  .breadcrumb{font-size:10px}
+  .top-avatar{width:33px;height:33px}
+}
+@media print{
+  .sidebar,.topbar,.btn-pdf,.btn-print,select,label,footer.page-foot{display:none!important}
+  .main{margin-left:0}
+  body{background:white}
+  .card-stat,.panel{border:1px solid #eee;box-shadow:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+  <link rel="stylesheet" href="batios-theme.css">
 </head>
 <body>
+<div class="app">
 
-    <div class="flag-top"><div class="orange"></div><div class="white"></div><div class="green"></div></div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="tableau-de-bord.html" style="color:white">
+      <div class="brand-mark">B</div>
+      <div>
+        <div class="brand-name">BâtiOS</div>
+        <div class="brand-sub">PLATEFORME BTP</div>
+      </div>
+    </a>
 
-    <nav>
-    <a href="tableau-de-bord.html">📊 Dashboard</a>
-    <a href="chantiers.html">🏗️ Chantiers</a>
-    <a href="equipe.html">👥 Équipe & Pointage</a>
-    <a href="bilan.html">💰 Bilan & Matériaux</a>
-    <a href="admin-fraude.html">Detection de fraude</a>
-    <a href="profil.html">⚙️ Profil</a>
+    <div class="nav-label">ESPACE DE TRAVAIL</div>
+    <nav class="nav-list">
+      <a class="nav-link" href="tableau-de-bord.html" id="nav-dashboard"><span class="nav-icon">▦</span> Tableau de bord</a>
+      <a class="nav-link" href="chantiers.html"><span class="nav-icon">▤</span> Gestion des chantiers</a>
+      <a class="nav-link" href="equipe.html"><span class="nav-icon">♧</span> Équipe & pointage</a>
+      <a class="nav-link active" href="bilan.html"><span class="nav-icon">◈</span> Bilan & matériaux</a>
+      <a class="nav-link" href="tableau-de-bord.html#fournisseurs" id="nav-suppliers"><span class="nav-icon">⇄</span> Fournisseurs & dettes</a>
+      <a class="nav-link" href="tableau-de-bord.html#partenaires" id="nav-partenaires"><span class="nav-icon">❖</span> Gestion partenaires</a>
+      <a class="nav-link" href="admin-fraude.html"><span class="nav-icon">⬡</span> Détection de fraude</a>
+    </nav>
 
-    <div class="notif-cloche" id="notif-cloche" onclick="togglePanel()">
-        🔔
-        <div class="notif-badge" id="notif-badge"></div>
+    <div class="nav-label">CONFIGURATION</div>
+    <nav class="nav-list">
+      <a class="nav-link" href="profil.html"><span class="nav-icon">⚙</span> Profil entreprise</a>
+    </nav>
+
+    <div class="nav-bottom">
+      <button onclick="deconnexion()" class="logout-btn" type="button">↪ Se déconnecter</button>
+      <div class="sidebar-footer">
+        CONÇU POUR LES PROFESSIONNELS<br>
+        <strong>BâtiOS Corporation</strong><br>
+        Gestion BTP nouvelle génération
+      </div>
     </div>
+  </aside>
 
-    <button onclick="deconnexion()" class="logout-btn">Sortir</button>
-</nav>
-
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="mobile-menu" id="mobile-menu" aria-label="Ouvrir le menu">☰</button>
+        <div class="breadcrumb">Espace de travail <span style="margin:0 7px;color:#c2cad5">/</span> <strong>Bilan & matériaux</strong></div>
+      </div>
+      <div class="top-actions">
+        <div class="notif-cloche" id="notif-cloche" onclick="togglePanel()">
+            🔔
+            <div class="notif-badge" id="notif-badge"></div>
+        </div>
+        <div class="secure"><span class="secure-dot"></span> Espace sécurisé</div>
+        <div class="top-avatar" aria-label="Profil">B</div>
+      </div>
+    </header>
 
     <div class="max-w-6xl mx-auto p-4 lg:p-8">
         <header class="mb-8 flex justify-between items-end flex-wrap gap-4">
             <div>
-                <h1 class="text-3xl font-black text-slate-800">Synthèse Générale</h1>
-                <p class="text-slate-500">Suivi financier et opérationnel en temps réel</p>
+                <div class="eyebrow">BâtiOS / FINANCES</div>
+                <h1 class="titre text-3xl">Synthèse générale</h1>
+                <p class="text-slate-500 mt-1">Suivi financier et opérationnel en temps réel</p>
             </div>
             <div class="flex gap-3 flex-wrap">
                 <button onclick="exporterPDF()" id="btn-pdf" class="btn-pdf" disabled>
-                    <i class="fas fa-file-pdf"></i> EXPORTER EN PDF
+                    <i class="fas fa-file-pdf"></i> Exporter en PDF
                 </button>
                 <button onclick="window.print()" class="btn-print">
-                    <i class="fas fa-print"></i> IMPRIMER
+                    <i class="fas fa-print"></i> Imprimer
                 </button>
             </div>
         </header>
 
         <!-- Sélecteur chantier -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Choisir un chantier :</label>
-            <select id="select-chantier" onchange="chargerBilanComplet()" class="w-full p-4 bg-slate-50 border-none rounded-xl text-lg font-semibold focus:ring-2 focus:ring-orange-500 outline-none">
+        <div class="panel p-6 mb-8">
+            <label class="block text-sm font-semibold text-slate-500 mb-2">Choisir un chantier</label>
+            <select id="select-chantier" onchange="chargerBilanComplet()" class="w-full p-4 text-lg font-semibold outline-none">
                 <option value="">Chargement des projets...</option>
             </select>
         </div>
 
         <!-- Chiffres clés -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            <div class="p-6 shadow-sm border-l-8 border-emerald-500 card-stat">
-                <div class="text-slate-400 text-sm font-bold uppercase">Matériaux</div>
-                <div id="total-mat" class="text-2xl font-black text-slate-800 mt-1">—</div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-10">
+            <div class="p-6 border-l-4 border-emerald-500 card-stat">
+                <div>Matériaux</div>
+                <div id="total-mat" class="text-2xl mt-1">—</div>
             </div>
-            <div class="p-6 shadow-sm border-l-8 border-blue-500 card-stat">
-                <div class="text-slate-400 text-sm font-bold uppercase">Main d'Œuvre</div>
-                <div id="total-mo" class="text-2xl font-black text-slate-800 mt-1">—</div>
-                <div id="count-mo" class="text-[10px] text-slate-400 font-bold uppercase mt-1">— Jours / Homme</div>
+            <div class="p-6 border-l-4 border-blue-500 card-stat">
+                <div>Main d'œuvre</div>
+                <div id="total-mo" class="text-2xl mt-1">—</div>
+                <div id="count-mo" class="text-xs text-slate-400 font-semibold mt-1">— Jours / Homme</div>
             </div>
-            <div class="p-6 shadow-sm border-l-8 border-orange-500 card-stat">
-                <div class="text-slate-400 text-sm font-bold uppercase">Coût Total</div>
-                <div id="total-global" class="text-2xl font-black text-orange-600 mt-1">—</div>
+            <div class="p-6 border-l-4 border-orange-500 card-stat">
+                <div>Coût total</div>
+                <div id="total-global" class="text-2xl mt-1">—</div>
             </div>
-            <div class="p-6 shadow-sm border-l-8 border-purple-500 card-stat">
-                <div class="text-slate-400 text-sm font-bold uppercase">Rapports</div>
-                <div id="total-notes" class="text-2xl font-black text-slate-800 mt-1">—</div>
+            <div class="p-6 border-l-4 border-purple-500 card-stat">
+                <div>Rapports</div>
+                <div id="total-notes" class="text-2xl mt-1">—</div>
             </div>
         </div>
 
         <!-- Détail matériaux -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
-            <h2 class="font-bold text-slate-800 mb-4 flex items-center">
-                <i class="fas fa-boxes mr-2 text-emerald-500"></i> Détail des Matériaux
+        <div class="panel p-6 mb-8">
+            <h2 class="font-bold mb-4 flex items-center">
+                <i class="fas fa-boxes mr-2 text-emerald-500"></i> Détail des matériaux
             </h2>
             <div id="container-materiaux" class="overflow-x-auto">
                 <p class="text-slate-400 italic text-center py-6">Sélectionnez un chantier.</p>
@@ -140,8 +269,8 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Journal -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="font-bold text-slate-800 mb-4 flex items-center">
+            <div class="panel p-6">
+                <h2 class="font-bold mb-4 flex items-center">
                     <i class="fas fa-clipboard-list mr-2 text-orange-500"></i> Rapports journaliers
                 </h2>
                 <div id="container-journal" class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
@@ -150,8 +279,8 @@
             </div>
 
             <!-- Photos -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="font-bold text-slate-800 mb-4 flex items-center">
+            <div class="panel p-6">
+                <h2 class="font-bold mb-4 flex items-center">
                     <i class="fas fa-camera mr-2 text-green-500"></i> Photos terrain
                 </h2>
                 <div id="container-photos" class="grid grid-cols-2 gap-3 max-h-[400px] overflow-y-auto">
@@ -159,7 +288,11 @@
                 </div>
             </div>
         </div>
+
+        <footer class="page-foot">© <span>BâtiOS Corporation</span> · SOLUTIONS DE GESTION POUR LE BTP</footer>
     </div>
+  </main>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="supabase.js"></script>
@@ -233,10 +366,10 @@ async function chargerBilanComplet() {
         document.getElementById('container-materiaux').innerHTML = mat && mat.length > 0
             ? `<table class="w-full text-sm">
                 <thead>
-                    <tr class="bg-slate-50 text-slate-500 text-xs uppercase">
+                    <tr class="bg-slate-50 text-slate-500 text-xs">
                         <th class="p-3 text-left">Désignation</th>
                         <th class="p-3 text-center">Qté</th>
-                        <th class="p-3 text-right">Prix Unit.</th>
+                        <th class="p-3 text-right">Prix unit.</th>
                         <th class="p-3 text-right">Total</th>
                         <th class="p-3 text-right">Date</th>
                     </tr>
@@ -253,7 +386,7 @@ async function chargerBilanComplet() {
                         </tr>`;
                     }).join('')}
                     <tr class="bg-emerald-50">
-                        <td colspan="3" class="p-3 font-black text-right uppercase text-sm">TOTAL MATÉRIAUX</td>
+                        <td colspan="3" class="p-3 font-black text-right text-sm">TOTAL MATÉRIAUX</td>
                         <td class="p-3 text-right font-black text-emerald-700">${totalMat.toLocaleString('fr-FR')} FCFA</td>
                         <td></td>
                     </tr>
@@ -350,9 +483,9 @@ async function exporterPDF() {
         day: '2-digit', month: 'long', year: 'numeric'
     });
 
-    const orange = [255, 130, 0];
-    const vert   = [0, 158, 73];
-    const dark   = [44, 62, 80];
+    const orange = [255, 122, 0];
+    const vert   = [15, 157, 88];
+    const dark   = [28, 21, 16];
     const gris   = [100, 116, 139];
 
     // ── EN-TÊTE ──────────────────────────────────────────
@@ -366,7 +499,7 @@ async function exporterPDF() {
 
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(18); doc.setFont('helvetica', 'bold');
-    doc.text('BTP PRO CI', 14, 20);
+    doc.text('BâtiOS', 14, 20);
     doc.setFontSize(10); doc.setFont('helvetica', 'normal');
     doc.text('Rapport de Bilan de Chantier', 14, 28);
     doc.setFontSize(9);
@@ -472,14 +605,14 @@ async function exporterPDF() {
                 o.salaire.toLocaleString('fr-FR'),
                 (o.jours * o.salaire).toLocaleString('fr-FR')
             ]),
-            headStyles: { fillColor: [37, 99, 235], textColor: [255,255,255], fontStyle: 'bold' },
+            headStyles: { fillColor: [245, 158, 11], textColor: [255,255,255], fontStyle: 'bold' },
             bodyStyles: { fontSize: 9 },
             columnStyles: {
                 1: { halign: 'center' },
                 2: { halign: 'right' },
                 3: { halign: 'right', fontStyle: 'bold' }
             },
-            alternateRowStyles: { fillColor: [239, 246, 255] },
+            alternateRowStyles: { fillColor: [255, 247, 236] },
             margin: { left: 14, right: 14 }
         });
 
@@ -525,7 +658,7 @@ async function exporterPDF() {
         doc.rect(0, 285, 210, 12, 'F');
         doc.setFontSize(7); doc.setFont('helvetica', 'normal');
         doc.setTextColor(...gris);
-        doc.text('BTP PRO CI — Confidentiel', 14, 292);
+        doc.text('BâtiOS — Confidentiel', 14, 292);
         doc.text(`Page ${i} / ${totalPages}`, 196, 292, { align: 'right' });
         doc.text(nomChantierActif, 105, 292, { align: 'center' });
     }
@@ -542,6 +675,20 @@ async function deconnexion() {
 }
 
 window.onload = init;
+    </script>
+
+    <!-- Menu mobile (habillage uniquement) -->
+    <script>
+    document.getElementById('mobile-menu').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.toggle('open');
+    });
+    document.addEventListener('click', event => {
+        const sb = document.getElementById('sidebar');
+        const burger = document.getElementById('mobile-menu');
+        if (window.innerWidth <= 760 && !sb.contains(event.target) && !burger.contains(event.target)) {
+            sb.classList.remove('open');
+        }
+    });
     </script>
 </body>
 </html>

@@ -1,436 +1,265 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KORE Software - Pointage Équipe</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary: #0f172a;
-            --primary-light: #1e293b;
-            --accent-blue: #0284c7;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-            --accent-orange: #f97316;
-            --surface-bg: #f8fafc;
-            --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
-            --shadow-btn: 0 8px 20px -4px rgba(2, 132, 199, 0.35);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fffaf3">
+<title>BâtiOS — Pointage d'équipe</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#101b2d;
+  --navy2:#192840;
+  --gold:#c9a76a;
+  --gold-dark:#a27e42;
+  --gold-light:#f0dfb8;
+  --bg:#f4f6fa;
+  --text:#182438;
+  --muted:#8290a4;
+  --line:#e8edf3;
+  --shadow:0 12px 40px rgba(23,39,64,.055);
+  /* variables utilisées par le JavaScript (styles en ligne) */
+  --primary:#101b2d;
+  --accent-blue:#3b82c4;
+  --accent-orange:#a27e42;
+  --accent-green:#13866b;
+  --accent-red:#e5484d;
+  --shadow-card:0 12px 40px rgba(23,39,64,.055);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px}
+button{font-family:inherit}
+a{text-decoration:none}
+::selection{background:rgba(201,167,106,.3)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.app{min-height:100vh}
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+/* ===== SIDEBAR ===== */
+.sidebar{
+  position:fixed;inset:0 auto 0 0;width:252px;
+  background:var(--navy);color:white;padding:28px 17px;
+  display:flex;flex-direction:column;z-index:1200;overflow-y:auto;
+}
+.brand{display:flex;align-items:center;gap:12px;padding:0 10px 32px;color:white}
+.brand-mark{
+  width:43px;height:43px;border-radius:13px;display:grid;place-items:center;
+  color:var(--gold-light);font:800 23px Manrope,sans-serif;
+  border:1px solid rgba(201,167,106,.55);
+  background:linear-gradient(145deg,#263650,#101b2d);
+}
+.brand-name{font:800 19px Manrope,sans-serif;letter-spacing:2px}
+.brand-sub{font-size:9px;letter-spacing:2.1px;color:#9ba8ba;margin-top:4px}
+.nav-label{font-size:9px;font-weight:700;letter-spacing:1.8px;color:#74839a;padding:0 13px;margin:15px 0 12px}
+.nav-list{display:grid;gap:6px}
+.nav-link{
+  color:#aeb9ca;padding:12px 13px;border-radius:9px;display:flex;align-items:center;gap:12px;
+  font-size:12px;transition:.2s;border:1px solid transparent;
+}
+.nav-link:hover{background:#ffffff0c;color:#fff}
+.nav-link.active{background:linear-gradient(100deg,#c9a76a24,#c9a76a09);border-color:#c9a76a32;color:#f0dfb8}
+.nav-icon{width:19px;text-align:center;font-size:15px}
+.nav-bottom{margin-top:auto}
+.sidebar-footer{
+  margin-top:20px;padding:16px 12px;border-top:1px solid #ffffff14;
+  color:#8290a4;font-size:10px;line-height:1.8;
+}
+.sidebar-footer strong{color:#d9c69f;letter-spacing:1px}
+.logout-btn{
+  width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:9px;
+  background:transparent;color:#e8b4ae;border:1px solid rgba(232,180,174,.35);
+  border-radius:9px;padding:11px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;
+}
+.logout-btn:hover{background:rgba(232,180,174,.1)}
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--surface-bg);
-            margin: 0;
-            padding-bottom: 40px;
-            color: var(--primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+/* ===== MAIN / TOPBAR ===== */
+.main{margin-left:252px;min-height:100vh}
+.topbar{
+  height:76px;background:#ffffffed;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 42px;position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);
+}
+.breadcrumb{font-size:12px;color:var(--muted)}
+.breadcrumb strong{color:var(--text)}
+.top-actions{display:flex;align-items:center;gap:15px}
+.secure{display:flex;align-items:center;gap:8px;font-size:11px;color:#65748a}
+.secure-dot{width:7px;height:7px;background:#1ba77c;border-radius:50%;box-shadow:0 0 0 4px #1ba77c18}
+.top-avatar{
+  width:37px;height:37px;border-radius:12px;display:grid;place-items:center;
+  background:#f2e9d7;color:#765a2c;font-weight:800;border:1px solid #e9d9b8;
+}
+.mobile-menu{display:none}
+.content{max-width:760px;margin:auto;padding:34px 42px 40px}
+.eyebrow{color:#a27e42;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
 
-        /* HEADER TOP */
-        header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: white;
-            width: 100%;
-            padding: 20px;
-            border-bottom-left-radius: 28px;
-            border-bottom-right-radius: 28px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-        }
+/* ===== EN-TÊTE DE PAGE ===== */
+.page-heading{margin-bottom:29px}
+.page-heading h1{font:800 clamp(25px,3vw,34px) Manrope,sans-serif;letter-spacing:-1.2px;margin:0;color:var(--navy)}
+.page-desc{margin:10px 0 0;color:var(--muted);font-size:12px;line-height:1.7}
+.nav-back{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:11px;font-weight:700;color:#7a6032}
+.nav-back:hover{color:var(--navy)}
 
-        .header-content {
-            max-width: 480px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+/* ===== FORMULAIRE ===== */
+.main-card{background:#fff;border-radius:14px;padding:25px;box-shadow:var(--shadow);border:1px solid #e9edf3}
+.card-header-title{font:800 14px Manrope,sans-serif;margin:0 0 20px;padding-bottom:16px;border-bottom:1px solid var(--line);color:var(--navy);display:flex;align-items:center;gap:8px}
+.card-header-title i{color:#a27e42}
+.form-group{margin-bottom:18px}
+label{display:flex;align-items:center;gap:8px;font-weight:700;font-size:10px;color:#526176;margin-bottom:9px}
+label i{color:#a27e42;font-size:12px}
+select{
+  width:100%;height:47px;padding:0 13px;border:1px solid #e4e9f0;border-radius:8px;
+  font-family:inherit;font-size:12px;color:var(--text);background:#fbfcfe;outline:none;transition:.2s;
+}
+select:hover{border-color:#c8d1dd}
+select:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px #c9a76a19}
 
-        .nav-back {
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.2s ease;
-        }
+/* GPS */
+.gps-status-card{
+  background:#e6f0fa;border:1px solid #b9d4ee;border-radius:12px;padding:15px;margin-bottom:18px;
+  display:flex;align-items:center;gap:12px;
+}
+.gps-status-card.error{background:#fdecec;border-color:#f7b9b9}
+.gps-status-card.success{background:#eaf7f0;border-color:#b7e4c7}
+.gps-status-icon{font-size:1.3rem;min-width:36px;text-align:center}
+.gps-status-text{flex:1}
+.gps-status-text .status-label{font-weight:700;font-size:12px;color:var(--navy);margin-bottom:4px}
+.gps-status-text .status-detail{font-size:10px;color:var(--muted)}
 
-        .nav-back:active {
-            transform: scale(0.92);
-            background: rgba(255, 255, 255, 0.2);
-        }
+.btn-gps{
+  width:100%;padding:13px;background:var(--gold-dark);color:white;border:none;border-radius:8px;
+  font-weight:700;font-size:12px;margin-bottom:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s;
+}
+.btn-gps:hover{filter:brightness(.92)}
+.btn-gps:disabled{background:#cbd5e1;cursor:not-allowed}
+.btn-gps.loading{opacity:.8}
 
-        .header-title {
-            text-align: center;
-        }
+/* Boutons de statut */
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.btn-status{
+  padding:14px;border:2px solid transparent;border-radius:10px;font-weight:700;cursor:pointer;
+  transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;
+}
+.btn-present{background:#eaf7f0;color:var(--accent-green);border-color:#b7e4c7}
+.btn-present:not(.inactif){background:var(--accent-green);color:white;border-color:var(--accent-green);box-shadow:0 6px 16px rgba(19,134,107,.3)}
+.btn-absent{background:#fdecec;color:var(--accent-red);border-color:#f7b9b9}
+.btn-absent:not(.inactif){background:var(--accent-red);color:white;border-color:var(--accent-red);box-shadow:0 6px 16px rgba(229,72,77,.3)}
+.btn-status.inactif{opacity:.55;box-shadow:none}
 
-        .header-title h1 {
-            margin: 0;
-            font-size: 1.15rem;
-            font-weight: 800;
-            letter-spacing: -0.3px;
-        }
+.btn-valider{
+  width:100%;padding:15px;background:var(--navy);color:white;border:none;border-radius:8px;
+  font-weight:700;font-size:12px;margin-top:20px;cursor:pointer;box-shadow:0 4px 12px #101b2d19;
+  display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .2s,background .2s;
+}
+.btn-valider:hover{background:#233650;transform:translateY(-1px)}
+.btn-valider:disabled{background:#a8afbd;box-shadow:none;cursor:not-allowed;transform:none}
 
-        .header-title p {
-            margin: 2px 0 0 0;
-            font-size: 0.75rem;
-            color: #94a3b8;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+/* Historique */
+.history-section{margin-top:30px}
+.section-title{font:800 14px Manrope,sans-serif;color:var(--navy);margin:0 0 14px;display:flex;align-items:center;gap:8px}
+.section-title i{color:#a27e42}
+.history-item{
+  background:white;padding:16px 18px;border-radius:12px;margin-bottom:10px;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  box-shadow:var(--shadow);border:1px solid #e9edf3;border-left:4px solid var(--accent-green);
+}
+.history-item.absent{border-left-color:var(--accent-red)}
+.history-item span{font-size:13px}
+.badge{padding:6px 12px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.3px}
+.badge-present{background:#eaf7f0;color:var(--accent-green)}
+.badge-absent{background:#fdecec;color:var(--accent-red)}
+.badge-gps{background:#e6f0fa;color:var(--accent-blue);font-size:10px;padding:4px 8px}
 
-        /* CONTENEUR PRINCIPAL */
-        .container {
-            width: 100%;
-            max-width: 480px;
-            padding: 20px;
-        }
+.spinner{display:inline-block;animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
-        .main-card {
-            background: white;
-            border-radius: 24px;
-            padding: 24px 20px;
-            box-shadow: var(--shadow-card);
-            border: 1px solid #f1f5f9;
-        }
+footer.page-foot{text-align:center;padding:25px 10px;color:#a0aaba;font-size:9px;letter-spacing:.4px}
+footer.page-foot span{color:#a27e42;font-weight:700;letter-spacing:1px}
 
-        .card-header-title {
-            font-size: 1rem;
-            font-weight: 800;
-            margin: 0 0 18px 0;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .card-header-title i {
-            color: var(--accent-blue);
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            font-size: 0.82rem;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-
-        label i {
-            color: var(--accent-blue);
-            font-size: 0.9rem;
-        }
-
-        /* SELECTS */
-        select {
-            width: 100%;
-            padding: 14px 16px;
-            border-radius: 16px;
-            border: 1.5px solid #e2e8f0;
-            font-family: inherit;
-            font-size: 0.95rem;
-            color: var(--primary);
-            background: #f8fafc;
-            outline: none;
-            transition: all 0.2s ease;
-            box-sizing: border-box;
-        }
-
-        select:focus {
-            border-color: var(--accent-blue);
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
-        }
-
-        /* GPS STATUS CARD */
-        .gps-status-card {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border: 2px solid var(--accent-blue);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .gps-status-card.error {
-            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-            border-color: var(--accent-red);
-        }
-
-        .gps-status-card.success {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border-color: var(--accent-green);
-        }
-
-        .gps-status-icon {
-            font-size: 1.5rem;
-            min-width: 40px;
-            text-align: center;
-        }
-
-        .gps-status-text {
-            flex: 1;
-        }
-
-        .gps-status-text .status-label {
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: var(--primary);
-            margin-bottom: 4px;
-        }
-
-        .gps-status-text .status-detail {
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-
-        /* BOUTONS DE STATUT */
-        .status-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .btn-status {
-            padding: 14px;
-            border: 2px solid transparent;
-            border-radius: 16px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 0.95rem;
-            font-family: inherit;
-        }
-
-        .btn-present {
-            background: rgba(16, 185, 129, 0.12);
-            color: var(--accent-green);
-            border-color: rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-present:not(.inactif) {
-            background: var(--accent-green);
-            color: white;
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
-            border-color: var(--accent-green);
-        }
-
-        .btn-absent {
-            background: rgba(239, 68, 68, 0.12);
-            color: var(--accent-red);
-            border-color: rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-absent:not(.inactif) {
-            background: var(--accent-red);
-            color: white;
-            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
-            border-color: var(--accent-red);
-        }
-
-        .btn-status.inactif {
-            opacity: 0.5;
-            box-shadow: none;
-        }
-
-        /* BOUTON GPS */
-        .btn-gps {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--accent-orange), #ea580c);
-            color: white;
-            border: none;
-            border-radius: 16px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-bottom: 12px;
-            cursor: pointer;
-            box-shadow: 0 6px 16px rgba(249, 115, 22, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
-
-        .btn-gps:active {
-            transform: scale(0.98);
-        }
-
-        .btn-gps:disabled {
-            background: #cbd5e1;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        .btn-gps.loading {
-            opacity: 0.8;
-        }
-
-        /* BOUTON DE VALIDATION */
-        .btn-valider {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--accent-blue), #0369a1);
-            color: white;
-            border: none;
-            border-radius: 18px;
-            font-weight: 800;
-            font-size: 1rem;
-            margin-top: 20px;
-            cursor: pointer;
-            box-shadow: var(--shadow-btn);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
-
-        .btn-valider:active {
-            transform: scale(0.98);
-            box-shadow: none;
-        }
-
-        .btn-valider:disabled {
-            background: #cbd5e1;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        /* HISTORIQUE */
-        .history-section {
-            margin-top: 28px;
-        }
-
-        .section-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: #64748b;
-            margin: 0 0 12px 4px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .history-item {
-            background: white;
-            padding: 16px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow-card);
-            border: 1px solid #f1f5f9;
-            border-left: 5px solid var(--accent-green);
-        }
-
-        .history-item.absent {
-            border-left-color: var(--accent-red);
-        }
-
-        .history-item span {
-            font-size: 0.95rem;
-        }
-
-        .badge {
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            letter-spacing: 0.3px;
-        }
-
-        .badge-present {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--accent-green);
-        }
-
-        .badge-absent {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--accent-red);
-        }
-
-        .badge-gps {
-            background: rgba(2, 132, 199, 0.1);
-            color: var(--accent-blue);
-            font-size: 0.7rem;
-            padding: 4px 8px;
-        }
-
-        footer {
-            margin-top: auto;
-            padding: 20px;
-            font-size: 0.75rem;
-            color: #94a3b8;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .spinner {
-            display: inline-block;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-    </style>
+/* ===== RESPONSIVE ===== */
+@media(max-width:1050px){
+  .sidebar{width:220px}
+  .main{margin-left:220px}
+  .topbar{padding:0 25px}
+  .content{padding:28px 25px}
+}
+@media(max-width:760px){
+  .sidebar{width:260px;transform:translateX(-100%);transition:transform .25s}
+  .sidebar.open{transform:translateX(0);box-shadow:15px 0 50px #101b2d30}
+  .main{margin-left:0}
+  .mobile-menu{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);background:white;border-radius:9px;cursor:pointer}
+  .topbar{height:65px;padding:0 17px}
+  .top-actions{gap:10px}
+  .secure{font-size:0;gap:0}
+  .secure-dot{width:8px;height:8px}
+  .content{padding:22px 16px 30px}
+  .main-card{padding:20px 17px}
+}
+@media(max-width:430px){
+  .breadcrumb{font-size:10px}
+  .top-avatar{width:33px;height:33px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+  <link rel="stylesheet" href="batios-theme.css">
 </head>
 <body>
+<div class="app">
 
-    <!-- ENTÊTE -->
-    <header>
-        <div class="header-content">
-            <a href="chef-accueil.html" class="nav-back">
-                <i class="fas fa-chevron-left"></i>
-            </a>
-            <div class="header-title">
-                <h1>Pointage Équipe</h1>
-                <p>KORE Software - Anti-Fraude</p>
-            </div>
-            <div style="width: 42px;"></div>
-        </div>
-    </header>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">B</div>
+      <div>
+        <div class="brand-name">BâtiOS</div>
+        <div class="brand-sub">PLATEFORME BTP</div>
+      </div>
+    </div>
 
-    <!-- CONTENU PRINCIPAL -->
-    <div class="container">
+    <div class="nav-label">ESPACE TERRAIN</div>
+    <nav class="nav-list">
+      <a class="nav-link" href="chef-accueil.html"><span class="nav-icon"><i class="fas fa-house"></i></span> Accueil</a>
+      <a class="nav-link active" href="chef-pointages.html"><span class="nav-icon"><i class="fas fa-user-check"></i></span> Pointage d'équipe</a>
+      <a class="nav-link" href="chef-materiaux.html"><span class="nav-icon"><i class="fas fa-truck-loading"></i></span> Achats & matériaux</a>
+      <a class="nav-link" href="chef-journal.html"><span class="nav-icon"><i class="fas fa-clipboard-list"></i></span> Journal de bord</a>
+    </nav>
+
+    <div class="nav-bottom">
+      <button class="logout-btn" onclick="deconnexion()" type="button">
+        <i class="fas fa-arrow-right-from-bracket"></i> Se déconnecter
+      </button>
+      <div class="sidebar-footer">
+        CONÇU POUR LES PROFESSIONNELS<br>
+        <strong>BâtiOS Corporation</strong><br>
+        Gestion BTP nouvelle génération
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="mobile-menu" id="mobile-menu" aria-label="Ouvrir le menu">☰</button>
+        <div class="breadcrumb">Espace terrain <span style="margin:0 7px;color:#c2cad5">/</span> <strong>Pointage d'équipe</strong></div>
+      </div>
+      <div class="top-actions">
+        <div class="secure"><span class="secure-dot"></span> Espace sécurisé</div>
+        <div class="top-avatar" aria-label="Profil">B</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-heading">
+        <div class="eyebrow">BâtiOS / TERRAIN · ANTI-FRAUDE</div>
+        <h1>Pointage d'équipe</h1>
+        <p class="page-desc">Saisissez la présence des ouvriers, validée par la position GPS du chantier.</p>
+        <a href="chef-accueil.html" class="nav-back"><i class="fas fa-chevron-left"></i> Retour à l'accueil</a>
+      </div>
+
         <div class="main-card">
             <h2 class="card-header-title"><i class="fas fa-user-check"></i> Saisie de présence</h2>
             
@@ -486,11 +315,11 @@
             <span class="section-title"><i class="fas fa-history"></i> Pointages du jour</span>
             <div id="historique"></div>
         </div>
-    </div>
 
-    <footer>
-        KORE Software • Propulsé par Bâtisys Tech
-    </footer>
+      <footer class="page-foot">© <span>BâtiOS Corporation</span> · PROPULSÉ PAR BÂTISYS TECH</footer>
+    </div>
+  </main>
+</div>
 
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -775,6 +604,20 @@
     }
 
     document.addEventListener('DOMContentLoaded', init);
+    </script>
+
+    <!-- Menu mobile (habillage uniquement) -->
+    <script>
+    document.getElementById('mobile-menu').addEventListener('click', function () {
+        document.getElementById('sidebar').classList.toggle('open');
+    });
+    document.addEventListener('click', function (event) {
+        var sb = document.getElementById('sidebar');
+        var burger = document.getElementById('mobile-menu');
+        if (window.innerWidth <= 760 && !sb.contains(event.target) && !burger.contains(event.target)) {
+            sb.classList.remove('open');
+        }
+    });
     </script>
 </body>
 </html>
